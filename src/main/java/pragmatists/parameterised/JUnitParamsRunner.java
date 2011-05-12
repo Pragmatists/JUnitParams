@@ -12,11 +12,11 @@ import org.junit.runner.notification.*;
 import org.junit.runners.*;
 import org.junit.runners.model.*;
 
-public class ParameterisedTestsRunner extends BlockJUnit4ClassRunner {
+public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
     private HashMap<FrameworkMethod, Integer> paramSetIndexMap;
 
-    public ParameterisedTestsRunner(Class<?> klass) throws InitializationError {
+    public JUnitParamsRunner(Class<?> klass) throws InitializationError {
         super(klass);
     }
 
