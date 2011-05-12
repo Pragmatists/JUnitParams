@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.*;
 import org.junit.runner.*;
 
-@RunWith(ParameterisedTestsRunner.class)
+@RunWith(JUnitParamsRunner.class)
 public class JustParamsTest {
 
     @Test
