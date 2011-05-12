@@ -9,7 +9,9 @@ import org.junit.runner.*;
 public class PersonTest {
 
     @Test
-    @Parameters({ "17, false", "22, true" })
+    @Parameters({
+            "17, false",
+            "22, true" })
     public void isAdultAge(int age, boolean valid) throws Exception {
         assertEquals(valid, age > 18);
     }
@@ -22,19 +24,19 @@ public class PersonTest {
 
     public static class PersonProvider {
         public static Object[] provideAdults() {
-            return params(
-                    params(new Person(25), true),
-                    params(new Person(32), true));
+            return $(
+                    $(new Person(25), true),
+                    $(new Person(32), true));
         }
 
         public static Object[] provideTeens() {
-            return params(
-                    params(new Person(12), false),
-                    params(new Person(17), false));
+            return $(
+                    $(new Person(12), false),
+                    $(new Person(17), false));
         }
 
-        private static Object[] params(Object... param) {
-            return param;
+        private static Object[] $(Object... params) {
+            return params;
         }
     }
 
