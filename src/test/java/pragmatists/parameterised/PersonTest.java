@@ -10,8 +10,8 @@ public class PersonTest {
 
     @Test
     @Parameters({ "17, false", "22, true" })
-    public void greaterAdultAge(int number, boolean valid) throws Exception {
-        assertEquals(valid, number > 18);
+    public void isAdultAge(int age, boolean valid) throws Exception {
+        assertEquals(valid, age > 18);
     }
 
     @Test

@@ -21,7 +21,6 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     }
 
     protected void collectInitializationErrors(List<Throwable> errors) {
-
     }
 
     @Override
@@ -34,20 +33,104 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
     private void runParameterisedScenario(FrameworkMethod method, RunNotifier notifier) {
         Statement methodInvoker = methodBlock(method);
-        Object[] params = paramsFromAnnotation(method);
 
-        Description methodDescription = Description.createSuiteDescription(testName(method));
-        for (Object paramSet : params)
-            methodDescription.addChild(Description.createTestDescription(getTestClass().getJavaClass(),
-                    Utils.stringify(paramSet) + " (" + testName(method) + ")", method.getAnnotations()));
-
+        Description methodDescription = describeParameterisedMethod(method);
         Description methodWithParams = findChildForParams(methodInvoker, methodDescription);
 
         notifier.fireTestStarted(methodWithParams);
-
         runMethodInvoker(notifier, methodDescription, methodInvoker, methodWithParams);
-
         notifier.fireTestFinished(methodWithParams);
+    }
+
+    private void runMethodInvoker(RunNotifier notifier, Description description, Statement methodInvoker, Description methodWithParams) {
+        EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
+        try {
+            eachNotifier.fireTestStarted();
+
+            methodInvoker.evaluate();
+        } catch (Throwable e) {
+            notifier.fireTestFailure(new Failure(methodWithParams, e));
+        } finally {
+            eachNotifier.fireTestFinished();
+        }
+    };
+
+    @Override
+    protected List<FrameworkMethod> computeTestMethods() {
+        return addTestMethods(getTestClass().getAnnotatedMethods(Test.class), false);
+    }
+
+    private List<FrameworkMethod> addTestMethods(List<FrameworkMethod> testMethods, boolean parameterisedOnlyOnce) {
+        List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
+
+        paramSetIndexMap = new HashMap<FrameworkMethod, Integer>();
+        for (FrameworkMethod testMethod : testMethods) {
+            if (isParameterised(testMethod) && !parameterisedOnlyOnce)
+                addTestMethodForEachParamSet(resultMethods, testMethod);
+            else
+                addTestMethodOnce(resultMethods, testMethod);
+        }
+
+        return resultMethods;
+    }
+
+    private void addTestMethodForEachParamSet(List<FrameworkMethod> resultMethods, FrameworkMethod scenarioMethod) {
+        int paramSetSize = paramsFromAnnotation(scenarioMethod).length;
+
+        for (int i = 0; i < paramSetSize; i++)
+            addTestMethodOnce(resultMethods, scenarioMethod);
+
+        paramSetIndexMap.put(scenarioMethod, 0);
+    }
+
+    private void addTestMethodOnce(List<FrameworkMethod> resultMethods, FrameworkMethod scenarioMethod) {
+        resultMethods.add(scenarioMethod);
+    }
+
+    @Override
+    protected Statement methodInvoker(FrameworkMethod method, Object test) {
+        if (isParameterised(method)) {
+            Integer counter = paramSetIndexMap.get(method);
+            paramSetIndexMap.put(method, counter + 1);
+            return new InvokeParameterisedMethod(method, test, paramsFromAnnotation(method)[counter]);
+        } else {
+            return super.methodInvoker(method, test);
+        }
+    }
+
+    @Override
+    public Description getDescription() {
+        Description description = Description.createSuiteDescription(getName(), getTestClass().getAnnotations());
+
+        List<FrameworkMethod> resultMethods = addTestMethods(getTestClass().getAnnotatedMethods(Test.class), true);
+
+        for (FrameworkMethod method : resultMethods)
+            description.addChild(describeMethod(method));
+
+        return description;
+    }
+
+    private Description describeMethod(FrameworkMethod method) {
+        Description child;
+
+        if (isParameterised(method))
+            child = describeParameterisedMethod(method);
+        else
+            child = describeChild(method);
+        return child;
+    }
+
+    private boolean isParameterised(FrameworkMethod method) {
+        return method.getMethod().isAnnotationPresent(Parameters.class);
+    }
+
+    private Description describeParameterisedMethod(FrameworkMethod method) {
+        Object[] params = paramsFromAnnotation(method);
+        Description parametrised = Description.createSuiteDescription(testName(method));
+        for (Object paramSet : params)
+            parametrised.addChild(Description.createTestDescription(getTestClass().getJavaClass(),
+                    Utils.stringify(paramSet) + " (" + testName(method) + ")", method.getAnnotations()));
+        return parametrised;
     }
 
     private Object[] paramsFromAnnotation(FrameworkMethod method) {
@@ -112,89 +195,4 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private void runMethodInvoker(RunNotifier notifier, Description description, Statement methodInvoker, Description methodWithParams) {
-        EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
-        try {
-            eachNotifier.fireTestStarted();
-
-            methodInvoker.evaluate();
-        } catch (Throwable e) {
-            notifier.fireTestFailure(new Failure(methodWithParams, e));
-        } finally {
-            eachNotifier.fireTestFinished();
-        }
-    };
-
-    private boolean isParameterised(FrameworkMethod method) {
-        return method.getMethod().isAnnotationPresent(Parameters.class);
-    }
-
-    @Override
-    protected java.util.List<FrameworkMethod> computeTestMethods() {
-        List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
-
-        addTestMethods(getTestClass().getAnnotatedMethods(Test.class), resultMethods, false);
-
-        return resultMethods;
-    }
-
-    private void addTestMethods(List<FrameworkMethod> scenarios, List<FrameworkMethod> resultMethods, boolean flat) {
-        paramSetIndexMap = new HashMap<FrameworkMethod, Integer>();
-        for (FrameworkMethod scenarioMethod : scenarios) {
-            if (isParameterised(scenarioMethod) && !flat)
-                addScenarioForEachParamSet(resultMethods, scenarioMethod);
-            else
-                addScenarioOnce(resultMethods, scenarioMethod);
-        }
-    }
-
-    private void addScenarioForEachParamSet(List<FrameworkMethod> resultMethods, FrameworkMethod scenarioMethod) {
-        int paramSetSize = paramsFromAnnotation(scenarioMethod).length;
-
-        for (int i = 0; i < paramSetSize; i++)
-            addScenarioOnce(resultMethods, scenarioMethod);
-
-        paramSetIndexMap.put(scenarioMethod, 0);
-    }
-
-    private void addScenarioOnce(List<FrameworkMethod> resultMethods, FrameworkMethod scenarioMethod) {
-        resultMethods.add(scenarioMethod);
-    }
-
-    @Override
-    protected Statement methodInvoker(FrameworkMethod method, Object test) {
-        if (isParameterised(method)) {
-            Integer counter = paramSetIndexMap.get(method);
-            paramSetIndexMap.put(method, counter + 1);
-            return new InvokeParameterisedMethod(method, test, paramsFromAnnotation(method)[counter]);
-        } else {
-            return super.methodInvoker(method, test);
-        }
-    }
-
-    @Override
-    public Description getDescription() {
-        Description description = Description.createSuiteDescription(getName(),
-                getTestClass().getAnnotations());
-
-        List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
-        addTestMethods(getTestClass().getAnnotatedMethods(Test.class), resultMethods, true);
-
-        for (FrameworkMethod child : resultMethods) {
-            if (isParameterised(child)) {
-                Description parametrised = Description.createSuiteDescription(testName(child));
-
-                Object[] params = paramsFromAnnotation(child);
-
-                for (Object paramSet : params)
-                    parametrised.addChild(Description.createTestDescription(getTestClass().getJavaClass(),
-                            Utils.stringify(paramSet) + " (" + testName(child) + ")", child.getAnnotations()));
-
-                description.addChild(parametrised);
-            } else {
-                description.addChild(describeChild(child));
-            }
-        }
-        return description;
-    }
 }
