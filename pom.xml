@@ -50,6 +50,15 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<sourcepath>${project.basedir}/src/main/javadoc;${project.basedir}/src/main/java</sourcepath>
+					<reportOutputDirectory>${project.basedir}</reportOutputDirectory>
+					<docfilessubdirs>false</docfilessubdirs>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
