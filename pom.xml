@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>oss-parent</artifactId>
 		<groupId>org.sonatype.oss</groupId>
-		<version>4</version>
+		<version>7</version>
 	</parent>
 	<groupId>pl.pragmatists</groupId>
 	<artifactId>JUnitParams</artifactId>
@@ -34,9 +34,9 @@
 		<url>http://code.google.com/p/junitparams/issues/list</url>
 	</issueManagement>
 	<scm>
-		<connection>scm:hg:http://junitparams.googlecode.com/hg</connection>
+		<connection>scm:hg:http://junitparams.googlecode.com/hg/</connection>
 		<developerConnection>scm:hg:https://junitparams.googlecode.com/hg/</developerConnection>
-		<url>http://junitparams.googlecode.com/hg</url>
+		<url>http://junitparams.googlecode.com/hg/</url>
 	</scm>
 	<build>
 		<plugins>
