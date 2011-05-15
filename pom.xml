@@ -38,6 +38,10 @@
 		<developerConnection>scm:hg:https://junitparams.googlecode.com/hg/</developerConnection>
 		<url>http://junitparams.googlecode.com/hg/</url>
 	</scm>
+	<organization>
+		<name>Pragmatists</name>
+		<url>http://pragmatists.pl</url>
+	</organization>
 	<build>
 		<plugins>
 			<plugin>
@@ -64,7 +68,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
+			<version>4.8.2</version>
 		</dependency>
 	</dependencies>
 </project>
