@@ -1,5 +1,10 @@
 package junitparams;
 
+/**
+ * Some String utils.
+ * 
+ * @author Pawel Lipinski
+ */
 class Utils {
 
     public static String stringify(Object paramSet) {
