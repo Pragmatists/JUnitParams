@@ -1,5 +1,6 @@
-package pragmatists.parameterised;
+package junitparams;
 
+import static junitparams.JUnitParamsRunner.*;
 import static org.junit.Assert.*;
 
 import org.junit.*;
@@ -28,11 +29,11 @@ public class JustParamsTest {
 
     public static class OneIntegerProvider {
         public static Object[] provideTwoNumbers() {
-            return new Object[] { new Object[] { 1 }, new Object[] { 2 } };
+            return $($(1), $(2));
         }
 
         public static Object[] provideOneNumber() {
-            return new Object[] { new Object[] { 3 } };
+            return new Object[] { $(3) };
         }
     }
 
