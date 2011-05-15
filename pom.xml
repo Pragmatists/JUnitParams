@@ -36,7 +36,7 @@
 	</issueManagement>
 	<scm>
 		<connection>scm:hg:http://junitparams.googlecode.com/hg</connection>
-		<developerConnection>scm:hg:https://junitparams.googlecode.com/hg</developerConnection>
+		<developerConnection>scm:hg:https://junitparams.googlecode.com/hg/</developerConnection>
 		<url>http://junitparams.googlecode.com/hg</url>
 	</scm>
 	<build>
