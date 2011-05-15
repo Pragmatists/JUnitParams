@@ -13,7 +13,10 @@ import org.junit.runners.*;
 import org.junit.runners.model.*;
 
 /**
- * JUnit runner for parameterised tests.
+ * JUnit runner for parameterised tests. Annotate your test class with
+ * <code>@RunWith(JUnitParamsRunner.class)</code> and place
+ * <code>@Parameters</code> annotation on each test method which requires
+ * parameters.
  * 
  * @author Pawel Lipinski
  */
