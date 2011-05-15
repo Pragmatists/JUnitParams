@@ -1,6 +1,7 @@
 package pragmatists.parameterised;
 
 import static org.junit.Assert.*;
+import static pragmatists.parameterised.JUnitParamsRunner.*;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -12,8 +13,29 @@ public class PersonTest {
     @Parameters({
             "17, false",
             "22, true" })
-    public void isAdultAge(int age, boolean valid) throws Exception {
+    public void isAdultAgeDirect(int age, boolean valid) throws Exception {
         assertEquals(valid, age > 18);
+    }
+
+    @Test
+    @Parameters(method = "adultValues")
+    public void isAdultAgeDefinedMethod(int age, boolean valid) throws Exception {
+        assertEquals(valid, age > 18);
+    }
+
+    private Object[] adultValues() {
+        return $($(17, false),
+                $(22, true));
+    }
+
+    @Test
+    @Parameters
+    public void isAdultAgeDefaultMethod(int age, boolean valid) throws Exception {
+        assertEquals(valid, age > 18);
+    }
+
+    private Object[] parametersForIsAdultAgeDefaultMethod() {
+        return adultValues();
     }
 
     @Test
