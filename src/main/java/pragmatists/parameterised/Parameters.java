@@ -9,4 +9,8 @@ public @interface Parameters {
     String[] value() default {};
 
     Class source() default NullType.class;
+
+    boolean fromTest() default false;
+
+    String method() default "";
 }

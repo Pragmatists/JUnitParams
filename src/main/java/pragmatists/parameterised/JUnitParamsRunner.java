@@ -135,34 +135,69 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
     private Object[] paramsFromAnnotation(FrameworkMethod method) {
         Parameters parametersAnnotation = method.getAnnotation(Parameters.class);
-        Object[] params = parametersAnnotation.value();
-        if (params.length == 0 && !(parametersAnnotation.source().isAssignableFrom(NullType.class)))
-            params = paramsFromProvider(parametersAnnotation.source());
+        Object[] params = paramsFromValue(parametersAnnotation);
+
+        if (params.length == 0)
+            params = paramsFromSource(parametersAnnotation);
+
+        if (params.length == 0)
+            params = paramsFromMethod(parametersAnnotation, method);
+
+        if (params.length == 0)
+            throw new RuntimeException(
+                    "No parameters found, even though the method is defined as Prameterised. "
+                            + "There aren't any params in the annotation, there's no test class method providing the params and no external provider...");
+
         return params;
     }
 
-    private Object[] paramsFromProvider(Class sourceClass) {
-        ArrayList<Object> result = new ArrayList<Object>();
-        Method[] methods = sourceClass.getDeclaredMethods();
+    private Object[] paramsFromMethod(Parameters parametersAnnotation, FrameworkMethod method) {
+        String methodName = parametersAnnotation.method();
+        try {
+            Class<?> testClass = method.getMethod().getDeclaringClass();
+            Object testObject = testClass.newInstance();
+            if ("".equals(methodName))
+                methodName = "parametersFor" + method.getName().substring(0, 1).toUpperCase()
+                            + method.getName().substring(1);
+            Method provideMethod = testClass.getDeclaredMethod(methodName);
+            provideMethod.setAccessible(true);
+            return (Object[]) provideMethod.invoke(testObject);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not find method: " + methodName + " so no params were used.", e);
+        }
+    }
 
-        for (Method method : methods) {
-            if (method.getName().startsWith("provide")) {
-                if (!Modifier.isStatic(method.getModifiers()))
-                    throw new RuntimeException("Parameters source method " +
-                            method.getName() +
-                            " is not declared as static. Modify it to a static method.");
-                try {
-                    result.addAll(Arrays.asList((Object[]) method.invoke(null)));
-                } catch (Exception e) {
-                    throw new RuntimeException("Cannot invoke parameters source method: " + method.getName(), e);
+    private Object[] paramsFromValue(Parameters parametersAnnotation) {
+        Object[] params = parametersAnnotation.value();
+        return params;
+    }
+
+    private Object[] paramsFromSource(Parameters parametersAnnotation) {
+        if (!(parametersAnnotation.source().isAssignableFrom(NullType.class))) {
+            Class sourceClass = parametersAnnotation.source();
+            ArrayList<Object> result = new ArrayList<Object>();
+            Method[] methods = sourceClass.getDeclaredMethods();
+
+            for (Method method : methods) {
+                if (method.getName().startsWith("provide")) {
+                    if (!Modifier.isStatic(method.getModifiers()))
+                        throw new RuntimeException("Parameters source method " +
+                                method.getName() +
+                                " is not declared as static. Modify it to a static method.");
+                    try {
+                        result.addAll(Arrays.asList((Object[]) method.invoke(null)));
+                    } catch (Exception e) {
+                        throw new RuntimeException("Cannot invoke parameters source method: " + method.getName(), e);
+                    }
                 }
             }
-        }
 
-        if (result.isEmpty())
-            throw new RuntimeException("No methods starting with provide or they return no result in the parameters source class: "
-                    + sourceClass.getName());
-        return result.toArray(new Object[] {});
+            if (result.isEmpty())
+                throw new RuntimeException("No methods starting with provide or they return no result in the parameters source class: "
+                        + sourceClass.getName());
+            return result.toArray(new Object[] {});
+        }
+        return $();
     }
 
     private Description findChildForParams(Statement methodInvoker, Description methodDescription) {
@@ -195,4 +230,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
         }
     }
 
+    public static Object[] $(Object... params) {
+        return params;
+    }
 }
