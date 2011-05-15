@@ -1,9 +1,14 @@
-package pragmatists.parameterised;
+package junitparams;
 
 import java.util.*;
 
 import org.junit.runners.model.*;
 
+/**
+ * JUnit invoker for parameterised test methods
+ * 
+ * @author Pawel Lipinski
+ */
 public class InvokeParameterisedMethod extends Statement {
 
     private final Object[] params;

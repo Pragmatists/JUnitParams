@@ -1,7 +1,8 @@
-package pragmatists.parameterised;
+package junitparams;
 
+import static junitparams.JUnitParamsRunner.*;
 import static org.junit.Assert.*;
-import static pragmatists.parameterised.JUnitParamsRunner.*;
+import junitparams.*;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -55,10 +56,6 @@ public class PersonTest {
             return $(
                     $(new Person(12), false),
                     $(new Person(17), false));
-        }
-
-        private static Object[] $(Object... params) {
-            return params;
         }
     }
 

@@ -1,4 +1,4 @@
-package pragmatists.parameterised;
+package junitparams;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -12,6 +12,11 @@ import org.junit.runner.notification.*;
 import org.junit.runners.*;
 import org.junit.runners.model.*;
 
+/**
+ * JUnit runner for parameterised tests.
+ * 
+ * @author Pawel Lipinski
+ */
 public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
     private HashMap<FrameworkMethod, Integer> paramSetIndexMap;

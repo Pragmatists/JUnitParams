@@ -1,6 +1,6 @@
-package pragmatists.parameterised;
+package junitparams;
 
-public class Utils {
+class Utils {
 
     public static String stringify(Object paramSet) {
         if (paramSet instanceof String)
