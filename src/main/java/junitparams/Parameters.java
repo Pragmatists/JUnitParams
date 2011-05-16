@@ -29,7 +29,7 @@ public @interface Parameters {
      * group your examples.
      * Example: <code>@Paramers(source = PeopleProvider.class)
      */
-    Class source() default NullType.class;
+    Class<?> source() default NullType.class;
 
     /**
      * Parameter values returned by a method within the test class. This way you
