@@ -182,7 +182,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
     private Object[] paramsFromSource(Parameters parametersAnnotation) {
         if (!(parametersAnnotation.source().isAssignableFrom(NullType.class))) {
-            Class sourceClass = parametersAnnotation.source();
+            Class<?> sourceClass = parametersAnnotation.source();
             ArrayList<Object> result = new ArrayList<Object>();
             Method[] methods = sourceClass.getDeclaredMethods();
 

@@ -2,7 +2,6 @@ package junitparams;
 
 import static junitparams.JUnitParamsRunner.*;
 import static org.junit.Assert.*;
-import junitparams.*;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -35,6 +34,7 @@ public class PersonTest {
         assertEquals(valid, age > 18);
     }
 
+    @SuppressWarnings("unused")
     private Object[] parametersForIsAdultAgeDefaultMethod() {
         return adultValues();
     }
