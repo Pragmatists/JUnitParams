@@ -3,7 +3,6 @@ package junitparams;
 import java.util.*;
 
 import org.junit.*;
-import org.junit.internal.runners.model.*;
 import org.junit.runner.*;
 import org.junit.runner.notification.*;
 import org.junit.runners.*;
@@ -31,13 +30,15 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        EachTestNotifier eachNotifier = new EachTestNotifier(notifier, describeChild(method));
         if (method.getAnnotation(Ignore.class) != null) {
-            eachNotifier.fireTestIgnored();
+            Description ignoredMethod = parameterisedRunner.describeParameterisedMethod(method);
+            for (Description child : ignoredMethod.getChildren()) {
+                notifier.fireTestIgnored(child);
+            }
             return;
         }
 
-        if (!parameterisedRunner.runParameterisedTest(method, methodBlock(method), notifier, eachNotifier))
+        if (!parameterisedRunner.runParameterisedTest(method, methodBlock(method), notifier))
             super.runChild(method, notifier);
     }
 
