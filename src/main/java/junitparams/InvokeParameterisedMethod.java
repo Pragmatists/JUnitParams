@@ -48,7 +48,7 @@ public class InvokeParameterisedMethod extends Statement {
 
     private Object[] parseStringToParams(String params) {
         Object[] columns;
-        StringTokenizer tokenizer = new StringTokenizer(params, ",");
+        StringTokenizer tokenizer = new StringTokenizer(params, ",|");
         List<String> cols = new ArrayList<String>();
         while (tokenizer.hasMoreTokens()) {
             String nextToken = tokenizer.nextToken().trim();
