@@ -26,12 +26,14 @@ public class JustParamsTest {
     }
 
     @Test
-    @Parameters
-    public void oneParamSetSameTypes(String a, String b) throws Exception {
+    @Parameters(source = SingleParamSetProvider.class)
+    public void oneParamSetFromClass(String a, String b) throws Exception {
     }
 
-    private Object[] parametersForOneParamSetSameTypes() {
-        return $($(null, "b"));
+    static class SingleParamSetProvider {
+        public static Object[] provideOneParamSetSameTypes() {
+            return $($("a", "b"));
+        }
     }
 
     @Test

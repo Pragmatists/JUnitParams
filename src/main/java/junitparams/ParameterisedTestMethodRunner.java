@@ -82,7 +82,7 @@ public class ParameterisedTestMethodRunner {
                                 method.getName() +
                                 " is not declared as static. Modify it to a static method.");
                 try {
-                    result.addAll(Arrays.asList((Object[]) method.invoke(null)));
+                    result.addAll(Arrays.asList(processParamsIfSingle((Object[]) method.invoke(null))));
                 } catch (Exception e) {
                     throw new RuntimeException("Cannot invoke parameters source method: " + method.getName(), e);
                 }
