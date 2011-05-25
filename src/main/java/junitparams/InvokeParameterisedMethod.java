@@ -23,13 +23,11 @@ public class InvokeParameterisedMethod extends Statement {
     public InvokeParameterisedMethod(FrameworkMethod testMethod, Object target, Object params, int paramSetIdx) {
         this.testMethod = testMethod;
         this.target = target;
-        if (params instanceof String) {
-            paramsAsString = Utils.stringify(params, paramSetIdx - 1);
+        paramsAsString = Utils.stringify(params, paramSetIdx - 1);
+        if (params instanceof String)
             this.params = castParamsFromString((String) params);
-        } else {
-            paramsAsString = Utils.stringify(params, paramSetIdx - 1);
+        else
             this.params = Utils.safelyCastParamsToArray(params);
-        }
     }
 
     private Object[] castParamsFromString(String params) {
