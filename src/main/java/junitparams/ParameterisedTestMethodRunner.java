@@ -187,12 +187,9 @@ public class ParameterisedTestMethodRunner {
     private void runMethodInvoker(RunNotifier notifier, Description description, Statement methodInvoker, Description methodWithParams) {
         EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
         try {
-            eachNotifier.fireTestStarted();
             methodInvoker.evaluate();
         } catch (Throwable e) {
             notifier.fireTestFailure(new Failure(methodWithParams, e));
-        } finally {
-            eachNotifier.fireTestFinished();
         }
     }
 

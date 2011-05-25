@@ -10,7 +10,7 @@ public class ParameterisedTestClassRunner {
 
     private HashMap<FrameworkMethod, ParameterisedTestMethodRunner> parameterisedMethods = new HashMap<FrameworkMethod, ParameterisedTestMethodRunner>();
 
-    List<FrameworkMethod> computeTestMethods(List<FrameworkMethod> testMethods, boolean parameterisedOnlyOnce) {
+    public List<FrameworkMethod> computeTestMethods(List<FrameworkMethod> testMethods, boolean parameterisedOnlyOnce) {
         List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
 
         for (FrameworkMethod testMethod : testMethods) {
@@ -38,7 +38,7 @@ public class ParameterisedTestClassRunner {
         resultMethods.add(testMethod);
     }
 
-    Statement parameterisedMethodInvoker(FrameworkMethod method, Object test) {
+    public Statement parameterisedMethodInvoker(FrameworkMethod method, Object test) {
         if (!isParameterised(method))
             return null;
 
@@ -46,7 +46,7 @@ public class ParameterisedTestClassRunner {
         return new InvokeParameterisedMethod(method, test, parameterisedMethod.currentParamsFromAnnotation(), parameterisedMethod.count());
     }
 
-    boolean runParameterisedTest(FrameworkMethod method, Statement methodInvoker, RunNotifier notifier) {
+    public boolean runParameterisedTest(FrameworkMethod method, Statement methodInvoker, RunNotifier notifier) {
         if (!isParameterised(method))
             return false;
 
@@ -54,14 +54,14 @@ public class ParameterisedTestClassRunner {
         return true;
     }
 
-    Description describeParameterisedMethod(FrameworkMethod method) {
+    public Description describeParameterisedMethod(FrameworkMethod method) {
         if (!isParameterised(method))
             return null;
 
         return parameterisedMethods.get(method).describeMethod();
     }
 
-    private boolean isParameterised(FrameworkMethod method) {
+    public boolean isParameterised(FrameworkMethod method) {
         return method.getMethod().isAnnotationPresent(Parameters.class);
     }
 }
