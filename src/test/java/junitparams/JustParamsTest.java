@@ -16,6 +16,51 @@ public class JustParamsTest {
     }
 
     @Test
+    @Parameters
+    public void oneParamDifferentTypes(int number, String a) throws Exception {
+        assertTrue(number > 0);
+    }
+
+    private Object[] parametersForOneParamDifferentTypes() {
+        return $($(1, "a"));
+    }
+
+    @Test
+    @Parameters
+    public void oneParamSetSameTypes(String a, String b) throws Exception {
+    }
+
+    private Object[] parametersForOneParamSetSameTypes() {
+        return $($(null, "b"));
+    }
+
+    @Test
+    @Parameters
+    public void oneParamSetOneNull(String a, String b) throws Exception {
+    }
+
+    private Object[] parametersForOneParamSetOneNull() {
+        return $($(null, "b"));
+    }
+
+    @Test
+    @Parameters
+    public void noToString(NoToStringObject o) throws Exception {
+    }
+
+    private Object[] parametersForNoToString() {
+        return $($(new NoToStringObject()));
+    }
+
+    public class NoToStringObject {
+    }
+
+    @Test
+    @Parameters({ "a \n b", "a(asdf)" })
+    public void specialCharsInParam(String a) throws Exception {
+    }
+
+    @Test
     @Parameters({ "1, false", "2, true" })
     public void multipleParams(int number, boolean what) throws Exception {
         assertEquals(what, number > 1);

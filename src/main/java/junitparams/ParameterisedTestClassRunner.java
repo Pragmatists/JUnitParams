@@ -42,7 +42,8 @@ public class ParameterisedTestClassRunner {
         if (!isParameterised(method))
             return null;
 
-        return new InvokeParameterisedMethod(method, test, parameterisedMethods.get(method).currentParamsFromAnnotation());
+        ParameterisedTestMethodRunner parameterisedMethod = parameterisedMethods.get(method);
+        return new InvokeParameterisedMethod(method, test, parameterisedMethod.currentParamsFromAnnotation(), parameterisedMethod.count());
     }
 
     boolean runParameterisedTest(FrameworkMethod method, Statement methodInvoker, RunNotifier notifier) {
