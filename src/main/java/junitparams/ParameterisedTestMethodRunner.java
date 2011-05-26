@@ -5,11 +5,16 @@ import java.util.*;
 
 import javax.lang.model.type.*;
 
-import org.junit.internal.runners.model.*;
 import org.junit.runner.*;
 import org.junit.runner.notification.*;
 import org.junit.runners.model.*;
 
+/**
+ * Testmethod-level functionalities for parameterised tests
+ * 
+ * @author Pawel Lipinski
+ * 
+ */
 public class ParameterisedTestMethodRunner {
 
     private int count;
@@ -185,7 +190,6 @@ public class ParameterisedTestMethodRunner {
     }
 
     private void runMethodInvoker(RunNotifier notifier, Description description, Statement methodInvoker, Description methodWithParams) {
-        EachTestNotifier eachNotifier = new EachTestNotifier(notifier, description);
         try {
             methodInvoker.evaluate();
         } catch (Throwable e) {
