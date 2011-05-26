@@ -1,7 +1,7 @@
 package junitparams;
 
 /**
- * Some String utils.
+ * Some String utils to handle parameterised tests' results.
  * 
  * @author Pawel Lipinski
  */

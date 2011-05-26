@@ -13,16 +13,16 @@ public class InvokeParameterisedMethod extends Statement {
 
     private final Object[] params;
     private final FrameworkMethod testMethod;
-    private final Object target;
+    private final Object testClass;
     private final String paramsAsString;
 
     public String getParamsAsString() {
         return paramsAsString;
     }
 
-    public InvokeParameterisedMethod(FrameworkMethod testMethod, Object target, Object params, int paramSetIdx) {
+    public InvokeParameterisedMethod(FrameworkMethod testMethod, Object testClass, Object params, int paramSetIdx) {
         this.testMethod = testMethod;
-        this.target = target;
+        this.testClass = testClass;
         paramsAsString = Utils.stringify(params, paramSetIdx - 1);
         if (params instanceof String)
             this.params = castParamsFromString((String) params);
@@ -38,7 +38,7 @@ public class InvokeParameterisedMethod extends Statement {
             Class<?>[] parameterTypes = testMethod.getMethod().getParameterTypes();
 
             verifySameSizeOfArrays(columns, parameterTypes);
-            columns = castColumns(columns, parameterTypes);
+            columns = castAllParametersToProperTypes(columns, parameterTypes);
         } catch (RuntimeException e) {
             new IllegalArgumentException("Cannot parse parameters. Did you use , as column separator? " + params, e).printStackTrace();
         }
@@ -58,16 +58,16 @@ public class InvokeParameterisedMethod extends Statement {
         return columns;
     }
 
-    private Object[] castColumns(Object[] columns, Class<?>[] parameterTypes) {
+    private Object[] castAllParametersToProperTypes(Object[] columns, Class<?>[] parameterTypes) {
         Object[] result = new Object[columns.length];
 
         for (int i = 0; i < columns.length; i++)
-            result[i] = castColumn(columns[i], parameterTypes[i]);
+            result[i] = castParameterFromString(columns[i], parameterTypes[i]);
 
         return result;
     }
 
-    private Object castColumn(Object object, Class<?> clazz) {
+    private Object castParameterFromString(Object object, Class<?> clazz) {
         if (clazz.isInstance(object))
             return object;
         if (clazz.isAssignableFrom(String.class))
@@ -101,6 +101,6 @@ public class InvokeParameterisedMethod extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-        testMethod.invokeExplosively(target, params);
+        testMethod.invokeExplosively(testClass, params);
     }
 }
