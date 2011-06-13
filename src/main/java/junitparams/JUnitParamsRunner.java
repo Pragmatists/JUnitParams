@@ -153,16 +153,28 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        if (method.getAnnotation(Ignore.class) != null) {
-            Description ignoredMethod = parameterisedRunner.describeParameterisedMethod(method);
-            for (Description child : ignoredMethod.getChildren()) {
-                notifier.fireTestIgnored(child);
-            }
+        if (handleIgnored(method, notifier))
             return;
-        }
 
         if (!parameterisedRunner.runParameterisedTest(method, methodBlock(method), notifier))
             super.runChild(method, notifier);
+    }
+
+    private boolean handleIgnored(FrameworkMethod method, RunNotifier notifier) {
+        boolean ignored = false;
+        if (method.getAnnotation(Ignore.class) != null) {
+            if (parameterisedRunner.isParameterised(method)) {
+                Description ignoredMethod = parameterisedRunner.describeParameterisedMethod(method);
+                for (Description child : ignoredMethod.getChildren()) {
+                    notifier.fireTestIgnored(child);
+                    ignored = true;
+                }
+            } else {
+                notifier.fireTestIgnored(describeMethod(method));
+                ignored = true;
+            }
+        }
+        return ignored;
     }
 
     @Override
