@@ -18,12 +18,12 @@ import org.junit.runners.model.*;
 public class ParameterisedTestMethodRunner {
 
     private int count;
-    private final FrameworkMethod method;
+    private final TestMethod method;
     private Parameters parametersAnnotation;
 
-    public ParameterisedTestMethodRunner(FrameworkMethod method) {
-        this.method = method;
-        parametersAnnotation = method.getAnnotation(Parameters.class);
+    public ParameterisedTestMethodRunner(TestMethod testMethod) {
+        this.method = testMethod;
+        parametersAnnotation = testMethod.frameworkMethod.getAnnotation(Parameters.class);
     }
 
     public int nextCount() {
@@ -109,7 +109,7 @@ public class ParameterisedTestMethodRunner {
     }
 
     private Object[] invokeMethodWithParams(String methodName) {
-        Class<?> testClass = method.getMethod().getDeclaringClass();
+        Class<?> testClass = method.frameworkMethod.getMethod().getDeclaringClass();
 
         Method provideMethod = findParamsProvidingMethodInTestclassHierarchy(methodName, testClass);
 
@@ -129,7 +129,7 @@ public class ParameterisedTestMethodRunner {
     }
 
     private Object[] processParamsIfSingle(Object[] params) {
-        if (method.getMethod().getParameterTypes().length != params.length)
+        if (method.frameworkMethod.getMethod().getParameterTypes().length != params.length)
             return params;
 
         if (params.length == 0)
@@ -160,8 +160,8 @@ public class ParameterisedTestMethodRunner {
 
     private String defaultMethodName() {
         String methodName;
-        methodName = "parametersFor" + method.getName().substring(0, 1).toUpperCase()
-                    + method.getName().substring(1);
+        methodName = "parametersFor" + method.frameworkMethod.getName().substring(0, 1).toUpperCase()
+                    + method.frameworkMethod.getName().substring(1);
         return methodName;
     }
 
@@ -180,11 +180,11 @@ public class ParameterisedTestMethodRunner {
 
     Description describeMethod() {
         Object[] params = paramsFromAnnotation();
-        Description parametrised = Description.createSuiteDescription(method.getName());
+        Description parametrised = Description.createSuiteDescription(method.name());
         for (int i = 0; i < params.length; i++) {
             Object paramSet = params[i];
-            parametrised.addChild(Description.createTestDescription(method.getMethod().getDeclaringClass(),
-                    Utils.stringify(paramSet, i) + " (" + method.getName() + ")", method.getAnnotations()));
+            parametrised.addChild(Description.createTestDescription(method.frameworkMethod.getMethod().getDeclaringClass(),
+                    Utils.stringify(paramSet, i) + " (" + method.name() + ")", method.frameworkMethod.getAnnotations()));
         }
         return parametrised;
     }

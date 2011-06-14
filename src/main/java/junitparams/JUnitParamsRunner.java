@@ -156,15 +156,16 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
         if (handleIgnored(method, notifier))
             return;
 
-        if (!parameterisedRunner.runParameterisedTest(method, methodBlock(method), notifier))
+        if (!parameterisedRunner.runParameterisedTest(new TestMethod(method), methodBlock(method), notifier))
             super.runChild(method, notifier);
     }
 
     private boolean handleIgnored(FrameworkMethod method, RunNotifier notifier) {
+        TestMethod testMethod = new TestMethod(method);
         boolean ignored = false;
         if (method.getAnnotation(Ignore.class) != null) {
-            if (parameterisedRunner.isParameterised(method)) {
-                Description ignoredMethod = parameterisedRunner.describeParameterisedMethod(method);
+            if (parameterisedRunner.isParameterised(testMethod)) {
+                Description ignoredMethod = parameterisedRunner.describeParameterisedMethod(testMethod);
                 for (Description child : ignoredMethod.getChildren()) {
                     notifier.fireTestIgnored(child);
                     ignored = true;
@@ -179,12 +180,12 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected List<FrameworkMethod> computeTestMethods() {
-        return parameterisedRunner.computeTestMethods(getTestClass().getAnnotatedMethods(Test.class), false);
+        return parameterisedRunner.computeTestMethods(TestMethod.listFrom(getTestClass().getAnnotatedMethods(Test.class)), false);
     }
 
     @Override
     protected Statement methodInvoker(FrameworkMethod method, Object test) {
-        Statement methodInvoker = parameterisedRunner.parameterisedMethodInvoker(method, test);
+        Statement methodInvoker = parameterisedRunner.parameterisedMethodInvoker(new TestMethod(method), test);
         if (methodInvoker == null)
             methodInvoker = super.methodInvoker(method, test);
 
@@ -194,7 +195,8 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     @Override
     public Description getDescription() {
         Description description = Description.createSuiteDescription(getName(), getTestClass().getAnnotations());
-        List<FrameworkMethod> resultMethods = parameterisedRunner.computeTestMethods(getTestClass().getAnnotatedMethods(Test.class), true);
+        List<FrameworkMethod> resultMethods = parameterisedRunner.computeTestMethods(
+                TestMethod.listFrom(getTestClass().getAnnotatedMethods(Test.class)), true);
 
         for (FrameworkMethod method : resultMethods)
             description.addChild(describeMethod(method));
@@ -203,7 +205,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     }
 
     private Description describeMethod(FrameworkMethod method) {
-        Description child = parameterisedRunner.describeParameterisedMethod(method);
+        Description child = parameterisedRunner.describeParameterisedMethod(new TestMethod(method));
 
         if (child == null)
             child = describeChild(method);

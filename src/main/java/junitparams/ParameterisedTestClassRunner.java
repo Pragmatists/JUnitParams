@@ -15,23 +15,23 @@ import org.junit.runners.model.*;
  */
 public class ParameterisedTestClassRunner {
 
-    private HashMap<FrameworkMethod, ParameterisedTestMethodRunner> parameterisedMethods = new HashMap<FrameworkMethod, ParameterisedTestMethodRunner>();
+    private Map<TestMethod, ParameterisedTestMethodRunner> parameterisedMethods = new HashMap<TestMethod, ParameterisedTestMethodRunner>();
 
     /**
      * Returns a list of <code>FrameworkMethod</code>s. Handles both
      * parameterised methods (counts them as many times as many paramsets they
      * have) and nonparameterised methods (just counts them once).
      * 
-     * @param testMethods
+     * @param list
      *            List of FrameworkMethods that should be taken into account.
      * @param parameterisedOnlyOnce
      *            If true, returns parameterised methods only once.
      * @return
      */
-    public List<FrameworkMethod> computeTestMethods(List<FrameworkMethod> testMethods, boolean parameterisedOnlyOnce) {
+    public List<FrameworkMethod> computeTestMethods(List<TestMethod> list, boolean parameterisedOnlyOnce) {
         List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
 
-        for (FrameworkMethod testMethod : testMethods) {
+        for (TestMethod testMethod : list) {
             if (isParameterised(testMethod) && !parameterisedOnlyOnce)
                 addTestMethodForEachParamSet(resultMethods, testMethod);
             else
@@ -41,7 +41,7 @@ public class ParameterisedTestClassRunner {
         return resultMethods;
     }
 
-    private void addTestMethodForEachParamSet(List<FrameworkMethod> resultMethods, FrameworkMethod testMethod) {
+    private void addTestMethodForEachParamSet(List<FrameworkMethod> resultMethods, TestMethod testMethod) {
         ParameterisedTestMethodRunner parameterisedTestMethodRunner = new ParameterisedTestMethodRunner(testMethod);
 
         int paramSetSize = parameterisedTestMethodRunner.paramsFromAnnotation().length;
@@ -52,8 +52,8 @@ public class ParameterisedTestClassRunner {
         parameterisedMethods.put(testMethod, parameterisedTestMethodRunner);
     }
 
-    private void addTestMethodOnce(List<FrameworkMethod> resultMethods, FrameworkMethod testMethod) {
-        resultMethods.add(testMethod);
+    private void addTestMethodOnce(List<FrameworkMethod> resultMethods, TestMethod testMethod) {
+        resultMethods.add(testMethod.frameworkMethod);
     }
 
     /**
@@ -65,12 +65,12 @@ public class ParameterisedTestClassRunner {
      * @param testClass
      * @return
      */
-    public Statement parameterisedMethodInvoker(FrameworkMethod method, Object testClass) {
+    public Statement parameterisedMethodInvoker(TestMethod method, Object testClass) {
         if (!isParameterised(method))
             return null;
 
         ParameterisedTestMethodRunner parameterisedMethod = parameterisedMethods.get(method);
-        return new InvokeParameterisedMethod(method, testClass, parameterisedMethod.currentParamsFromAnnotation(),
+        return new InvokeParameterisedMethod(method.frameworkMethod, testClass, parameterisedMethod.currentParamsFromAnnotation(),
                 parameterisedMethod.count());
     }
 
@@ -82,7 +82,7 @@ public class ParameterisedTestClassRunner {
      * @param notifier
      * @return True if method has been executed, and false if not.
      */
-    public boolean runParameterisedTest(FrameworkMethod method, Statement methodInvoker, RunNotifier notifier) {
+    public boolean runParameterisedTest(TestMethod method, Statement methodInvoker, RunNotifier notifier) {
         if (!isParameterised(method))
             return false;
 
@@ -93,23 +93,25 @@ public class ParameterisedTestClassRunner {
     /**
      * Returns description of a parameterised method.
      * 
-     * @param method
+     * @param testMethod
+     *            TODO
+     * 
      * @return Description of a method or null if it's not parameterised.
      */
-    public Description describeParameterisedMethod(FrameworkMethod method) {
-        if (!isParameterised(method))
+    public Description describeParameterisedMethod(TestMethod testMethod) {
+        if (!isParameterised(testMethod))
             return null;
 
-        return parameterisedMethods.get(method).describeMethod();
+        return parameterisedMethods.get(testMethod).describeMethod();
     }
 
     /**
      * Checks if a method has a <code>Parameters</code> annotation
      * 
-     * @param method
+     * @param parameterObject
      * @return
      */
-    public boolean isParameterised(FrameworkMethod method) {
-        return method.getMethod().isAnnotationPresent(Parameters.class);
+    public boolean isParameterised(TestMethod parameterObject) {
+        return parameterObject.frameworkMethod.getMethod().isAnnotationPresent(Parameters.class);
     }
 }
