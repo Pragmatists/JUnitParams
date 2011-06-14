@@ -7,7 +7,7 @@
 	</parent>
 	<groupId>pl.pragmatists</groupId>
 	<artifactId>JUnitParams</artifactId>
-	<version>0.3.2</version>
+	<version>0.3.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>JUnitParams</name>
 	<description>Better parameterised tests for JUnit</description>
