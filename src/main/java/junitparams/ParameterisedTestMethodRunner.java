@@ -219,22 +219,22 @@ public class ParameterisedTestMethodRunner {
 
     private Statement nextChainedInvoker(Statement methodInvoker) {
         Statement nextInvoker = null;
-        try {
-            nextInvoker = getFieldValue(methodInvoker, "fNext"); // most
-                                                                 // invokers
-        } catch (Exception e) {
-            try {
-                nextInvoker = getFieldValue(methodInvoker, "val$base"); // ExternalResource
-            } catch (Exception e1) {
-                // nothing found, will return null
-            }
-        }
+        nextInvoker = getFieldValue(methodInvoker, "fNext"); // JUnit standard
+        if (nextInvoker == null)
+            nextInvoker = getFieldValue(methodInvoker, "val$base"); // ExternalResource
+        if (nextInvoker == null)
+            nextInvoker = getFieldValue(methodInvoker, "next"); // Spring
+
         return nextInvoker;
     }
 
-    private Statement getFieldValue(Statement methodInvoker, String fieldName) throws NoSuchFieldException, IllegalAccessException {
-        Field methodInvokerField = methodInvoker.getClass().getDeclaredField(fieldName);
-        methodInvokerField.setAccessible(true);
-        return (Statement) methodInvokerField.get(methodInvoker);
+    private Statement getFieldValue(Statement methodInvoker, String fieldName) {
+        try {
+            Field methodInvokerField = methodInvoker.getClass().getDeclaredField(fieldName);
+            methodInvokerField.setAccessible(true);
+            return (Statement) methodInvokerField.get(methodInvoker);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
