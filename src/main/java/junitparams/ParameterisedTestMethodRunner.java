@@ -73,7 +73,7 @@ public class ParameterisedTestMethodRunner {
         }
         if (result.isEmpty())
             throw new RuntimeException("No methods starting with provide or they return no result in the parameters source class: "
-                        + sourceClass.getName());
+                    + sourceClass.getName());
         return result.toArray(new Object[] {});
     }
 
@@ -84,8 +84,8 @@ public class ParameterisedTestMethodRunner {
             if (method.getName().startsWith("provide")) {
                 if (!Modifier.isStatic(method.getModifiers()))
                     throw new RuntimeException("Parameters source method " +
-                                method.getName() +
-                                " is not declared as static. Modify it to a static method.");
+                            method.getName() +
+                            " is not declared as static. Modify it to a static method.");
                 try {
                     result.addAll(Arrays.asList(processParamsIfSingle((Object[]) method.invoke(null))));
                 } catch (Exception e) {
@@ -161,7 +161,7 @@ public class ParameterisedTestMethodRunner {
     private String defaultMethodName() {
         String methodName;
         methodName = "parametersFor" + method.frameworkMethod.getName().substring(0, 1).toUpperCase()
-                    + method.frameworkMethod.getName().substring(1);
+                + method.frameworkMethod.getName().substring(1);
         return methodName;
     }
 
@@ -218,22 +218,30 @@ public class ParameterisedTestMethodRunner {
     }
 
     private Statement nextChainedInvoker(Statement methodInvoker) {
-        Statement nextInvoker = null;
-        nextInvoker = getFieldValue(methodInvoker, "fNext"); // JUnit standard
-        if (nextInvoker == null)
-            nextInvoker = getFieldValue(methodInvoker, "val$base"); // ExternalResource
-        if (nextInvoker == null)
-            nextInvoker = getFieldValue(methodInvoker, "next"); // Spring
+        Field[] declaredFields = methodInvoker.getClass().getDeclaredFields();
 
-        return nextInvoker;
+        for (Field field : declaredFields) {
+            Statement statement = statementOrNull(methodInvoker, field);
+            if (statement != null)
+                return statement;
+        }
+
+        return null;
     }
 
-    private Statement getFieldValue(Statement methodInvoker, String fieldName) {
+    private Statement statementOrNull(Statement methodInvoker, Field field) {
+        if (field.getType().isAssignableFrom(Statement.class))
+            return getOriginalStatement(methodInvoker, field);
+
+        return null;
+    }
+
+    private Statement getOriginalStatement(Statement methodInvoker, Field field) {
+        field.setAccessible(true);
         try {
-            Field methodInvokerField = methodInvoker.getClass().getDeclaredField(fieldName);
-            methodInvokerField.setAccessible(true);
-            return (Statement) methodInvokerField.get(methodInvoker);
+            return (Statement) field.get(methodInvoker);
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
