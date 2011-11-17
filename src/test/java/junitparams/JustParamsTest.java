@@ -11,13 +11,13 @@ public class JustParamsTest {
 
     @Test
     @Parameters({ "1", "2" })
-    public void singleParam(int number) throws Exception {
+    public void singleParam(int number) {
         assertTrue(number > 0);
     }
 
     @Test
     @Parameters
-    public void oneParamDifferentTypes(int number, String a) throws Exception {
+    public void oneParamDifferentTypes(int number, String a) {
         assertTrue(number > 0);
     }
 
@@ -27,7 +27,7 @@ public class JustParamsTest {
 
     @Test
     @Parameters(source = SingleParamSetProvider.class)
-    public void oneParamSetFromClass(String a, String b) throws Exception {
+    public void oneParamSetFromClass(String a, String b) {
     }
 
     static class SingleParamSetProvider {
@@ -38,7 +38,7 @@ public class JustParamsTest {
 
     @Test
     @Parameters
-    public void oneParamSetOneNull(String a, String b) throws Exception {
+    public void oneParamSetOneNull(String a, String b) {
     }
 
     private Object[] parametersForOneParamSetOneNull() {
@@ -47,7 +47,7 @@ public class JustParamsTest {
 
     @Test
     @Parameters
-    public void noToString(NoToStringObject o) throws Exception {
+    public void noToString(NoToStringObject o) {
     }
 
     private Object[] parametersForNoToString() {
@@ -110,6 +110,15 @@ public class JustParamsTest {
         public String toString() {
             return name;
         }
+    }
+
+    @Test
+    @Parameters
+    public void emptyParamset() {
+    }
+
+    private Object[] parametersForEmptyParamset() {
+        return new Object[] {};
     }
 
 }
