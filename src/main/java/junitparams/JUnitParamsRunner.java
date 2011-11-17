@@ -17,8 +17,7 @@ import org.junit.runners.model.*;
  * parameters.
  * </p>
  * <br/>
- * <h2>Contents</h2> <b>
- * <a href="#1">1. Parameterising tests</a><br/>
+ * <h2>Contents</h2> <b> <a href="#1">1. Parameterising tests</a><br/>
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#a">a. Parameterising tests via values
  * in annotation</a><br/>
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#b">b. Parameterising tests via a
@@ -128,8 +127,8 @@ import org.junit.runners.model.*;
  * 
  * &#064;Before
  * public void init() throws Exception {
- *     this.testContextManager = new TestContextManager(getClass());
- *     this.testContextManager.prepareTestInstance(this);
+ * 	this.testContextManager = new TestContextManager(getClass());
+ * 	this.testContextManager.prepareTestInstance(this);
  * }
  * </pre>
  * 
@@ -141,87 +140,98 @@ import org.junit.runners.model.*;
  */
 public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
-    private ParameterisedTestClassRunner parameterisedRunner = new ParameterisedTestClassRunner();
+	private ParameterisedTestClassRunner parameterisedRunner = new ParameterisedTestClassRunner();
 
-    public JUnitParamsRunner(Class<?> klass) throws InitializationError {
-        super(klass);
-        computeTestMethods();
-    }
+	public JUnitParamsRunner(Class<?> klass) throws InitializationError {
+		super(klass);
+		computeTestMethods();
+	}
 
-    protected void collectInitializationErrors(List<Throwable> errors) {
-    }
+	protected void collectInitializationErrors(List<Throwable> errors) {
+	}
 
-    @Override
-    protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        if (handleIgnored(method, notifier))
-            return;
+	@Override
+	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
+		if (handleIgnored(method, notifier))
+			return;
 
-        if (!parameterisedRunner.runParameterisedTest(new TestMethod(method), methodBlock(method), notifier))
-            super.runChild(method, notifier);
-    }
+		TestMethod testMethod = new TestMethod(method);
+		if (parameterisedRunner.shouldRun(testMethod))
+			parameterisedRunner.runParameterisedTest(testMethod, methodBlock(method), notifier);
+		else
+			super.runChild(method, notifier);		
+	}
 
-    private boolean handleIgnored(FrameworkMethod method, RunNotifier notifier) {
-        TestMethod testMethod = new TestMethod(method);
-        boolean ignored = false;
-        if (method.getAnnotation(Ignore.class) != null) {
-            if (parameterisedRunner.isParameterised(testMethod)) {
-                Description ignoredMethod = parameterisedRunner.describeParameterisedMethod(testMethod);
-                for (Description child : ignoredMethod.getChildren()) {
-                    notifier.fireTestIgnored(child);
-                    ignored = true;
-                }
-            } else {
-                notifier.fireTestIgnored(describeMethod(method));
-                ignored = true;
-            }
-        }
-        return ignored;
-    }
+	private boolean handleIgnored(FrameworkMethod method, RunNotifier notifier) {
+		TestMethod testMethod = new TestMethod(method);
+		boolean ignored = false;
+		if (method.getAnnotation(Ignore.class) != null) {
+			if (parameterisedRunner.isParameterised(testMethod)) {
+				Description ignoredMethod = parameterisedRunner
+						.describeParameterisedMethod(testMethod);
+				for (Description child : ignoredMethod.getChildren()) {
+					notifier.fireTestIgnored(child);
+					ignored = true;
+				}
+			} else {
+				notifier.fireTestIgnored(describeMethod(method));
+				ignored = true;
+			}
+		}
+		return ignored;
+	}
 
-    @Override
-    protected List<FrameworkMethod> computeTestMethods() {
-        return parameterisedRunner.computeTestMethods(TestMethod.listFrom(getTestClass().getAnnotatedMethods(Test.class)), false);
-    }
+	@Override
+	protected List<FrameworkMethod> computeTestMethods() {
+		return parameterisedRunner.computeTestMethods(
+				TestMethod.listFrom(getTestClass().getAnnotatedMethods(
+						Test.class)), false);
+	}
 
-    @Override
-    protected Statement methodInvoker(FrameworkMethod method, Object test) {
-        Statement methodInvoker = parameterisedRunner.parameterisedMethodInvoker(new TestMethod(method), test);
-        if (methodInvoker == null)
-            methodInvoker = super.methodInvoker(method, test);
+	@Override
+	protected Statement methodInvoker(FrameworkMethod method, Object test) {
+		Statement methodInvoker = parameterisedRunner
+				.parameterisedMethodInvoker(new TestMethod(method), test);
+		if (methodInvoker == null)
+			methodInvoker = super.methodInvoker(method, test);
 
-        return methodInvoker;
-    }
+		return methodInvoker;
+	}
 
-    @Override
-    public Description getDescription() {
-        Description description = Description.createSuiteDescription(getName(), getTestClass().getAnnotations());
-        List<FrameworkMethod> resultMethods = parameterisedRunner.computeTestMethods(
-                TestMethod.listFrom(getTestClass().getAnnotatedMethods(Test.class)), true);
+	@Override
+	public Description getDescription() {
+		Description description = Description.createSuiteDescription(getName(),
+				getTestClass().getAnnotations());
+		List<FrameworkMethod> resultMethods = parameterisedRunner
+				.computeTestMethods(
+						TestMethod.listFrom(getTestClass().getAnnotatedMethods(
+								Test.class)), true);
 
-        for (FrameworkMethod method : resultMethods)
-            description.addChild(describeMethod(method));
+		for (FrameworkMethod method : resultMethods)
+			description.addChild(describeMethod(method));
 
-        return description;
-    }
+		return description;
+	}
 
-    private Description describeMethod(FrameworkMethod method) {
-        Description child = parameterisedRunner.describeParameterisedMethod(new TestMethod(method));
+	private Description describeMethod(FrameworkMethod method) {
+		Description child = parameterisedRunner
+				.describeParameterisedMethod(new TestMethod(method));
 
-        if (child == null)
-            child = describeChild(method);
+		if (child == null)
+			child = describeChild(method);
 
-        return child;
-    }
+		return child;
+	}
 
-    /**
-     * Shortcut for returning an array of objects. All parameters passed to this
-     * method are returned in an <code>Object[]</code> array.
-     * 
-     * @param params
-     *            Values to be returned in an <code>Object[]</code> array.
-     * @return Values passed to this method.
-     */
-    public static Object[] $(Object... params) {
-        return params;
-    }
+	/**
+	 * Shortcut for returning an array of objects. All parameters passed to this
+	 * method are returned in an <code>Object[]</code> array.
+	 * 
+	 * @param params
+	 *            Values to be returned in an <code>Object[]</code> array.
+	 * @return Values passed to this method.
+	 */
+	public static Object[] $(Object... params) {
+		return params;
+	}
 }

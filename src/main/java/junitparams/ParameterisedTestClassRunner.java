@@ -73,6 +73,16 @@ public class ParameterisedTestClassRunner {
         return new InvokeParameterisedMethod(method.frameworkMethod, testClass, parameterisedMethod.currentParamsFromAnnotation(),
                 parameterisedMethod.count());
     }
+    
+	/**
+	 * Tells if method should be run by this runner.
+	 * 
+	 * @param testMethod
+	 * @return true, iff testMethod should be run by this runner.
+	 */
+	public boolean shouldRun(TestMethod testMethod) {
+		return isParameterised(testMethod);
+    }
 
     /**
      * Executes parameterised method.
@@ -80,14 +90,9 @@ public class ParameterisedTestClassRunner {
      * @param method
      * @param methodInvoker
      * @param notifier
-     * @return True if method has been executed, and false if not.
      */
-    public boolean runParameterisedTest(TestMethod method, Statement methodInvoker, RunNotifier notifier) {
-        if (!isParameterised(method))
-            return false;
-
+    public void runParameterisedTest(TestMethod method, Statement methodInvoker, RunNotifier notifier) {
         parameterisedMethods.get(method).runTestMethod(methodInvoker, notifier);
-        return true;
     }
 
     /**
