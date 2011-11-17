@@ -1,14 +1,12 @@
 package junitparams;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.internal.matchers.StringContains;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.TestClass;
+import java.lang.reflect.*;
 
-import java.lang.reflect.Method;
+import org.junit.*;
+import org.junit.internal.matchers.*;
+import org.junit.rules.*;
+import org.junit.runner.*;
+import org.junit.runners.model.*;
 
 public class ParametersProvidersTest {
 
@@ -17,16 +15,11 @@ public class ParametersProvidersTest {
 
     @Test
     public void shouldPutProviderClassNameInExceptionMessageForProviderWithNoValidMethods() {
-        //given
         ParameterisedTestMethodRunner runner = new ParameterisedTestMethodRunner(getTestMethodWithInvalidProvider());
 
-        //when
         exception.expect(RuntimeException.class);
         exception.expectMessage(new StringContains(ProviderClassWithNoValidMethods.class.getName()));
         runner.paramsFromAnnotation();
-
-        //then
-        //expected exception
     }
 
     private TestMethod getTestMethodWithInvalidProvider() {
