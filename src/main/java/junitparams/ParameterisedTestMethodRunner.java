@@ -66,19 +66,27 @@ public class ParameterisedTestMethodRunner {
     }
 
     private Object[] fillResultWithAllParamProviderMethods(Class<?> sourceClass) {
-        ArrayList<Object> result = new ArrayList<Object>();
+    	List<Object> result = getParamsFromSourceHierarchy(sourceClass);
+		if (result.isEmpty())
+			throw new RuntimeException(
+					"No methods starting with provide or they return no result in the parameters source class: "
+							+ sourceClass.getName());
+		
+		return result.toArray(new Object[] {});
+	}
+
+	public List<Object> getParamsFromSourceHierarchy(Class<?> sourceClass) {
+	    List<Object> result = new ArrayList<Object>();
         while (sourceClass.getSuperclass() != null) {
             result.addAll(gatherParamsFromAllMethodsFrom(sourceClass));
             sourceClass = sourceClass.getSuperclass();
         }
-        if (result.isEmpty())
-            throw new RuntimeException("No methods starting with provide or they return no result in the parameters source class: "
-                    + sourceClass.getName());
-        return result.toArray(new Object[] {});
+        
+        return result;
     }
 
-    private ArrayList<Object> gatherParamsFromAllMethodsFrom(Class<?> sourceClass) {
-        ArrayList<Object> result = new ArrayList<Object>();
+    private List<Object> gatherParamsFromAllMethodsFrom(Class<?> sourceClass) {
+        List<Object> result = new ArrayList<Object>();
         Method[] methods = sourceClass.getDeclaredMethods();
         for (Method method : methods) {
             if (method.getName().startsWith("provide")) {
