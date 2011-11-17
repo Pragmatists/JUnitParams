@@ -117,14 +117,14 @@ public class ParameterisedTestMethodRunner {
     }
 
     private Object[] invokeMethodWithParams(String methodName) {
-        Class<?> testClass = method.frameworkMethod.getMethod().getDeclaringClass();
+        Class<?> testClass = method.testClass();
 
         Method provideMethod = findParamsProvidingMethodInTestclassHierarchy(methodName, testClass);
 
         return invokeParamsProvidingMethod(testClass, provideMethod);
     }
 
-    private Object[] invokeParamsProvidingMethod(Class<?> testClass, Method provideMethod) {
+	private Object[] invokeParamsProvidingMethod(Class<?> testClass, Method provideMethod) {
         try {
             Object testObject = testClass.newInstance();
             provideMethod.setAccessible(true);
@@ -191,7 +191,7 @@ public class ParameterisedTestMethodRunner {
         Description parametrised = Description.createSuiteDescription(method.name());
         for (int i = 0; i < params.length; i++) {
             Object paramSet = params[i];
-            parametrised.addChild(Description.createTestDescription(method.frameworkMethod.getMethod().getDeclaringClass(),
+            parametrised.addChild(Description.createTestDescription(method.testClass(),
                     Utils.stringify(paramSet, i) + " (" + method.name() + ")", method.frameworkMethod.getAnnotations()));
         }
         return parametrised;

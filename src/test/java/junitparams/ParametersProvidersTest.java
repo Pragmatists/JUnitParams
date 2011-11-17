@@ -6,6 +6,7 @@ import org.junit.internal.matchers.StringContains;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.TestClass;
 
 import java.lang.reflect.Method;
 
@@ -30,7 +31,7 @@ public class ParametersProvidersTest {
 
     private TestMethod getTestMethodWithInvalidProvider() {
         Method testMethod = TestClassWithProviderClassWithNoValidMethods.class.getMethods()[0];
-        return new TestMethod(new FrameworkMethod(testMethod));
+        return new TestMethod(new FrameworkMethod(testMethod), new TestClass(TestClassWithProviderClassWithNoValidMethods.class));
     }
 
     @RunWith(JUnitParamsRunner.class)

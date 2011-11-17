@@ -155,7 +155,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 		if (handleIgnored(method, notifier))
 			return;
 
-		TestMethod testMethod = new TestMethod(method);
+		TestMethod testMethod = new TestMethod(method, getTestClass());
 		if (parameterisedRunner.shouldRun(testMethod))
 			parameterisedRunner.runParameterisedTest(testMethod, methodBlock(method), notifier);
 		else
@@ -163,7 +163,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 	}
 
 	private boolean handleIgnored(FrameworkMethod method, RunNotifier notifier) {
-		TestMethod testMethod = new TestMethod(method);
+		TestMethod testMethod = new TestMethod(method, getTestClass());
 		boolean ignored = false;
 		if (method.getAnnotation(Ignore.class) != null) {
 			if (parameterisedRunner.isParameterised(testMethod)) {
@@ -185,13 +185,13 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 	protected List<FrameworkMethod> computeTestMethods() {
 		return parameterisedRunner.computeTestMethods(
 				TestMethod.listFrom(getTestClass().getAnnotatedMethods(
-						Test.class)), false);
+						Test.class), getTestClass()), false);
 	}
 
 	@Override
 	protected Statement methodInvoker(FrameworkMethod method, Object test) {
 		Statement methodInvoker = parameterisedRunner
-				.parameterisedMethodInvoker(new TestMethod(method), test);
+				.parameterisedMethodInvoker(new TestMethod(method, getTestClass()), test);
 		if (methodInvoker == null)
 			methodInvoker = super.methodInvoker(method, test);
 
@@ -205,7 +205,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 		List<FrameworkMethod> resultMethods = parameterisedRunner
 				.computeTestMethods(
 						TestMethod.listFrom(getTestClass().getAnnotatedMethods(
-								Test.class)), true);
+								Test.class), getTestClass()), true);
 
 		for (FrameworkMethod method : resultMethods)
 			description.addChild(describeMethod(method));
@@ -215,7 +215,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
 	private Description describeMethod(FrameworkMethod method) {
 		Description child = parameterisedRunner
-				.describeParameterisedMethod(new TestMethod(method));
+				.describeParameterisedMethod(new TestMethod(method, getTestClass()));
 
 		if (child == null)
 			child = describeChild(method);
