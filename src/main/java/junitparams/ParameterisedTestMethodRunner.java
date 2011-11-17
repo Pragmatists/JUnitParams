@@ -43,11 +43,6 @@ public class ParameterisedTestMethodRunner {
         if (params.length == 0)
             params = paramsFromMethod();
 
-        if (params.length == 0)
-            throw new RuntimeException(
-                    "No parameters found, even though the method is defined as Prameterised. "
-                            + "There aren't any params in the annotation, there's no test class method providing the params and no external provider...");
-
         return params;
     }
 
@@ -66,22 +61,22 @@ public class ParameterisedTestMethodRunner {
     }
 
     private Object[] fillResultWithAllParamProviderMethods(Class<?> sourceClass) {
-    	List<Object> result = getParamsFromSourceHierarchy(sourceClass);
-		if (result.isEmpty())
-			throw new RuntimeException(
-					"No methods starting with provide or they return no result in the parameters source class: "
-							+ sourceClass.getName());
-		
-		return result.toArray(new Object[] {});
-	}
+        List<Object> result = getParamsFromSourceHierarchy(sourceClass);
+        if (result.isEmpty())
+            throw new RuntimeException(
+                    "No methods starting with provide or they return no result in the parameters source class: "
+                            + sourceClass.getName());
 
-	public List<Object> getParamsFromSourceHierarchy(Class<?> sourceClass) {
-	    List<Object> result = new ArrayList<Object>();
+        return result.toArray(new Object[] {});
+    }
+
+    public List<Object> getParamsFromSourceHierarchy(Class<?> sourceClass) {
+        List<Object> result = new ArrayList<Object>();
         while (sourceClass.getSuperclass() != null) {
             result.addAll(gatherParamsFromAllMethodsFrom(sourceClass));
             sourceClass = sourceClass.getSuperclass();
         }
-        
+
         return result;
     }
 
@@ -124,7 +119,7 @@ public class ParameterisedTestMethodRunner {
         return invokeParamsProvidingMethod(testClass, provideMethod);
     }
 
-	private Object[] invokeParamsProvidingMethod(Class<?> testClass, Method provideMethod) {
+    private Object[] invokeParamsProvidingMethod(Class<?> testClass, Method provideMethod) {
         try {
             Object testObject = testClass.newInstance();
             provideMethod.setAccessible(true);
