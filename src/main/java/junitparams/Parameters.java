@@ -39,6 +39,9 @@ public @interface Parameters {
      * format of the data returned by the method is the same as for the source
      * annotation class.
      * Example: <code>@Paramers(method = "examplaryPeople")</code>
+     * 
+     * You can use multiple methods to provide parameters - use comma to do it:
+     * Example: <code>@Paramers(method = "womenParams, menParams")</code>
      */
     String method() default "";
 }

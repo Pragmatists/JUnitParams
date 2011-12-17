@@ -104,11 +104,19 @@ public class ParameterisedTestMethodRunner {
     }
 
     private Object[] paramsFromMethod() {
-        String methodName = parametersAnnotation.method();
-        if ("".equals(methodName))
-            methodName = defaultMethodName();
+        String methodAnnotation = parametersAnnotation.method();
 
-        return invokeMethodWithParams(methodName);
+        if ("".equals(methodAnnotation))
+            return invokeMethodWithParams(defaultMethodName());
+
+        List<Object> result = new ArrayList<Object>();
+        for (String methodName : methodAnnotation.split(",")) {
+            for (Object param : invokeMethodWithParams(methodName.trim()))
+                result.add(param);
+        }
+
+        return result.toArray();
+
     }
 
     private Object[] invokeMethodWithParams(String methodName) {
@@ -125,6 +133,9 @@ public class ParameterisedTestMethodRunner {
             provideMethod.setAccessible(true);
             Object[] params = (Object[]) provideMethod.invoke(testObject);
             return processParamsIfSingle(params);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("The return type of: " + provideMethod.getName() + " defined in class " + testClass
+                    + " is not Object[]. Fix it!", e);
         } catch (Exception e) {
             throw new RuntimeException("Could not invoke method: " + provideMethod.getName() + " defined in class " + testClass
                     + " so no params were used.", e);
