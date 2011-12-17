@@ -11,6 +11,7 @@ import org.junit.rules.*;
 import org.junit.runner.*;
 import org.junit.runners.model.*;
 
+@RunWith(JUnitParamsRunner.class)
 public class ParametersProvidersTest {
 
     @Rule
