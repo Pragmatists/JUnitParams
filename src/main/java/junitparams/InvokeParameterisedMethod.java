@@ -94,7 +94,7 @@ public class InvokeParameterisedMethod extends Statement {
     private void verifySameSizeOfArrays(Object[] columns, Class<?>[] parameterTypes) {
         if (parameterTypes.length != columns.length)
             throw new IllegalArgumentException(
-                    "Number of parameters inside @Params annotation doesn't match the number of test method parameters.\nThere are "
+                    "Number of parameters inside @Parameters annotation doesn't match the number of test method parameters.\nThere are "
                             + columns.length + " parameters in annotation, while there's " + parameterTypes.length + " parameters in the "
                             + testMethod.getName() + " method.");
     }
