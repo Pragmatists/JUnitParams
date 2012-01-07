@@ -42,7 +42,11 @@ public class ParameterisedTestClassRunner {
     }
 
     private void addTestMethodForEachParamSet(List<FrameworkMethod> resultMethods, TestMethod testMethod) {
-        ParameterisedTestMethodRunner parameterisedTestMethodRunner = new ParameterisedTestMethodRunner(testMethod);
+        ParameterisedTestMethodRunner parameterisedTestMethodRunner;
+        if (parameterisedMethods.containsKey(testMethod))
+            parameterisedTestMethodRunner = parameterisedMethods.get(testMethod);
+        else
+            parameterisedTestMethodRunner = new ParameterisedTestMethodRunner(testMethod);
 
         int paramSetSize = parameterisedTestMethodRunner.paramsFromAnnotation().length;
 
@@ -73,15 +77,15 @@ public class ParameterisedTestClassRunner {
         return new InvokeParameterisedMethod(method.frameworkMethod, testClass, parameterisedMethod.currentParamsFromAnnotation(),
                 parameterisedMethod.count());
     }
-    
-	/**
-	 * Tells if method should be run by this runner.
-	 * 
-	 * @param testMethod
-	 * @return true, iff testMethod should be run by this runner.
-	 */
-	public boolean shouldRun(TestMethod testMethod) {
-		return isParameterised(testMethod);
+
+    /**
+     * Tells if method should be run by this runner.
+     * 
+     * @param testMethod
+     * @return true, iff testMethod should be run by this runner.
+     */
+    public boolean shouldRun(TestMethod testMethod) {
+        return isParameterised(testMethod);
     }
 
     /**
