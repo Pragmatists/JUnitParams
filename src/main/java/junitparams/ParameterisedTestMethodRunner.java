@@ -20,6 +20,7 @@ public class ParameterisedTestMethodRunner {
     private int count;
     private final TestMethod method;
     private Parameters parametersAnnotation;
+    private Object[] params;
 
     public ParameterisedTestMethodRunner(TestMethod testMethod) {
         this.method = testMethod;
@@ -35,7 +36,10 @@ public class ParameterisedTestMethodRunner {
     }
 
     Object[] paramsFromAnnotation() {
-        Object[] params = paramsFromValue();
+        if (params != null)
+            return params;
+
+        params = paramsFromValue();
 
         if (params.length == 0)
             params = paramsFromSource();
@@ -70,7 +74,7 @@ public class ParameterisedTestMethodRunner {
         return result.toArray(new Object[] {});
     }
 
-    public List<Object> getParamsFromSourceHierarchy(Class<?> sourceClass) {
+    private List<Object> getParamsFromSourceHierarchy(Class<?> sourceClass) {
         List<Object> result = new ArrayList<Object>();
         while (sourceClass.getSuperclass() != null) {
             result.addAll(gatherParamsFromAllMethodsFrom(sourceClass));

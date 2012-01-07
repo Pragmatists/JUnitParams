@@ -6,7 +6,7 @@ import org.junit.runners.model.*;
 
 public class TestMethod {
     protected FrameworkMethod frameworkMethod;
-	private Class<?> testClass;
+    private Class<?> testClass;
 
     public TestMethod(FrameworkMethod method, TestClass testClass) {
         this.frameworkMethod = method;
@@ -19,10 +19,10 @@ public class TestMethod {
 
     public static List<TestMethod> listFrom(List<FrameworkMethod> annotatedMethods, TestClass testClass) {
         List<TestMethod> methods = new ArrayList<TestMethod>();
-        
+
         for (FrameworkMethod frameworkMethod : annotatedMethods)
             methods.add(new TestMethod(frameworkMethod, testClass));
-        
+
         return methods;
     }
 
@@ -36,10 +36,10 @@ public class TestMethod {
         if (!(obj instanceof TestMethod))
             return false;
 
-        return frameworkMethod.equals(((TestMethod) obj).frameworkMethod);
+        return frameworkMethod.getName().equals(((TestMethod) obj).frameworkMethod.getName());
     }
 
-	Class<?> testClass() {
-		return testClass;
-	}
+    Class<?> testClass() {
+        return testClass;
+    }
 }
