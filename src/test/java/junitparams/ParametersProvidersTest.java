@@ -34,7 +34,7 @@ public class ParametersProvidersTest {
 
         exception.expect(RuntimeException.class);
         exception.expectMessage(new StringContains(ProviderClassWithNoValidMethods.class.getName()));
-        runner.paramsFromAnnotation();
+        runner.method.parametersSets();
     }
 
     private TestMethod getTestMethodWithInvalidProvider() {

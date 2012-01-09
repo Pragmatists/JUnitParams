@@ -48,5 +48,4 @@ public class ParametersForMethodTest {
     private Object[] parametersForEmptyParamset() {
         return new Object[] {};
     }
-
 }

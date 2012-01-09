@@ -2,6 +2,7 @@ package junitparams;
 
 import java.util.*;
 
+import org.junit.*;
 import org.junit.runner.*;
 import org.junit.runner.notification.*;
 import org.junit.runners.model.*;
@@ -16,6 +17,19 @@ import org.junit.runners.model.*;
 public class ParameterisedTestClassRunner {
 
     private Map<TestMethod, ParameterisedTestMethodRunner> parameterisedMethods = new HashMap<TestMethod, ParameterisedTestMethodRunner>();
+    private Map<FrameworkMethod, TestMethod> testMethods = new HashMap<FrameworkMethod, TestMethod>();
+    private List<TestMethod> testMethodsList;
+
+    public ParameterisedTestClassRunner(TestClass testClass) {
+        testMethodsList = TestMethod.listFrom(testClass.getAnnotatedMethods(Test.class), testClass);
+        fillTestMethodsMap();
+        computeFrameworkMethods(false);
+    }
+
+    private void fillTestMethodsMap() {
+        for (TestMethod testMethod : testMethodsList)
+            testMethods.put(testMethod.frameworkMethod, testMethod);
+    }
 
     /**
      * Returns a list of <code>FrameworkMethod</code>s. Handles both
@@ -24,36 +38,46 @@ public class ParameterisedTestClassRunner {
      * 
      * @param list
      *            List of FrameworkMethods that should be taken into account.
-     * @param parameterisedOnlyOnce
+     * @param firstTimeJustToGetNames
      *            If true, returns parameterised methods only once.
      * @return
      */
-    public List<FrameworkMethod> computeTestMethods(List<TestMethod> list, boolean parameterisedOnlyOnce) {
+    public List<FrameworkMethod> computeFrameworkMethods(boolean firstTimeJustToGetNames) {
         List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
 
-        for (TestMethod testMethod : list) {
-            if (isParameterised(testMethod) && !parameterisedOnlyOnce)
+        for (TestMethod testMethod : testMethodsList) {
+            if (testMethod.isParameterised() && !firstTimeJustToGetNames)
                 addTestMethodForEachParamSet(resultMethods, testMethod);
             else
                 addTestMethodOnce(resultMethods, testMethod);
+
+            if (firstTimeJustToGetNames)
+                testMethod.warnIfNoParamsGiven();
         }
 
         return resultMethods;
     }
 
     private void addTestMethodForEachParamSet(List<FrameworkMethod> resultMethods, TestMethod testMethod) {
+        ParameterisedTestMethodRunner parameterisedTestMethodRunner = createOrGetCachedMethodRunner(testMethod);
+        if (testMethod.isNotIgnored()) {
+            int paramSetSize = parameterisedTestMethodRunner.method.parametersSets().length;
+            for (int i = 0; i < paramSetSize; i++)
+                addTestMethodOnce(resultMethods, testMethod);
+        } else {
+            addTestMethodOnce(resultMethods, testMethod);
+        }
+
+        parameterisedMethods.put(testMethod, parameterisedTestMethodRunner);
+    }
+
+    private ParameterisedTestMethodRunner createOrGetCachedMethodRunner(TestMethod testMethod) {
         ParameterisedTestMethodRunner parameterisedTestMethodRunner;
         if (parameterisedMethods.containsKey(testMethod))
             parameterisedTestMethodRunner = parameterisedMethods.get(testMethod);
         else
             parameterisedTestMethodRunner = new ParameterisedTestMethodRunner(testMethod);
-
-        int paramSetSize = parameterisedTestMethodRunner.paramsFromAnnotation().length;
-
-        for (int i = 0; i < paramSetSize; i++)
-            addTestMethodOnce(resultMethods, testMethod);
-
-        parameterisedMethods.put(testMethod, parameterisedTestMethodRunner);
+        return parameterisedTestMethodRunner;
     }
 
     private void addTestMethodOnce(List<FrameworkMethod> resultMethods, TestMethod testMethod) {
@@ -69,13 +93,16 @@ public class ParameterisedTestClassRunner {
      * @param testClass
      * @return
      */
-    public Statement parameterisedMethodInvoker(TestMethod method, Object testClass) {
-        if (!isParameterised(method))
+    public Statement parameterisedMethodInvoker(FrameworkMethod method, Object testClass) {
+        TestMethod testMethod = testMethods.get(method);
+
+        if (!testMethod.isParameterised())
             return null;
 
-        ParameterisedTestMethodRunner parameterisedMethod = parameterisedMethods.get(method);
-        return new InvokeParameterisedMethod(method.frameworkMethod, testClass, parameterisedMethod.currentParamsFromAnnotation(),
-                parameterisedMethod.count());
+        ParameterisedTestMethodRunner parameterisedMethod = parameterisedMethods.get(testMethod);
+
+        return new InvokeParameterisedMethod(
+                method, testClass, parameterisedMethod.currentParamsFromAnnotation(), parameterisedMethod.count());
     }
 
     /**
@@ -85,7 +112,7 @@ public class ParameterisedTestClassRunner {
      * @return true, iff testMethod should be run by this runner.
      */
     public boolean shouldRun(TestMethod testMethod) {
-        return isParameterised(testMethod);
+        return testMethod.isParameterised();
     }
 
     /**
@@ -102,16 +129,18 @@ public class ParameterisedTestClassRunner {
     /**
      * Returns description of a parameterised method.
      * 
-     * @param testMethod
+     * @param method
      *            TODO
      * 
      * @return Description of a method or null if it's not parameterised.
      */
-    public Description describeParameterisedMethod(TestMethod testMethod) {
-        if (!isParameterised(testMethod))
+    public Description describeParameterisedMethod(FrameworkMethod method) {
+        TestMethod testMethod = testMethods.get(method);
+
+        if (!testMethod.isParameterised())
             return null;
 
-        return parameterisedMethods.get(testMethod).describeMethod();
+        return testMethod.describe();
     }
 
     /**
@@ -121,6 +150,10 @@ public class ParameterisedTestClassRunner {
      * @return
      */
     public boolean isParameterised(TestMethod parameterObject) {
-        return parameterObject.frameworkMethod.getMethod().isAnnotationPresent(Parameters.class);
+        return parameterObject.isParameterised();
+    }
+
+    public TestMethod testMethodFor(FrameworkMethod method) {
+        return testMethods.get(method);
     }
 }
