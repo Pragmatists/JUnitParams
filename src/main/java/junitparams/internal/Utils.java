@@ -1,4 +1,4 @@
-package junitparams;
+package junitparams.internal;
 
 import java.lang.reflect.*;
 
@@ -7,7 +7,7 @@ import java.lang.reflect.*;
  * 
  * @author Pawel Lipinski
  */
-class Utils {
+public class Utils {
 
     public static String stringify(Object paramSet, int paramIdx) {
         String result = "[" + paramIdx + "] ";

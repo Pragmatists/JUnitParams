@@ -1,7 +1,9 @@
 package junitparams;
 
+import static junitparams.internal.Utils.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+import junitparams.internal.*;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -11,16 +13,16 @@ public class ObjectStringificationTest {
 
     @Test
     public void stringifyString() throws Exception {
-        String obj = "dupa";
+        String obj = "test";
 
-        assertThat(Utils.stringify(obj, 0), is("[0] dupa"));
+        assertThat(stringify(obj, 0), is("[0] test"));
     }
 
     @Test
     public void stringifyClassWithToStringAndOneParam() throws Exception {
-        ClassWithToString obj = new ClassWithToString("dupa");
+        ClassWithToString obj = new ClassWithToString("test");
 
-        assertThat(Utils.stringify(obj, 0), is("[0] dupa"));
+        assertThat(stringify(obj, 0), is("[0] test"));
     }
 
     @Test
@@ -28,7 +30,7 @@ public class ObjectStringificationTest {
         ClassWithToString obj1 = new ClassWithToString("one");
         ClassWithToString obj2 = new ClassWithToString("two");
 
-        assertThat(Utils.stringify(new Object[] { obj1, obj2 }, 0),
+        assertThat(stringify(new Object[] { obj1, obj2 }, 0),
                 is("[0] one, two"));
     }
 

@@ -1,4 +1,4 @@
-package junitparams;
+package junitparams.internal;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
@@ -6,17 +6,19 @@ import java.util.*;
 
 import javax.lang.model.type.*;
 
+import junitparams.*;
+
 import org.junit.*;
 import org.junit.runner.*;
 import org.junit.runners.model.*;
 
 public class TestMethod {
-    protected FrameworkMethod frameworkMethod;
+    private FrameworkMethod frameworkMethod;
     private Class<?> testClass;
     private Parameters parametersAnnotation;
-    Object[] params;
+    private Object[] params;
 
-    TestMethod(FrameworkMethod method, TestClass testClass) {
+    public TestMethod(FrameworkMethod method, TestClass testClass) {
         this.frameworkMethod = method;
         this.testClass = testClass.getJavaClass();
         this.parametersAnnotation = frameworkMethod.getAnnotation(Parameters.class);
@@ -85,7 +87,7 @@ public class TestMethod {
         }
     }
 
-    Object[] parametersSets() {
+    public Object[] parametersSets() {
         if (params != null)
             return params;
 
@@ -256,6 +258,10 @@ public class TestMethod {
     void warnIfNoParamsGiven() {
         if (isNotIgnored() && isParameterised() && parametersSets().length == 0)
             System.err.println("Method " + name() + " gets empty list of parameters, so it's being ignored!");
+    }
+
+    public FrameworkMethod frameworkMethod() {
+        return frameworkMethod;
     }
 
 }

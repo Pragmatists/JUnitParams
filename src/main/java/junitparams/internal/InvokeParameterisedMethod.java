@@ -1,4 +1,4 @@
-package junitparams;
+package junitparams.internal;
 
 import java.util.*;
 
@@ -47,15 +47,13 @@ public class InvokeParameterisedMethod extends Statement {
     }
 
     private Object[] parseStringToParams(String params) {
-        Object[] columns;
         StringTokenizer tokenizer = new StringTokenizer(params, ",|");
         List<String> cols = new ArrayList<String>();
         while (tokenizer.hasMoreTokens()) {
             String nextToken = tokenizer.nextToken().trim();
             cols.add(nextToken);
         }
-        columns = cols.toArray(new String[] {});
-        return columns;
+        return cols.toArray();
     }
 
     private Object[] castAllParametersToProperTypes(Object[] columns, Class<?>[] parameterTypes) {
