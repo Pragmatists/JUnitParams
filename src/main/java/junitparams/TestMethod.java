@@ -167,11 +167,28 @@ public class TestMethod {
         try {
             Object testObject = testClass.newInstance();
             provideMethod.setAccessible(true);
-            Object[] params = (Object[]) provideMethod.invoke(testObject);
-            return encapsulateParamsIntoArrayIfSingleParamsetPassed(params);
+            Object result = provideMethod.invoke(testObject);
+            try {
+                Object[] params = (Object[]) result;
+                return encapsulateParamsIntoArrayIfSingleParamsetPassed(params);
+            } catch (ClassCastException e) {
+                // Iterable
+                try {
+                    ArrayList<Object[]> res = new ArrayList<Object[]>();
+                    for (Object[] paramSet : (Iterable<Object[]>) result)
+                        res.add(paramSet);
+                    return res.toArray();
+                } catch (ClassCastException e1) {
+                    // Iterable with consecutive paramsets, each of one param
+                    ArrayList<Object> res = new ArrayList<Object>();
+                    for (Object param : (Iterable<?>) result)
+                        res.add(new Object[] { param });
+                    return res.toArray();
+                }
+            }
         } catch (ClassCastException e) {
             throw new RuntimeException("The return type of: " + provideMethod.getName() + " defined in class " + testClass
-                    + " is not Object[]. Fix it!", e);
+                    + " is not Object[][] nor Iterable<Object[]>. Fix it!", e);
         } catch (Exception e) {
             throw new RuntimeException("Could not invoke method: " + provideMethod.getName() + " defined in class " + testClass
                     + " so no params were used.", e);
