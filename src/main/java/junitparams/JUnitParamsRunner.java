@@ -2,6 +2,8 @@ package junitparams;
 
 import java.util.*;
 
+import junitparams.internal.*;
+
 import org.junit.runner.*;
 import org.junit.runner.notification.*;
 import org.junit.runners.*;
@@ -24,6 +26,7 @@ import org.junit.runners.model.*;
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#c">c. Parameterising tests via
  * external classes</a><br/>
  * <a href="#2">2. Using JUnitParams together with Spring</a><br/>
+ * <a href="#2">3. Other options</a><br/>
  * </b><br/>
  * <h3 id="1">1. Parameterising tests</h3> <h4 id="a">a. Parameterising tests
  * via values in annotation</h4>
@@ -83,6 +86,10 @@ import org.junit.runners.model.*;
  * </pre>
  * 
  * </p>
+ * <p>
+ * The <code>method</code> argument can accept more than one method, so you can
+ * divide your parameter sets into categories e.g. positive and negative cases.
+ * </p>
  * <h4 id="c">c. Parameterising tests via external classes</h4>
  * <p>
  * For more complex cases you may want to externalise the method that provides
@@ -135,7 +142,75 @@ import org.junit.runners.model.*;
  * framework.
  * </p>
  * 
- * @author Pawel Lipinski
+ * <h3 id="1">3. Other options</h3> <h4>Customizing how parameter objects are
+ * shown in IDE</h4>
+ * <p>
+ * Tests show up in your IDE as a tree with test class name being the root, test
+ * methods being nodes, and parameter sets being the leaves. If you want to
+ * customize the way an parameter object is shown, create a <b>toString</b>
+ * method for it.
+ * </p>
+ * <h4>Empty parameter sets</h4>
+ * <p>
+ * If you create a parameterised test, but won't give it any parameter sets, it
+ * will be ignored and you'll be warned about it.
+ * </p>
+ * <h4>Parameterised test with no parameters</h4>
+ * <p>
+ * If for some reason you want to have a normal non-parameterised method to be
+ * annotated with @Parameters, then fine, you can do it. But it will be ignored
+ * then, since there won't be any params for it, and parameterised tests need
+ * parameters to execute properly (parameters are a part of test setup, right?)
+ * </p>
+ * <h4>JUnit Rules</h4>
+ * <p>
+ * The runner for parameterised test is trying to keep all the @Rule's running,
+ * but if something doesn't work - let me know. It's pretty tricky, since the
+ * rules in JUnit are chained, but the chain is kind of... unstructured, so
+ * sometimes I need to guess how to call the next element in chain. If you have
+ * your own rule, make sure it has a field of type Statement which is the next
+ * statement in chain to call.
+ * </p>
+ * <h4>Test inheritance</h4>
+ * <p>
+ * Although usually a bad idea, since it makes tests less readable, sometimes
+ * inheritance is the best way to remove repetitions from tests. JUnitParams is
+ * fine with inheritance - you can define a common test in the superclass, and
+ * have separate parameters provider methods in the subclasses. Also the other
+ * way around is ok, you can define parameter providers in superclass and have
+ * tests in subclasses uses them as their input.
+ * </p>
+ * <h4>Collections</h4>
+ * <p>
+ * Instead of using ugly Object[][] for parameters (even though it's much nicer
+ * with my $(...) method), sometimes you may prefer to have parameter sets in
+ * Collections. JUnitParams likes collections as well, so you can return any
+ * Iterable from your parameters provider method. The Iterable elements must be
+ * Object[] containing consecutive params, but for this $(...) is better than
+ * anything else. So a method may look like this:<br/>
+ * 
+ * <pre>
+ * private List&lt;Object[]&gt; parametersForCartoonCharacters() {
+ *     return Arrays.asList(
+ *             $(0, &quot;Tarzan&quot;),
+ *             $(20, &quot;Jane&quot;)
+ *             );
+ * }
+ * </pre>
+ * 
+ * There is also a simplified version - if your test method has just one
+ * parameter, you can return just an Object[] or Iterable with param values,
+ * without the need to encapsulate them in Object[]. So you may do this:<br/>
+ * 
+ * <pre>
+ * private List&lt;String&gt; parametersForCartoonCharacters() {
+ *     return Arrays.asList(&quot;Tarzan&quot;, &quot;Jane&quot;, &quot;Scooby&quot;, &quot;Donald&quot;);
+ * }
+ * </pre>
+ * 
+ * </p>
+ * 
+ * @author Pawel Lipinski (lipinski.pawel@gmail.com)
  */
 public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
@@ -174,7 +249,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected List<FrameworkMethod> computeTestMethods() {
-        return parameterisedRunner.computeFrameworkMethods(false);
+        return parameterisedRunner.computeFrameworkMethods();
     }
 
     @Override
@@ -190,7 +265,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     public Description getDescription() {
         if (description == null) {
             description = Description.createSuiteDescription(getName(), getTestClass().getAnnotations());
-            List<FrameworkMethod> resultMethods = parameterisedRunner.computeFrameworkMethods(true);
+            List<FrameworkMethod> resultMethods = parameterisedRunner.returnListOfMethods();
 
             for (FrameworkMethod method : resultMethods)
                 description.addChild(describeMethod(method));

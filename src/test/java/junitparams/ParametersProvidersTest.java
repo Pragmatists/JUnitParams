@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 
 import java.lang.reflect.*;
 
+import junitparams.internal.*;
+
 import org.junit.*;
 import org.junit.internal.matchers.*;
 import org.junit.rules.*;
@@ -22,7 +24,7 @@ public class ParametersProvidersTest {
     public void oneParamSetFromClass(String a, String b) {
     }
 
-    static class SingleParamSetProvider {
+    public static class SingleParamSetProvider {
         public static Object[] provideOneParamSetSameTypes() {
             return $($("a", "b"));
         }
