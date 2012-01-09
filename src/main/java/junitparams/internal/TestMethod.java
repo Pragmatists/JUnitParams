@@ -165,6 +165,7 @@ public class TestMethod {
         return provideMethod;
     }
 
+    @SuppressWarnings("unchecked")
     private Object[] invokeParamsProvidingMethod(Class<?> testClass, Method provideMethod) {
         try {
             Object testObject = testClass.newInstance();
