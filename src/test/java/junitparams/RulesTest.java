@@ -15,6 +15,7 @@ public class RulesTest {
     @Rule
     public TestName testName = new TestName();
     @Rule
+    @SuppressWarnings("deprecation")
     public TestWatchman testWatchman = new TestWatchman();
     @Rule
     public Timeout timeout = new Timeout(0);
