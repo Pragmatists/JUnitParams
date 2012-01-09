@@ -249,7 +249,7 @@ public class TestMethod {
         return params;
     }
 
-    boolean isParameterised() {
+    public boolean isParameterised() {
         return frameworkMethod.getMethod().isAnnotationPresent(Parameters.class);
     }
 
