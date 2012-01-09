@@ -68,7 +68,7 @@ public class ObjectStringificationTest {
 
         @Override
         public String toString() {
-            return "dupa" + super.toString();
+            return test + super.toString();
         }
     }
 }

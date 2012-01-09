@@ -1,6 +1,6 @@
 package junitparams;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 /**
  * Some String utils to handle parameterised tests' results.
@@ -9,66 +9,69 @@ import java.lang.reflect.Method;
  */
 class Utils {
 
-	public static String stringify(Object paramSet, int paramIdx) {
-		String result = "[" + paramIdx + "] ";
+    public static String stringify(Object paramSet, int paramIdx) {
+        String result = "[" + paramIdx + "] ";
 
-		if (paramSet instanceof String)
-			result += paramSet;
-		else
-			result += asCsvString(safelyCastParamsToArray(paramSet), paramIdx);
+        if (paramSet instanceof String)
+            result += paramSet;
+        else
+            result += asCsvString(safelyCastParamsToArray(paramSet), paramIdx);
 
-		return trimSpecialChars(result);
-	}
+        return trimSpecialChars(result);
+    }
 
-	private static String trimSpecialChars(String result) {
-		return result.replace(System.getProperty("line.separator"), " ")
-				.replace('(', '[').replace(')', ']');
-	}
+    private static String trimSpecialChars(String result) {
+        return result.replace(System.getProperty("line.separator"), " ")
+                .replace('(', '[').replace(')', ']');
+    }
 
-	static Object[] safelyCastParamsToArray(Object paramSet) {
-		Object[] params;
-		try {
-			params = (Object[]) paramSet;
-		} catch (ClassCastException e) {
-			params = new Object[] { paramSet };
-		}
-		return params;
-	}
+    static Object[] safelyCastParamsToArray(Object paramSet) {
+        Object[] params;
+        try {
+            params = (Object[]) paramSet;
+        } catch (ClassCastException e) {
+            params = new Object[] { paramSet };
+        }
+        return params;
+    }
 
-	private static String asCsvString(Object[] params, int paramIdx) {
-		String result = "";
-		Object lastParam = params[params.length - 1];
+    private static String asCsvString(Object[] params, int paramIdx) {
+        if (params.length == 0)
+            return "";
 
-		for (Object param : params) {
-			result = addParamToResult(result, param);
+        String result = "";
+        Object lastParam = params[params.length - 1];
 
-			if (param != lastParam)
-				result += ", ";
-		}
+        for (Object param : params) {
+            result = addParamToResult(result, param);
 
-		return result;
-	}
+            if (param != lastParam)
+                result += ", ";
+        }
 
-	private static String addParamToResult(String result, Object param) {
-		if (param == null)
-			result += "null";
-		else {
-			try {
-				tryFindingOverridenToString(param);
-				result += param.toString();
-			} catch (Exception e) {
-				result += param.getClass().getSimpleName();
-			}
-		}
-		return result;
-	}
+        return result;
+    }
 
-	private static void tryFindingOverridenToString(Object param)
-			throws NoSuchMethodException {
-		final Method toString = param.getClass().getMethod("toString");
-		
-		if (toString.getDeclaringClass().equals(Object.class)) {
-			throw new NoSuchMethodException();
-		}
-	}
+    private static String addParamToResult(String result, Object param) {
+        if (param == null)
+            result += "null";
+        else {
+            try {
+                tryFindingOverridenToString(param);
+                result += param.toString();
+            } catch (Exception e) {
+                result += param.getClass().getSimpleName();
+            }
+        }
+        return result;
+    }
+
+    private static void tryFindingOverridenToString(Object param)
+            throws NoSuchMethodException {
+        final Method toString = param.getClass().getMethod("toString");
+
+        if (toString.getDeclaringClass().equals(Object.class)) {
+            throw new NoSuchMethodException();
+        }
+    }
 }

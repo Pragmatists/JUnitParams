@@ -28,4 +28,11 @@ public class IgnoringTest {
     public void dontIgnoreMeWithParams() {
 
     }
+
+    @Test
+    @Ignore
+    @Parameters(method = "noMethod")
+    public void shouldNotTryToInvokeMethodWhenTestIgnored(Object a) {
+
+    }
 }
