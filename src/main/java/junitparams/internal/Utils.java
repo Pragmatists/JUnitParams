@@ -40,14 +40,12 @@ public class Utils {
             return "";
 
         String result = "";
-        Object lastParam = params[params.length - 1];
 
-        for (Object param : params) {
-            result = addParamToResult(result, param);
-
-            if (param != lastParam)
-                result += ", ";
+        for (int i = 0; i < params.length - 1; i++) {
+            Object param = params[i];
+            result = addParamToResult(result, param) + ", ";
         }
+        result = addParamToResult(result, params[params.length - 1]);
 
         return result;
     }
