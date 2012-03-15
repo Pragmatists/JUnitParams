@@ -48,4 +48,11 @@ public class ParametersForMethodTest {
     private Object[] parametersForEmptyParamset() {
         return new Object[] {};
     }
+
+    @Test
+    @Parameters({ "a \n \\,\\|b", "\\,a(asdf)\\|", "\\," })
+    public void escapedSpecialCharsInParam(String a) {
+
+    }
+
 }

@@ -1,6 +1,6 @@
 package junitparams.internal;
 
-import java.util.*;
+import java.util.regex.*;
 
 import org.junit.runners.model.*;
 
@@ -15,6 +15,8 @@ public class InvokeParameterisedMethod extends Statement {
     private final FrameworkMethod testMethod;
     private final Object testClass;
     private final String paramsAsString;
+
+    private static Pattern splitPattern = Pattern.compile("\\s*(?<!\\\\)[|,]\\s*");
 
     public String getParamsAsString() {
         return paramsAsString;
@@ -47,13 +49,11 @@ public class InvokeParameterisedMethod extends Statement {
     }
 
     private Object[] parseStringToParams(String params) {
-        StringTokenizer tokenizer = new StringTokenizer(params, ",|");
-        List<String> cols = new ArrayList<String>();
-        while (tokenizer.hasMoreTokens()) {
-            String nextToken = tokenizer.nextToken().trim();
-            cols.add(nextToken);
-        }
-        return cols.toArray();
+        String[] colls = splitPattern.split(params);
+        if (colls.length == 1 && "".equals(colls[0]))
+            return new String[0];
+
+        return colls;
     }
 
     private Object[] castAllParametersToProperTypes(Object[] columns, Class<?>[] parameterTypes) {
