@@ -113,7 +113,7 @@ public class TestMethod {
         Class<?> sourceClass = parametersAnnotation.source();
         String method = parametersAnnotation.method();
 
-        if (method == null)
+        if (method.isEmpty())
             return fillResultWithAllParamProviderMethods(sourceClass);
         else {
             return paramsFromMethod(sourceClass);
@@ -123,7 +123,7 @@ public class TestMethod {
     private Object[] paramsFromMethod(Class<?> classWithMethod) {
         String methodAnnotation = parametersAnnotation.method();
 
-        if ("".equals(methodAnnotation))
+        if (methodAnnotation.isEmpty())
             return invokeMethodWithParams(defaultMethodName(), classWithMethod);
 
         List<Object> result = new ArrayList<Object>();
