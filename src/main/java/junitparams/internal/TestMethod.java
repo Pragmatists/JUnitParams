@@ -79,7 +79,7 @@ public class TestMethod {
             for (int i = 0; i < params.length; i++) {
                 Object paramSet = params[i];
                 parametrised.addChild(
-                        Description.createTestDescription(testClass(), Utils.stringify(paramSet, i) + " (" + name() + ")", annotations()));
+                    Description.createTestDescription(testClass(), Utils.stringify(paramSet, i) + " (" + name() + ")", annotations()));
             }
             return parametrised;
         } else {
@@ -97,7 +97,7 @@ public class TestMethod {
             params = paramsFromSource();
 
         if (params.length == 0)
-            params = paramsFromMethod();
+            params = paramsFromMethod(testClass());
 
         return params;
     }
@@ -111,19 +111,24 @@ public class TestMethod {
             return new Object[] {};
 
         Class<?> sourceClass = parametersAnnotation.source();
+        String method = parametersAnnotation.method();
 
-        return fillResultWithAllParamProviderMethods(sourceClass);
+        if (method == null)
+            return fillResultWithAllParamProviderMethods(sourceClass);
+        else {
+            return paramsFromMethod(sourceClass);
+        }
     }
 
-    private Object[] paramsFromMethod() {
+    private Object[] paramsFromMethod(Class<?> classWithMethod) {
         String methodAnnotation = parametersAnnotation.method();
 
         if ("".equals(methodAnnotation))
-            return invokeMethodWithParams(defaultMethodName());
+            return invokeMethodWithParams(defaultMethodName(), classWithMethod);
 
         List<Object> result = new ArrayList<Object>();
         for (String methodName : methodAnnotation.split(",")) {
-            for (Object param : invokeMethodWithParams(methodName.trim()))
+            for (Object param : invokeMethodWithParams(methodName.trim(), classWithMethod))
                 result.add(param);
         }
 
@@ -137,13 +142,11 @@ public class TestMethod {
     private String defaultMethodName() {
         String methodName;
         methodName = "parametersFor" + frameworkMethod.getName().substring(0, 1).toUpperCase()
-                + frameworkMethod.getName().substring(1);
+            + frameworkMethod.getName().substring(1);
         return methodName;
     }
 
-    private Object[] invokeMethodWithParams(String methodName) {
-        Class<?> testClass = testClass();
-
+    private Object[] invokeMethodWithParams(String methodName, Class<?> testClass) {
         Method provideMethod = findParamsProvidingMethodInTestclassHierarchy(methodName, testClass);
 
         return invokeParamsProvidingMethod(testClass, provideMethod);
@@ -191,10 +194,10 @@ public class TestMethod {
             }
         } catch (ClassCastException e) {
             throw new RuntimeException("The return type of: " + provideMethod.getName() + " defined in class " + testClass
-                    + " is not Object[][] nor Iterable<Object[]>. Fix it!", e);
+                + " is not Object[][] nor Iterable<Object[]>. Fix it!", e);
         } catch (Exception e) {
             throw new RuntimeException("Could not invoke method: " + provideMethod.getName() + " defined in class " + testClass
-                    + " so no params were used.", e);
+                + " so no params were used.", e);
         }
     }
 
@@ -202,8 +205,8 @@ public class TestMethod {
         List<Object> result = getParamsFromSourceHierarchy(sourceClass);
         if (result.isEmpty())
             throw new RuntimeException(
-                    "No methods starting with provide or they return no result in the parameters source class: "
-                            + sourceClass.getName());
+                "No methods starting with provide or they return no result in the parameters source class: "
+                    + sourceClass.getName());
 
         return result.toArray(new Object[] {});
     }
@@ -225,17 +228,20 @@ public class TestMethod {
             if (prividerMethod.getName().startsWith("provide")) {
                 if (!Modifier.isStatic(prividerMethod.getModifiers()))
                     throw new RuntimeException("Parameters source method " +
-                            prividerMethod.getName() +
-                            " is not declared as static. Change it to a static method.");
+                        prividerMethod.getName() +
+                        " is not declared as static. Change it to a static method.");
                 try {
-                    result.addAll(
-                            Arrays.asList(encapsulateParamsIntoArrayIfSingleParamsetPassed((Object[]) prividerMethod.invoke(null))));
+                    result.addAll(Arrays.asList(getDataFromMethod(prividerMethod)));
                 } catch (Exception e) {
                     throw new RuntimeException("Cannot invoke parameters source method: " + prividerMethod.getName(), e);
                 }
             }
         }
         return result;
+    }
+
+    private Object[] getDataFromMethod(Method prividerMethod) throws IllegalAccessException, InvocationTargetException {
+        return encapsulateParamsIntoArrayIfSingleParamsetPassed((Object[]) prividerMethod.invoke(null));
     }
 
     private Object[] encapsulateParamsIntoArrayIfSingleParamsetPassed(Object[] params) {

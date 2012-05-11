@@ -1,7 +1,9 @@
 package junitparams;
 
 import static junitparams.JUnitParamsRunner.*;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+import junitparams.PersonTest.Person;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -34,5 +36,11 @@ public class MethodAnnotationArgumentTest {
 
     private Object[] return2() {
         return $($(2));
+    }
+
+    @Test
+    @Parameters(source = PersonTest.class, method = "adultValues")
+    public void testSingleMethodFromDifferentClass(int age, boolean valid) {
+        assertThat(new Person(age).isAdult(), is(valid));
     }
 }
