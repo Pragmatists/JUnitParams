@@ -28,8 +28,48 @@ public class InvokeParameterisedMethod extends Statement {
         paramsAsString = Utils.stringify(params, paramSetIdx - 1);
         if (params instanceof String)
             this.params = castParamsFromString((String) params);
-        else
-            this.params = Utils.safelyCastParamsToArray(params);
+        else {
+            this.params = castParamsFromObjects(params);
+        }
+    }
+
+    private Object[] castParamsFromObjects(Object params) {
+        Object[] paramset = Utils.safelyCastParamsToArray(params);
+
+        if (isFirstParamSameTypeAsExpected(paramset))
+            return paramset;
+
+        Class<?>[] typesOfParameters = createArrayOfTypesOf(paramset);
+
+        Object resultParam = createObjectOfExpectedTypeBasedOnParams(paramset, typesOfParameters);
+
+        return new Object[] { resultParam };
+    }
+
+    private Object createObjectOfExpectedTypeBasedOnParams(Object[] paramset, Class<?>[] typesOfParameters) {
+        Object resultParam;
+        try {
+            resultParam = testMethod.getMethod().getParameterTypes()[0].getConstructor(typesOfParameters).newInstance(paramset);
+        } catch (Exception e) {
+            throw new IllegalStateException("While trying to create object of class " + testMethod.getMethod().getParameterTypes()[0]
+                + " could not find constructor with arguments matching (type-wise) the ones given in parameters.", e);
+        }
+        return resultParam;
+    }
+
+    private Class<?>[] createArrayOfTypesOf(Object[] paramset) {
+        Class<?>[] parametersBasedOnValues = new Class<?>[paramset.length];
+        for (int i = 0; i < paramset.length; i++) {
+            parametersBasedOnValues[i] = paramset[i].getClass();
+        }
+        return parametersBasedOnValues;
+    }
+
+    private boolean isFirstParamSameTypeAsExpected(Object[] paramset) {
+        if (paramset[0] == null || testMethod.getMethod().getParameterTypes()[0].isPrimitive())
+            return true;
+
+        return testMethod.getMethod().getParameterTypes()[0].isAssignableFrom(paramset[0].getClass());
     }
 
     private Object[] castParamsFromString(String params) {
@@ -92,9 +132,9 @@ public class InvokeParameterisedMethod extends Statement {
     private void verifySameSizeOfArrays(Object[] columns, Class<?>[] parameterTypes) {
         if (parameterTypes.length != columns.length)
             throw new IllegalArgumentException(
-                    "Number of parameters inside @Parameters annotation doesn't match the number of test method parameters.\nThere are "
-                            + columns.length + " parameters in annotation, while there's " + parameterTypes.length + " parameters in the "
-                            + testMethod.getName() + " method.");
+                "Number of parameters inside @Parameters annotation doesn't match the number of test method parameters.\nThere are "
+                    + columns.length + " parameters in annotation, while there's " + parameterTypes.length + " parameters in the "
+                    + testMethod.getName() + " method.");
     }
 
     @Override
