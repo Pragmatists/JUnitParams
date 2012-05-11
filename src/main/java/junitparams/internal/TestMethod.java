@@ -1,5 +1,6 @@
 package junitparams.internal;
 
+import java.io.*;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
@@ -12,16 +13,28 @@ import org.junit.*;
 import org.junit.runner.*;
 import org.junit.runners.model.*;
 
+/**
+ * A wrapper for a test method
+ * 
+ * @author Pawel Lipinski
+ */
 public class TestMethod {
     private FrameworkMethod frameworkMethod;
     private Class<?> testClass;
     private Parameters parametersAnnotation;
+    private FileParameters fileParametersAnnotation;
     private Object[] params;
 
     public TestMethod(FrameworkMethod method, TestClass testClass) {
         this.frameworkMethod = method;
         this.testClass = testClass.getJavaClass();
         this.parametersAnnotation = frameworkMethod.getAnnotation(Parameters.class);
+        this.fileParametersAnnotation = frameworkMethod.getAnnotation(FileParameters.class);
+
+        if (parametersAnnotation != null && fileParametersAnnotation != null) {
+            throw new IllegalArgumentException("Both @Parameters and @FileParameters exist on " + frameworkMethod.getName()
+                + ". Remove one of them!");
+        }
     }
 
     public String name() {
@@ -91,15 +104,35 @@ public class TestMethod {
         if (params != null)
             return params;
 
-        params = paramsFromValue();
+        if (parametersAnnotation != null) {
+            params = paramsFromValue();
 
-        if (params.length == 0)
-            params = paramsFromSource();
+            if (params.length == 0)
+                params = paramsFromSource();
 
-        if (params.length == 0)
-            params = paramsFromMethod(testClass());
+            if (params.length == 0)
+                params = paramsFromMethod(testClass());
+        }
+        else if (fileParametersAnnotation != null) {
+            params = paramsFromFile();
+        }
 
         return params;
+    }
+
+    private Object[] paramsFromFile() {
+        try {
+            Reader reader = new FileReader(fileParametersAnnotation.value());
+            DataMapper mapper = fileParametersAnnotation.mapper().newInstance();
+            try {
+                return mapper.map(reader);
+            } finally {
+                reader.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Could not successfully read parameters from file: " + fileParametersAnnotation.value(), e);
+        }
     }
 
     private Object[] paramsFromValue() {
@@ -259,7 +292,8 @@ public class TestMethod {
     }
 
     public boolean isParameterised() {
-        return frameworkMethod.getMethod().isAnnotationPresent(Parameters.class);
+        return frameworkMethod.getMethod().isAnnotationPresent(Parameters.class)
+            || frameworkMethod.getMethod().isAnnotationPresent(FileParameters.class);
     }
 
     void warnIfNoParamsGiven() {
