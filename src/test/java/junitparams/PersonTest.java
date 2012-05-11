@@ -26,7 +26,7 @@ public class PersonTest {
 
     private Object[] adultValues() {
         return $($(17, false),
-                $(22, true));
+            $(22, true));
     }
 
     @Test
@@ -49,21 +49,25 @@ public class PersonTest {
     public static class PersonProvider {
         public static Object[] provideAdults() {
             return $(
-                    $(new Person(25), true),
-                    $(new Person(32), true));
+                $(new Person(25), true),
+                $(new Person(32), true));
         }
 
         public static Object[] provideTeens() {
             return $(
-                    $(new Person(12), false),
-                    $(new Person(17), false));
+                $(new Person(12), false),
+                $(new Person(17), false));
         }
     }
 
     public static class Person {
         private int age;
 
-        public Person(int age) {
+        public Person(Integer age) {
+            this.age = age;
+        }
+
+        public Person(String name, Integer age) {
             this.age = age;
         }
 
