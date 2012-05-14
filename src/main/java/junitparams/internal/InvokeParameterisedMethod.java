@@ -105,9 +105,12 @@ public class InvokeParameterisedMethod extends Statement {
         return result;
     }
 
-    private Object castParameterFromString(Object object, Class<?> clazz) {
+    @SuppressWarnings("unchecked")
+    private Object castParameterFromString(Object object, Class clazz) {
         if (clazz.isInstance(object))
             return object;
+        if (clazz.isEnum())
+            return (Enum.valueOf(clazz, (String) object));
         if (clazz.isAssignableFrom(String.class))
             return object.toString();
         if (clazz.isAssignableFrom(Integer.TYPE))
