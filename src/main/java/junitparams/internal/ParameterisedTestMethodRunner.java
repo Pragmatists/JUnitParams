@@ -2,6 +2,7 @@ package junitparams.internal;
 
 import java.lang.reflect.*;
 
+import org.junit.internal.*;
 import org.junit.runner.*;
 import org.junit.runner.notification.*;
 import org.junit.runners.model.*;
@@ -45,6 +46,8 @@ public class ParameterisedTestMethodRunner {
     private void runMethodInvoker(RunNotifier notifier, Description description, Statement methodInvoker, Description methodWithParams) {
         try {
             methodInvoker.evaluate();
+        } catch (AssumptionViolatedException e) {
+            notifier.fireTestAssumptionFailed(new Failure(description, e));
         } catch (Throwable e) {
             notifier.fireTestFailure(new Failure(methodWithParams, e));
         }
