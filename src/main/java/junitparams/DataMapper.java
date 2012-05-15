@@ -22,10 +22,10 @@ public interface DataMapper {
      * 
      * You can optionally return Object[] with Strings inside, but each String
      * must be a string in the same format as what you would normally pass to
-     * @Parameters({})
+     * &#064;Parameters({})
      * 
      * @param reader
-     * @return
+     * @return an array with all parameter sets
      */
     Object[] map(Reader reader);
 }
