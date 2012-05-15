@@ -32,4 +32,16 @@ public class CastingParamsTest {
     Object parametersForWrapWithTypeByMultiArgConstructor() {
         return $($("first", 1), $("second", 2));
     }
+
+    @Test
+    @Parameters
+    public void cartoonCharacters(Person character) {
+    }
+
+    private List<?> parametersForCartoonCharacters() {
+        return Arrays.asList(
+            $("Tarzan", 0),
+            $("Jane", 20)
+            );
+    }
 }
