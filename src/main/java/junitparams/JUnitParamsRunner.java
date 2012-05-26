@@ -425,7 +425,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
         return description;
     }
 
-    private Description describeMethod(FrameworkMethod method) {
+    protected Description describeMethod(FrameworkMethod method) {
         Description child = parameterisedRunner.describeParameterisedMethod(method);
 
         if (child == null)

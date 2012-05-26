@@ -122,7 +122,7 @@ public class TestMethod {
 
     private Object[] paramsFromFile() {
         try {
-            Reader reader = new FileReader(fileParametersAnnotation.value());
+            Reader reader = createProperReader();
             DataMapper mapper = fileParametersAnnotation.mapper().newInstance();
             try {
                 return mapper.map(reader);
@@ -133,6 +133,24 @@ public class TestMethod {
             e.printStackTrace();
             throw new RuntimeException("Could not successfully read parameters from file: " + fileParametersAnnotation.value(), e);
         }
+    }
+
+    private Reader createProperReader() throws IOException {
+        String filepath = fileParametersAnnotation.value();
+
+        if (filepath.indexOf(':') < 0)
+            return new FileReader(filepath);
+
+        String protocol = filepath.substring(0, filepath.indexOf(':'));
+        String filename = filepath.substring(filepath.indexOf(':') + 1);
+
+        if ("classpath".equals(protocol)) {
+            return new InputStreamReader(getClass().getClassLoader().getResourceAsStream(filename));
+        } else if ("file".equals(protocol)) {
+            return new FileReader(filename);
+        }
+
+        throw new IllegalArgumentException("Unknown file access protocol. Only 'file' and 'classpath' are supported!");
     }
 
     private Object[] paramsFromValue() {
