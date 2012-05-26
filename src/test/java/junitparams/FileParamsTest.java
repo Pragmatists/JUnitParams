@@ -20,4 +20,16 @@ public class FileParamsTest {
     public void loadParamsFromFileWithCustomMapper(Person person) {
         assertTrue(person.getAge() > 0);
     }
+
+    @Test
+    @FileParameters("classpath:test.csv")
+    public void loadParamsFromFileAtClasspath(int age, String name) {
+        assertTrue(age > 0);
+    }
+
+    @Test
+    @FileParameters("file:src/test/resources/test.csv")
+    public void loadParamsFromFileAtFilesystem(int age, String name) {
+        assertTrue(age > 0);
+    }
 }
