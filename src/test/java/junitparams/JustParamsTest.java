@@ -24,4 +24,12 @@ public class JustParamsTest {
     public void multipleParams(int number, boolean what) throws Exception {
         assertEquals(what, number > 1);
     }
+
+    @Test
+    @Parameters({ "1," })
+    public void emptyParam(int number, String empty) {
+        assertEquals(1, number);
+        assertEquals("", empty);
+    }
+
 }

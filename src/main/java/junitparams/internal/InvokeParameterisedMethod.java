@@ -1,5 +1,6 @@
 package junitparams.internal;
 
+import java.util.*;
 import java.util.regex.*;
 
 import org.junit.runners.model.*;
@@ -66,7 +67,7 @@ public class InvokeParameterisedMethod extends Statement {
     }
 
     private boolean isFirstParamSameTypeAsExpected(Object[] paramset) {
-        if (paramset[0] == null || testMethod.getMethod().getParameterTypes()[0].isPrimitive())
+        if (paramset == null || paramset[0] == null || testMethod.getMethod().getParameterTypes()[0].isPrimitive())
             return true;
 
         return testMethod.getMethod().getParameterTypes()[0].isAssignableFrom(paramset[0].getClass());
@@ -75,10 +76,8 @@ public class InvokeParameterisedMethod extends Statement {
     private Object[] castParamsFromString(String params) {
         Object[] columns = null;
         try {
-            columns = parseStringToParams(params);
-
             Class<?>[] parameterTypes = testMethod.getMethod().getParameterTypes();
-
+            columns = parseStringToParams(params, parameterTypes.length);
             verifySameSizeOfArrays(columns, parameterTypes);
             columns = castAllParametersToProperTypes(columns, parameterTypes);
         } catch (RuntimeException e) {
@@ -88,10 +87,16 @@ public class InvokeParameterisedMethod extends Statement {
         return columns;
     }
 
-    private Object[] parseStringToParams(String params) {
+    private Object[] parseStringToParams(String params, int numberOfParams) {
         String[] colls = splitPattern.split(params);
         if (colls.length == 1 && "".equals(colls[0]))
             return new String[0];
+
+        if ((numberOfParams == colls.length + 1) && (params.charAt(params.length() - 1) == ',')) {
+            String[] tmp = Arrays.copyOf(colls, colls.length + 1);
+            tmp[colls.length] = "";
+            colls = tmp;
+        }
 
         return colls;
     }
@@ -142,6 +147,6 @@ public class InvokeParameterisedMethod extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-        testMethod.invokeExplosively(testClass, params);
+        testMethod.invokeExplosively(testClass, params == null ? new Object[] { params } : params);
     }
 }

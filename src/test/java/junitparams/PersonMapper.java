@@ -5,7 +5,7 @@ import java.util.*;
 
 import junitparams.internal.*;
 
-public class PersonMapper extends IdentityMapper {
+public class PersonMapper extends CsvWithHeaderMapper {
     @Override
     public Object[] map(Reader reader) {
         Object[] map = super.map(reader);

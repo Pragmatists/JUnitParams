@@ -1,5 +1,7 @@
 package junitparams;
 
+import static org.junit.Assert.*;
+
 import org.junit.*;
 import org.junit.runner.*;
 
@@ -10,5 +12,6 @@ public class AssumptionsWithParamsTest {
     @Parameters({ "true", "false" })
     public void assumeOnceWorksAndOnceIgnores(boolean value) {
         Assume.assumeTrue(value);
+        assertTrue(value);
     }
 }

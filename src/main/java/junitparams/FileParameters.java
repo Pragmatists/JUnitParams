@@ -24,6 +24,6 @@ public @interface FileParameters {
      * of parameters. By default it is an IdentityMapper, meaning the file has
      * exactly the same format as the @Parameters({}) annotation.
      */
-    Class<? extends DataMapper> mapper() default IdentityMapper.class;
+    Class<? extends DataMapper> mapper() default CsvWithHeaderMapper.class;
 
 }

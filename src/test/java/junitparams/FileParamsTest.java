@@ -32,4 +32,11 @@ public class FileParamsTest {
     public void loadParamsFromFileAtFilesystem(int age, String name) {
         assertTrue(age > 0);
     }
+
+    @Test
+    @FileParameters(value = "classpath:with_header.csv", mapper = CsvWithHeaderMapper.class)
+    public void csvWithHeader(int id, String name) {
+        assertTrue(id > 0);
+    }
+
 }
