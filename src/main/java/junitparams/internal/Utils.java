@@ -12,7 +12,9 @@ public class Utils {
     public static String stringify(Object paramSet, int paramIdx) {
         String result = "[" + paramIdx + "] ";
 
-        if (paramSet instanceof String)
+        if (paramSet == null)
+            result += "null";
+        else if (paramSet instanceof String)
             result += paramSet;
         else
             result += asCsvString(safelyCastParamsToArray(paramSet), paramIdx);
@@ -22,7 +24,7 @@ public class Utils {
 
     private static String trimSpecialChars(String result) {
         return result.replace(System.getProperty("line.separator"), " ")
-                .replace('(', '[').replace(')', ']');
+            .replace('(', '[').replace(')', ']');
     }
 
     static Object[] safelyCastParamsToArray(Object paramSet) {
@@ -36,6 +38,9 @@ public class Utils {
     }
 
     private static String asCsvString(Object[] params, int paramIdx) {
+        if (params == null)
+            return "null";
+
         if (params.length == 0)
             return "";
 
@@ -65,7 +70,7 @@ public class Utils {
     }
 
     private static void tryFindingOverridenToString(Object param)
-            throws NoSuchMethodException {
+        throws NoSuchMethodException {
         final Method toString = param.getClass().getMethod("toString");
 
         if (toString.getDeclaringClass().equals(Object.class)) {

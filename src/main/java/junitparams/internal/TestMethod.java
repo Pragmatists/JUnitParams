@@ -60,7 +60,13 @@ public class TestMethod {
         if (!(obj instanceof TestMethod))
             return false;
 
-        return frameworkMethod.getName().equals(((TestMethod) obj).frameworkMethod.getName());
+        if (!frameworkMethod.getName().equals(((TestMethod) obj).frameworkMethod.getName()))
+            return false;
+
+        if (!frameworkMethod.getMethod().getParameterTypes().equals(((TestMethod) obj).frameworkMethod.getMethod().getParameterTypes()))
+            return false;
+
+        return true;
     }
 
     Class<?> testClass() {
