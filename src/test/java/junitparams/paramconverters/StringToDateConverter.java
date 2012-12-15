@@ -4,6 +4,7 @@ import java.text.*;
 import java.util.*;
 
 import junitparams.*;
+import junitparams.converters.*;
 
 public class StringToDateConverter implements ParamConverter<Date> {
 

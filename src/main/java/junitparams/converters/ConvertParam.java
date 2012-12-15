@@ -1,4 +1,4 @@
-package junitparams;
+package junitparams.converters;
 
 import java.lang.annotation.*;
 

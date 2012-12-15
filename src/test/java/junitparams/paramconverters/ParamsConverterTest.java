@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.*;
 
 import junitparams.*;
+import junitparams.converters.*;
 
 import org.junit.*;
 import org.junit.runner.*;

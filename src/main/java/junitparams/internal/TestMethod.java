@@ -8,6 +8,7 @@ import java.util.*;
 import javax.lang.model.type.*;
 
 import junitparams.*;
+import junitparams.mappers.*;
 
 import org.junit.*;
 import org.junit.runner.*;

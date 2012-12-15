@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import junitparams.internal.*;
+import junitparams.mappers.*;
 
 public class PersonMapper extends CsvWithHeaderMapper {
     @Override

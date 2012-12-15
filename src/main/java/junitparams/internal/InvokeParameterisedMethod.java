@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.regex.*;
 
 import junitparams.*;
+import junitparams.converters.*;
 
 import org.junit.runners.model.*;
 

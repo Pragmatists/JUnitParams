@@ -1,8 +1,16 @@
-package junitparams;
+package junitparams.mappers;
 
 import java.io.*;
 import java.util.*;
 
+/**
+ * Reads a CSV file starting from the second line - the first one is supposed to
+ * be a header. If you don't want to skip the first line, use @FilePatameters
+ * without any mapper.
+ * 
+ * @author Pawel Lipinski
+ * 
+ */
 public class CsvWithHeaderMapper implements DataMapper {
     public Object[] map(Reader reader) {
         BufferedReader br = new BufferedReader(reader);
