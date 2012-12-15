@@ -1,7 +1,10 @@
 package junitparams.internal;
 
+import java.lang.annotation.*;
 import java.util.*;
 import java.util.regex.*;
+
+import junitparams.*;
 
 import org.junit.runners.model.*;
 
@@ -77,9 +80,10 @@ public class InvokeParameterisedMethod extends Statement {
         Object[] columns = null;
         try {
             Class<?>[] parameterTypes = testMethod.getMethod().getParameterTypes();
+            Annotation[][] parameterAnnotations = testMethod.getMethod().getParameterAnnotations();
             columns = parseStringToParams(params, parameterTypes.length);
             verifySameSizeOfArrays(columns, parameterTypes);
-            columns = castAllParametersToProperTypes(columns, parameterTypes);
+            columns = castAllParametersToProperTypes(columns, parameterTypes, parameterAnnotations);
         } catch (RuntimeException e) {
             new IllegalArgumentException("Cannot parse parameters. Did you use , as column separator? " + params, e).printStackTrace();
         }
@@ -101,13 +105,31 @@ public class InvokeParameterisedMethod extends Statement {
         return colls;
     }
 
-    private Object[] castAllParametersToProperTypes(Object[] columns, Class<?>[] parameterTypes) {
+    private Object[] castAllParametersToProperTypes(Object[] columns, Class<?>[] parameterTypes, Annotation[][] parameterAnnotations) {
         Object[] result = new Object[columns.length];
 
-        for (int i = 0; i < columns.length; i++)
-            result[i] = castParameterFromString(columns[i], parameterTypes[i]);
+        for (int i = 0; i < columns.length; i++) {
+            if (parameterAnnotations[i].length == 0)
+                result[i] = castParameterFromString(columns[i], parameterTypes[i]);
+            else
+                result[i] = castParameterUsingConverter(columns[i], parameterTypes[i], parameterAnnotations[i]);
+        }
 
         return result;
+    }
+
+    private Object castParameterUsingConverter(Object param, Class<?> expectedType, Annotation[] annotations) {
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType().isAssignableFrom(ConvertParam.class)) {
+                Class<? extends ParamConverter<?>> converterClass = ((ConvertParam) annotation).value();
+                try {
+                    return converterClass.newInstance().convert(param);
+                } catch (Exception e) {
+                    throw new RuntimeException("Your ParamConverter class must have a public no-arg constructor!");
+                }
+            }
+        }
+        throw new RuntimeException("Only @ConvertParam annotation is allowed on parameters!");
     }
 
     @SuppressWarnings("unchecked")
