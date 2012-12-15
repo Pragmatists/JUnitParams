@@ -10,5 +10,5 @@ package junitparams;
  * @author Pawel Lipinski
  */
 public interface ParamConverter<T> {
-    T convert(Object param);
+    T convert(Object param, String options);
 }

@@ -14,7 +14,8 @@ public class ParamsConverterTest {
 
     @Test
     @Parameters({ "01.12.2012" })
-    public void convertSingleParam(@ConvertParam(DateParamConverter.class) Date date) {
+    public void convertSingleParam(
+        @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
 
@@ -25,8 +26,10 @@ public class ParamsConverterTest {
 
     @Test
     @Parameters({ "01.12.2012,A" })
-    public void convertMultipleParams(@ConvertParam(DateParamConverter.class) Date date,
+    public void convertMultipleParams(
+        @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date,
         @ConvertParam(LetterToNumberConverter.class) int num) {
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
 

@@ -122,8 +122,9 @@ public class InvokeParameterisedMethod extends Statement {
         for (Annotation annotation : annotations) {
             if (annotation.annotationType().isAssignableFrom(ConvertParam.class)) {
                 Class<? extends ParamConverter<?>> converterClass = ((ConvertParam) annotation).value();
+                String options = ((ConvertParam) annotation).options();
                 try {
-                    return converterClass.newInstance().convert(param);
+                    return converterClass.newInstance().convert(param, options);
                 } catch (Exception e) {
                     throw new RuntimeException("Your ParamConverter class must have a public no-arg constructor!");
                 }

@@ -5,11 +5,11 @@ import java.util.*;
 
 import junitparams.*;
 
-public class DateParamConverter implements ParamConverter<Date> {
+public class StringToDateConverter implements ParamConverter<Date> {
 
-    public Date convert(Object param) {
+    public Date convert(Object param, String options) {
         try {
-            return new SimpleDateFormat("dd.MM.yyyy").parse(param.toString());
+            return new SimpleDateFormat(options).parse(param.toString());
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
