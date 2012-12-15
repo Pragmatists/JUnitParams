@@ -1,6 +1,7 @@
 package junitparams.paramconverters;
 
 import junitparams.*;
+import junitparams.converters.*;
 
 public class LetterToNumberConverter implements ParamConverter<Integer> {
 

@@ -3,11 +3,12 @@ package junitparams;
 import java.lang.annotation.*;
 
 import junitparams.internal.*;
+import junitparams.mappers.*;
 
 /**
  * 
- * Denotes that parameters for a annotated test method should be taken from a
- * file.
+ * Denotes that parameters for a annotated test method should be taken from an
+ * external resource.
  * 
  * @author Pawel Lipinski
  */
@@ -20,10 +21,12 @@ public @interface FileParameters {
     String value();
 
     /**
-     * The mapper which knows how to parse the file and turn it into a valid set
-     * of parameters. By default it is an IdentityMapper, meaning the file has
-     * exactly the same format as the @Parameters({}) annotation.
+     * The mapper which knows how to get the data from the external resource and
+     * turn it into a valid set of parameters. By default it is an
+     * IdentityMapper, meaning the resource has exactly the same format as the
+     * 
+     * @Parameters annotation value (when passed as String), being CSV.
      */
-    Class<? extends DataMapper> mapper() default CsvWithHeaderMapper.class;
+    Class<? extends DataMapper> mapper() default IdentityMapper.class;
 
 }

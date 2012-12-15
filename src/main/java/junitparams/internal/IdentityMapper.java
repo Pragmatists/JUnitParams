@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import junitparams.*;
+import junitparams.mappers.*;
 
 /**
  * A mapper, that maps contents of a file to a set of parameters for test
