@@ -4,7 +4,6 @@ import java.lang.annotation.*;
 import java.util.*;
 import java.util.regex.*;
 
-import junitparams.*;
 import junitparams.converters.*;
 
 import org.junit.runners.model.*;
@@ -127,7 +126,7 @@ public class InvokeParameterisedMethod extends Statement {
                 try {
                     return converterClass.newInstance().convert(param, options);
                 } catch (Exception e) {
-                    throw new RuntimeException("Your ParamConverter class must have a public no-arg constructor!");
+                    throw new RuntimeException("Your ParamConverter class must have a public no-arg constructor!", e);
                 }
             }
         }
