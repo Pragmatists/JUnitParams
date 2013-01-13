@@ -9,3 +9,7 @@ syntax: regexp
 ^\.project$
 syntax: regexp
 ^bin$
+syntax: regexp
+^\.idea$
+syntax: regexp
+^JUnitParams.iml$
