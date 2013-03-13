@@ -5,13 +5,12 @@ import static org.junit.Assert.*;
 
 import java.lang.reflect.*;
 
-import junitparams.internal.*;
-
 import org.junit.*;
-import org.junit.internal.matchers.*;
 import org.junit.rules.*;
 import org.junit.runner.*;
 import org.junit.runners.model.*;
+
+import junitparams.internal.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class ParametersProvidersTest {
@@ -35,7 +34,7 @@ public class ParametersProvidersTest {
         ParameterisedTestMethodRunner runner = new ParameterisedTestMethodRunner(getTestMethodWithInvalidProvider());
 
         exception.expect(RuntimeException.class);
-        exception.expectMessage(new StringContains(ProviderClassWithNoValidMethods.class.getName()));
+        exception.expectMessage(ProviderClassWithNoValidMethods.class.getName());
         runner.method.parametersSets();
     }
 
