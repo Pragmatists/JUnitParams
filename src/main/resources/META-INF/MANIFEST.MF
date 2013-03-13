@@ -1,5 +1,5 @@
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: junitparams
-Bundle-Version: 0.9.0
-Export-Package: junitparams;version="0.9.0";uses:="org.junit"
+Bundle-Version: 1.0.0
+Export-Package: junitparams;version="1.0.0";uses:="org.junit"
 Import-Package: org.junit;version="[4.11)"

@@ -20,9 +20,11 @@ public class RulesTest {
     @Rule
     public Timeout timeout = new Timeout(0);
 
+
     @Test
     @Parameters("")
-    public void shouldHandleRulesProperly(String n) throws Exception {
+    public void shouldHandleRulesProperly(String n) {
 
     }
+
 }

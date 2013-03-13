@@ -3,10 +3,11 @@ package junitparams;
 import static junitparams.JUnitParamsRunner.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import junitparams.PersonTest.Person;
 
 import org.junit.*;
 import org.junit.runner.*;
+
+import junitparams.PersonTest.*;
 
 @SuppressWarnings("unused")
 @RunWith(JUnitParamsRunner.class)

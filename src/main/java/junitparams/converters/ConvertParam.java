@@ -15,6 +15,10 @@ public @interface ConvertParam {
 
     Class<? extends ParamConverter<?>> value();
 
+    /**
+     * Options / settings to be used by the converter class
+     * @return
+     */
     String options() default "";
 
 }
