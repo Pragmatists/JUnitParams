@@ -19,8 +19,6 @@ public class RulesTest {
     };
     @Rule
     public Timeout timeout = new Timeout(0);
-    @Rule
-    public Verifier verifier = new Verifier();
 
     @Test
     @Parameters("")
