@@ -2,20 +2,20 @@ package junitparams;
 
 import java.util.*;
 
-import junitparams.internal.*;
-
 import org.junit.runner.*;
 import org.junit.runner.notification.*;
 import org.junit.runners.*;
 import org.junit.runners.model.*;
 
+import junitparams.internal.*;
+
 /**
  * <h1>JUnitParams</h1><br/>
  * <p>
- * JUnit runner for parameterised tests. Annotate your test class with
+ * This is a JUnit runner for parameterised tests that don't suck. Annotate your test class with
  * <code>&#064;RunWith(JUnitParamsRunner.class)</code> and place
  * <code>&#064;Parameters</code> annotation on each test method which requires
- * parameters.
+ * parameters. Nothing more needed - no special structure, no dirty tricks.
  * </p>
  * <br/>
  * <h2>Contents</h2> <b> <a href="#1">1. Parameterising tests</a><br/>
@@ -25,8 +25,10 @@ import org.junit.runners.model.*;
  * method that returns parameter values</a><br/>
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#c">c. Parameterising tests via
  * external classes</a><br/>
- * <a href="#2">2. Using JUnitParams together with Spring</a><br/>
- * <a href="#2">3. Other options</a><br/>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#d">d. Loading parameters from files</a><br/>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#d">e. Converting parameter values</a><br/>
+ * <a href="#2">2. Usage with Spring</a><br/>
+ * <a href="#3">3. Other options</a><br/>
  * </b><br/>
  * <h3 id="1">1. Parameterising tests</h3> Parameterised tests are a great way
  * to limit the amount of test code when you need to test the same code under
@@ -36,7 +38,7 @@ import org.junit.runners.model.*;
  * a handy tool.
  * 
  * So here we go. There are a few different ways to use JUnitParams, I will try
- * to show you all.
+ * to show you all of them here.
  * 
  * <h4 id="a">a. Parameterising tests via values in annotation</h4>
  * <p>
@@ -86,12 +88,32 @@ import org.junit.runners.model.*;
  * 
  * Where <code>$(...)</code> is a static method defined in
  * <code>JUnitParamsRunner</code> class, which returns its parameters as a
- * <code>Object[]</code> array.
+ * <code>Object[]</code> array. Just a shortcut, so that you don't need to write the ugly <code>new Object[] {}</code> kind of stuff.
  * </p>
  * <p>
  * <code>method</code> can take more than one method name - you can pass as many
  * of them as you want, separated by commas. This enables you to divide your
  * test cases e.g. into categories.
+ * <pre>
+ *   &#064;Test
+ *   &#064;Parameters(method = "menCharactes, womenCharacters")
+ *   public void cartoonCharacters(int yearsInJungle, String person) {
+ *       ...
+ *   }
+ *   private Object[] menCharacters() {
+ *      return $(
+ *          $(20, "Tarzan"),
+ *          $(2, "Chip"),
+ *          $(2, "Dale")
+ *      );
+ *   }
+ *   private Object[] womenCharacters() {
+ *      return $(
+ *          $(0, "Jane"),
+ *          $(18, "Pocahontas")
+ *      );
+ *   }
+ * </pre>
  * </p>
  * <p>
  * The <code>method</code> argument of a <code>@Parameters</code> annotation can
@@ -115,10 +137,6 @@ import org.junit.runners.model.*;
  * 
  * </p>
  * <p>
- * The <code>method</code> argument can accept more than one method, so you can
- * divide your parameter sets into categories e.g. positive and negative cases.
- * </p>
- * <p>
  * If you don't like returning untyped values and arrays, you can equally well
  * return any Iterable of concrete objects:
  * 
@@ -136,10 +154,9 @@ import org.junit.runners.model.*;
  *   }
  * </pre>
  * 
- * If we had more than just two Person's to make, we would get pretty redundant,
+ * If we had more than just two Person's to make, we would get redundant,
  * so JUnitParams gives you a simplified way of creating objects to be passed as
- * params. If your test method takes just one parameter (like the one above),
- * you can ommit the creation of the objects and just return their constructor
+ * params. You can omit the creation of the objects and just return their constructor
  * argument values like this:
  * 
  * <pre>
@@ -155,9 +172,9 @@ import org.junit.runners.model.*;
  *      );
  *   }
  * </pre>
- * 
- * If you want to use it, watch out! Automatic refactoring of constructor
- * arguments won't be working here!
+ * And JUnitParams will invoke the appropriate constructor (<code>new Person(int age, String name)</code> in this case.)
+ * <b>If you want to use it, watch out! Automatic refactoring of constructor
+ * arguments won't be working here!</b>
  * 
  * <p>
  * You can also define methods that provide parameters in subclasses and use
@@ -249,6 +266,8 @@ import org.junit.runners.model.*;
  * 
  * }
  * </pre>
+ *
+ * A CSV files with a header are also supported with the use of <code>CsvWithHeaderMapper</code> class.
  * 
  * You may also want to use a completely different file format, like excel or
  * something. Then just parse it yourself:
@@ -270,6 +289,33 @@ import org.junit.runners.model.*;
  * 
  * As you see, you don't need to open or close the file. Just read it from the
  * reader and parse it the way you wish.
+ *
+ * By default the file is loaded from the file system, relatively to where you start the tests from. But you can also use a resource from
+ * the classpath by prefixing the file name with <code>classpath:</code>
+ *
+ * <h4 id="e">e. Converting parameter values</h4>
+ * Sometimes you want to pass some parameter in one form, but use it in the test in another. Dates are a good example. It's handy to
+ * specify them in the parameters as a String like "2013.01.01", but you'd like to use a Jodatime's LocalDate or JDKs Date in the test
+ * without manually converting the value in the test. This is where the converters become handy. It's enough to annotate a parameter with
+ * a <code>&#064;ConvertParam</code> annotation, give it a converter class and possibly some options (like date format in this case) and
+ * you're done. Here's an example:
+ * <pre>
+ *     &#064;Test
+ *     &#064;Parameters({ "01.12.2012, A" })
+ *     public void convertMultipleParams(
+ *                  &#064;ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date,
+ *                  &#064;ConvertParam(LetterToASCIIConverter.class) int num) {
+ *
+ *         Calendar calendar = Calendar.getInstance();
+ *         calendar.setTime(date);
+ *
+ *         assertEquals(2012, calendar.get(Calendar.YEAR));
+ *         assertEquals(11, calendar.get(Calendar.MONTH));
+ *         assertEquals(1, calendar.get(Calendar.DAY_OF_MONTH));
+ *
+ *         assertEquals(65, num);
+ *     }
+ * </pre>
  * 
  * <h3 id="2">2. Usage with Spring</h3>
  * <p>
@@ -331,36 +377,7 @@ import org.junit.runners.model.*;
  * way around is ok, you can define parameter providers in superclass and have
  * tests in subclasses uses them as their input.
  * </p>
- * <h4>Collections</h4>
- * <p>
- * Instead of using ugly Object[][] for parameters (even though it's much nicer
- * with my $(...) method), sometimes you may prefer to have parameter sets in
- * Collections. JUnitParams likes collections as well, so you can return any
- * Iterable from your parameters provider method. The Iterable elements must be
- * Object[] containing consecutive params, but for this $(...) is better than
- * anything else. So a method may look like this:<br/>
- * 
- * <pre>
- * private List&lt;Object[]&gt; parametersForCartoonCharacters() {
- *     return Arrays.asList(
- *         $(0, &quot;Tarzan&quot;),
- *         $(20, &quot;Jane&quot;)
- *         );
- * }
- * </pre>
- * 
- * There is also a simplified version - if your test method has just one
- * parameter, you can return just an Object[] or Iterable with param values,
- * without the need to encapsulate them in Object[]. So you may do this:<br/>
- * 
- * <pre>
- * private List&lt;String&gt; parametersForCartoonCharacters() {
- *     return Arrays.asList(&quot;Tarzan&quot;, &quot;Jane&quot;, &quot;Scooby&quot;, &quot;Donald&quot;);
- * }
- * </pre>
- * 
- * </p>
- * 
+ *
  * @author Pawel Lipinski (lipinski.pawel@gmail.com)
  */
 public class JUnitParamsRunner extends BlockJUnit4ClassRunner {

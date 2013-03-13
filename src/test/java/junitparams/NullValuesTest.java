@@ -1,14 +1,13 @@
-package junitparams.nullcases.passing;
+package junitparams;
 
 import static junitparams.JUnitParamsRunner.*;
 import static org.junit.Assert.*;
-import junitparams.*;
 
 import org.junit.*;
 import org.junit.runner.*;
 
 @RunWith(JUnitParamsRunner.class)
-public class PassingNullCasesTest {
+public class NullValuesTest {
 
     @Test
     @Parameters(method = "singleParams")

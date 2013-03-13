@@ -1,17 +1,14 @@
-package junitparams.internal;
+package junitparams.mappers;
 
 import java.io.*;
 import java.util.*;
-
-import junitparams.*;
-import junitparams.mappers.*;
 
 /**
  * A mapper, that maps contents of a file to a set of parameters for test
  * methods. Basically a CSV with no header and ordering of columns exactly like
  * the one in the test methods.
  * 
- * It uses the logic from @Parameters({}) for parsing lines of file, so be sure
+ * It uses the logic from &#064;Parameters({}) for parsing lines of file, so be sure
  * the columns in the file match exactly the ordering of arguments in the test
  * method.
  * 

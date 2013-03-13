@@ -2,7 +2,6 @@ package junitparams;
 
 import java.lang.annotation.*;
 
-import junitparams.internal.*;
 import junitparams.mappers.*;
 
 /**
@@ -25,7 +24,7 @@ public @interface FileParameters {
      * turn it into a valid set of parameters. By default it is an
      * IdentityMapper, meaning the resource has exactly the same format as the
      * 
-     * @Parameters annotation value (when passed as String), being CSV.
+     * &#064;Parameters annotation value (when passed as String), being CSV.
      */
     Class<? extends DataMapper> mapper() default IdentityMapper.class;
 

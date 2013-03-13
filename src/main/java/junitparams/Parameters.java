@@ -16,7 +16,7 @@ public @interface Parameters {
      * Parameter values defined as a String array. Each element in the array is
      * a full parameter set, comma-separated. The values must match the method
      * parameters in order and type.
-     * Example: <code>@Paramers({
+     * Example: <code>@Parameters({
      *                    "1, joe, 26.4, true", 
      *                    "2, angie, 37.2, false"}</code>
      */
@@ -29,7 +29,7 @@ public @interface Parameters {
      * group your examples. The resulting array should contain parameter sets in
      * its elements. Each parameter set must be another Object[] array, which
      * contains parameter values in its elements.
-     * Example: <code>@Paramers(source = PeopleProvider.class)
+     * Example: <code>@Parameters(source = PeopleProvider.class)
      */
     Class<?> source() default NullType.class;
 
@@ -38,10 +38,10 @@ public @interface Parameters {
      * don't need additional classes and the test code may be a bit cleaner. The
      * format of the data returned by the method is the same as for the source
      * annotation class.
-     * Example: <code>@Paramers(method = "examplaryPeople")</code>
+     * Example: <code>@Parameters(method = "examplaryPeople")</code>
      * 
      * You can use multiple methods to provide parameters - use comma to do it:
-     * Example: <code>@Paramers(method = "womenParams, menParams")</code>
+     * Example: <code>@Parameters(method = "womenParams, menParams")</code>
      */
     String method() default "";
 }
