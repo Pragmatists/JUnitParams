@@ -22,7 +22,7 @@ public class RulesTest {
 
     @Test
     @Parameters("")
-    public void shouldHandleRulesProperly() throws Exception {
+    public void shouldHandleRulesProperly(String n) throws Exception {
 
     }
 }
