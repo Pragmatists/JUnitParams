@@ -4,9 +4,9 @@ import java.lang.annotation.*;
 import java.util.*;
 import java.util.regex.*;
 
-import junitparams.converters.*;
-
 import org.junit.runners.model.*;
+
+import junitparams.converters.*;
 
 /**
  * JUnit invoker for parameterised test methods
@@ -93,9 +93,6 @@ public class InvokeParameterisedMethod extends Statement {
 
     private Object[] parseStringToParams(String params, int numberOfParams) {
         String[] colls = splitPattern.split(params);
-        if (colls.length == 1 && "".equals(colls[0]))
-            return new String[0];
-
         if ((numberOfParams == colls.length + 1) && (params.charAt(params.length() - 1) == ',')) {
             String[] tmp = Arrays.copyOf(colls, colls.length + 1);
             tmp[colls.length] = "";

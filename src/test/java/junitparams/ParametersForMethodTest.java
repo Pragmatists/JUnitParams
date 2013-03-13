@@ -50,9 +50,8 @@ public class ParametersForMethodTest {
     }
 
     @Test
-    @Parameters({ "a \n \\,\\|b", "\\,a(asdf)\\|", "\\," })
+    @Parameters({ "a \n \\,\\|b", "\\,a(asdf)\\|", "\\,", "" })
     public void escapedSpecialCharsInParam(String a) {
 
     }
-
 }

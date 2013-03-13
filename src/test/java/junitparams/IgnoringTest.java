@@ -25,7 +25,7 @@ public class IgnoringTest {
 
     @Test
     @Parameters("")
-    public void dontIgnoreMeWithParams() {
+    public void dontIgnoreMeWithParams(String a) {
 
     }
 
