@@ -7,7 +7,7 @@
 	</parent>
 	<groupId>pl.pragmatists</groupId>
 	<artifactId>JUnitParams</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>JUnitParams</name>
 	<description>Better parameterised tests for JUnit</description>
@@ -37,7 +37,7 @@
 		<connection>scm:hg:http://junitparams.googlecode.com/hg/</connection>
 		<developerConnection>scm:hg:https://junitparams.googlecode.com/hg/</developerConnection>
 		<url>http://junitparams.googlecode.com/hg/</url>
-	  <tag>JUnitParams-1.0.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 	<organization>
 		<name>Pragmatists</name>
