@@ -5,11 +5,11 @@ import static org.junit.Assert.*;
 import java.text.*;
 import java.util.*;
 
-import junitparams.*;
-import junitparams.converters.*;
-
 import org.junit.*;
 import org.junit.runner.*;
+
+import junitparams.*;
+import junitparams.converters.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class ParamsConverterTest {
@@ -18,12 +18,8 @@ public class ParamsConverterTest {
     @Parameters({ "01.12.2012" })
     public void convertSingleParam(
         @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-
-        assertEquals(2012, calendar.get(Calendar.YEAR));
-        assertEquals(11, calendar.get(Calendar.MONTH));
-        assertEquals(1, calendar.get(Calendar.DAY_OF_MONTH));
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
     }
 
     @Test
@@ -31,15 +27,33 @@ public class ParamsConverterTest {
     public void convertMultipleParams(
         @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date,
         @ConvertParam(LetterToNumberConverter.class) int num) {
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
+        assertEquals(1, num);
+    }
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+    @Test
+    @Parameters(method = "params")
+    public void convertParamsFromMethod(
+            @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
+    }
 
+    private List<String> params() {
+        return Arrays.asList("01.12.2012");
+    }
+
+    private void assertCalendarDate(Calendar calendar) {
         assertEquals(2012, calendar.get(Calendar.YEAR));
         assertEquals(11, calendar.get(Calendar.MONTH));
         assertEquals(1, calendar.get(Calendar.DAY_OF_MONTH));
+    }
 
-        assertEquals(1, num);
+    private Calendar createCalendarWithDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
     }
 
     public static class LetterToNumberConverter implements ParamConverter<Integer> {
