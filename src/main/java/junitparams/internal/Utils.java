@@ -24,7 +24,7 @@ public class Utils {
 
     private static String trimSpecialChars(String result) {
         return result.replace(System.getProperty("line.separator"), " ")
-            .replace('(', '[').replace(')', ']');
+            .replace('(', '[').replace(')', ']').replace("\r"," ");
     }
 
     static Object[] safelyCastParamsToArray(Object paramSet) {
