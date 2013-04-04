@@ -10,7 +10,7 @@ import junitparams.converters.*;
 
 /**
  * JUnit invoker for parameterised test methods
- * 
+ *
  * @author Pawel Lipinski
  */
 public class InvokeParameterisedMethod extends Statement {
@@ -30,24 +30,42 @@ public class InvokeParameterisedMethod extends Statement {
         this.testMethod = testMethod;
         this.testClass = testClass;
         paramsAsString = Utils.stringify(params, paramSetIdx - 1);
-        if (params instanceof String)
-            this.params = castParamsFromString((String) params);
-        else {
-            this.params = castParamsFromObjects(params);
+        try {
+            if (params instanceof String)
+                this.params = castParamsFromString((String) params);
+            else {
+                this.params = castParamsFromObjects(params);
+            }
+        } catch (ConversionFailedException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private Object[] castParamsFromObjects(Object params) {
+    private Object[] castParamsFromString(String params) throws ConversionFailedException {
+        Class<?>[] parameterTypes = testMethod.getMethod().getParameterTypes();
+        Object[] columns = null;
+        try {
+            columns = parseStringToParams(params, parameterTypes.length);
+            columns = castParamsUsingConverters(columns);
+        } catch (RuntimeException e) {
+            new IllegalArgumentException("Cannot parse parameters. Did you use , as column separator? " + params, e).printStackTrace();
+        }
+
+        return columns;
+    }
+
+    private Object[] castParamsFromObjects(Object params) throws ConversionFailedException {
         Object[] paramset = Utils.safelyCastParamsToArray(params);
 
-        if (isFirstParamSameTypeAsExpected(paramset))
-            return paramset;
-
-        Class<?>[] typesOfParameters = createArrayOfTypesOf(paramset);
-
-        Object resultParam = createObjectOfExpectedTypeBasedOnParams(paramset, typesOfParameters);
-
-        return new Object[] { resultParam };
+        try {
+            return castParamsUsingConverters(paramset);
+        } catch (ConversionFailedException e) {
+            throw e;
+        } catch (Exception e) {
+            Class<?>[] typesOfParameters = createArrayOfTypesOf(paramset);
+            Object resultParam = createObjectOfExpectedTypeBasedOnParams(paramset, typesOfParameters);
+            return new Object[]{resultParam};
+        }
     }
 
     private Object createObjectOfExpectedTypeBasedOnParams(Object[] paramset, Class<?>[] typesOfParameters) {
@@ -56,7 +74,7 @@ public class InvokeParameterisedMethod extends Statement {
             resultParam = testMethod.getMethod().getParameterTypes()[0].getConstructor(typesOfParameters).newInstance(paramset);
         } catch (Exception e) {
             throw new IllegalStateException("While trying to create object of class " + testMethod.getMethod().getParameterTypes()[0]
-                + " could not find constructor with arguments matching (type-wise) the ones given in parameters.", e);
+                    + " could not find constructor with arguments matching (type-wise) the ones given in parameters.", e);
         }
         return resultParam;
     }
@@ -76,18 +94,11 @@ public class InvokeParameterisedMethod extends Statement {
         return testMethod.getMethod().getParameterTypes()[0].isAssignableFrom(paramset[0].getClass());
     }
 
-    private Object[] castParamsFromString(String params) {
-        Object[] columns = null;
-        try {
-            Class<?>[] parameterTypes = testMethod.getMethod().getParameterTypes();
-            Annotation[][] parameterAnnotations = testMethod.getMethod().getParameterAnnotations();
-            columns = parseStringToParams(params, parameterTypes.length);
-            verifySameSizeOfArrays(columns, parameterTypes);
-            columns = castAllParametersToProperTypes(columns, parameterTypes, parameterAnnotations);
-        } catch (RuntimeException e) {
-            new IllegalArgumentException("Cannot parse parameters. Did you use , as column separator? " + params, e).printStackTrace();
-        }
-
+    private Object[] castParamsUsingConverters(Object[] columns) throws ConversionFailedException {
+        Class<?>[] expectedParameterTypes = testMethod.getMethod().getParameterTypes();
+        Annotation[][] parameterAnnotations = testMethod.getMethod().getParameterAnnotations();
+        verifySameSizeOfArrays(columns, expectedParameterTypes);
+        columns = castAllParametersToProperTypes(columns, expectedParameterTypes, parameterAnnotations);
         return columns;
     }
 
@@ -102,26 +113,29 @@ public class InvokeParameterisedMethod extends Statement {
         return colls;
     }
 
-    private Object[] castAllParametersToProperTypes(Object[] columns, Class<?>[] parameterTypes, Annotation[][] parameterAnnotations) {
+    private Object[] castAllParametersToProperTypes(Object[] columns, Class<?>[] expectedParameterTypes,
+                                                    Annotation[][] parameterAnnotations) throws ConversionFailedException {
         Object[] result = new Object[columns.length];
 
         for (int i = 0; i < columns.length; i++) {
             if (parameterAnnotations[i].length == 0)
-                result[i] = castParameterFromString(columns[i], parameterTypes[i]);
+                result[i] = castParameterDirectly(columns[i], expectedParameterTypes[i]);
             else
-                result[i] = castParameterUsingConverter(columns[i], parameterTypes[i], parameterAnnotations[i]);
+                result[i] = castParameterUsingConverter(columns[i], parameterAnnotations[i]);
         }
 
         return result;
     }
 
-    private Object castParameterUsingConverter(Object param, Class<?> expectedType, Annotation[] annotations) {
+    private Object castParameterUsingConverter(Object param, Annotation[] annotations) throws ConversionFailedException {
         for (Annotation annotation : annotations) {
             if (annotation.annotationType().isAssignableFrom(ConvertParam.class)) {
                 Class<? extends ParamConverter<?>> converterClass = ((ConvertParam) annotation).value();
                 String options = ((ConvertParam) annotation).options();
                 try {
                     return converterClass.newInstance().convert(param, options);
+                } catch (ConversionFailedException e) {
+                    throw e;
                 } catch (Exception e) {
                     throw new RuntimeException("Your ParamConverter class must have a public no-arg constructor!", e);
                 }
@@ -131,8 +145,8 @@ public class InvokeParameterisedMethod extends Statement {
     }
 
     @SuppressWarnings("unchecked")
-    private Object castParameterFromString(Object object, Class clazz) {
-        if (clazz.isInstance(object))
+    private Object castParameterDirectly(Object object, Class clazz) {
+        if (object == null || clazz.isInstance(object) || (!(object instanceof String) && clazz.isPrimitive()))
             return object;
         if (clazz.isEnum())
             return (Enum.valueOf(clazz, (String) object));
@@ -160,13 +174,13 @@ public class InvokeParameterisedMethod extends Statement {
     private void verifySameSizeOfArrays(Object[] columns, Class<?>[] parameterTypes) {
         if (parameterTypes.length != columns.length)
             throw new IllegalArgumentException(
-                "Number of parameters inside @Parameters annotation doesn't match the number of test method parameters.\nThere are "
-                    + columns.length + " parameters in annotation, while there's " + parameterTypes.length + " parameters in the "
-                    + testMethod.getName() + " method.");
+                    "Number of parameters inside @Parameters annotation doesn't match the number of test method parameters.\nThere are "
+                            + columns.length + " parameters in annotation, while there's " + parameterTypes.length + " parameters in the "
+                            + testMethod.getName() + " method.");
     }
 
     @Override
     public void evaluate() throws Throwable {
-        testMethod.invokeExplosively(testClass, params == null ? new Object[] { params } : params);
+        testMethod.invokeExplosively(testClass, params == null ? new Object[]{params} : params);
     }
 }

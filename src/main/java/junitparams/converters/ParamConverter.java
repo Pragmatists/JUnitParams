@@ -10,5 +10,5 @@ package junitparams.converters;
  * @author Pawel Lipinski
  */
 public interface ParamConverter<T> {
-    T convert(Object param, String options);
+    T convert(Object param, String options) throws ConversionFailedException;
 }
