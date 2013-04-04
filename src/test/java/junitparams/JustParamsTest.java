@@ -15,7 +15,7 @@ public class JustParamsTest {
     }
 
     @Test
-    @Parameters({ "a \n b", "a(asdf)" })
+    @Parameters({ "a \n b", "a(asdf)", "a \r a" })
     public void specialCharsInParam(String a) throws Exception {
     }
 
