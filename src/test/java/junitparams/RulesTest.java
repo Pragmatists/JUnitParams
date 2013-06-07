@@ -1,5 +1,7 @@
 package junitparams;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.*;
 import org.junit.rules.*;
 import org.junit.runner.*;
@@ -24,7 +26,7 @@ public class RulesTest {
     @Test
     @Parameters("")
     public void shouldHandleRulesProperly(String n) {
-
+        assertEquals("shouldHandleRulesProperly", testName.getMethodName());
     }
 
 }

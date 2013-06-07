@@ -3,9 +3,10 @@ package junitparams;
 import static junitparams.JUnitParamsRunner.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import junitparams.PersonTest.Person;
 
 import org.junit.*;
+
+import junitparams.usage.person_example.PersonTest.*;
 
 public class SubclassTest extends SuperclassTest {
 

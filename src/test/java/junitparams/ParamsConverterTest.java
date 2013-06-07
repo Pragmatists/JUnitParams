@@ -1,4 +1,4 @@
-package junitparams.paramconverters;
+package junitparams;
 
 import static org.junit.Assert.*;
 

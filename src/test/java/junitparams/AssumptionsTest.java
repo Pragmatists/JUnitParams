@@ -6,8 +6,10 @@ import static org.junit.Assume.*;
 import org.junit.*;
 import org.junit.runner.*;
 
+import junitparams.*;
+
 @RunWith(JUnitParamsRunner.class)
-public class AssumptionsWithParamsTest {
+public class AssumptionsTest {
 
     @Test
     @Parameters({ "true", "false" })

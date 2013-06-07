@@ -6,7 +6,7 @@ import org.junit.*;
 import org.junit.runner.*;
 
 @RunWith(JUnitParamsRunner.class)
-public class JustParamsTest {
+public class ParamsInAnnotationTest {
 
     @Test
     @Parameters({ "1", "2" })

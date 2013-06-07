@@ -1,4 +1,4 @@
-package junitparams;
+package junitparams.usage.person_example;
 
 import static junitparams.JUnitParamsRunner.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -6,6 +6,8 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 import org.junit.runner.*;
+
+import junitparams.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class PersonTest {

@@ -1,4 +1,4 @@
-package junitparams;
+package junitparams.usage.person_example;
 
 import java.io.*;
 import java.util.*;

@@ -1,11 +1,13 @@
 package junitparams;
 
 import static org.junit.Assert.*;
-import junitparams.PersonTest.Person;
-import junitparams.mappers.*;
 
 import org.junit.*;
 import org.junit.runner.*;
+
+import junitparams.mappers.*;
+import junitparams.usage.person_example.*;
+import junitparams.usage.person_example.PersonTest.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class FileParamsTest {
