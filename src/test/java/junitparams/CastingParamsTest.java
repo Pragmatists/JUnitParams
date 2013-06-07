@@ -5,10 +5,10 @@ import static org.junit.Assert.*;
 
 import java.util.*;
 
-import junitparams.PersonTest.Person;
-
 import org.junit.*;
 import org.junit.runner.*;
+
+import junitparams.usage.person_example.PersonTest.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class CastingParamsTest {

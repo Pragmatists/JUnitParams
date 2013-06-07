@@ -1,13 +1,13 @@
 package junitparams;
 
-import static junitparams.JUnitParamsRunner.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.*;
 import org.junit.runner.*;
 
-import junitparams.PersonTest.*;
+import junitparams.usage.person_example.*;
+import junitparams.usage.person_example.PersonTest.*;
 
 @SuppressWarnings("unused")
 @RunWith(JUnitParamsRunner.class)
@@ -19,8 +19,8 @@ public class MethodAnnotationArgumentTest {
         assertEquals(1, number);
     }
 
-    private Object[] return1() {
-        return $($(1));
+    private Integer[] return1() {
+        return new Integer[] {1};
     }
 
     @Test
@@ -35,8 +35,8 @@ public class MethodAnnotationArgumentTest {
         assertTrue(2 >= number && number >= 1);
     }
 
-    private Object[] return2() {
-        return $($(2));
+    private Integer[] return2() {
+        return new Integer[] {2};
     }
 
     @Test
