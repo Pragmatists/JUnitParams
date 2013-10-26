@@ -86,7 +86,7 @@ public class ParameterisedTestMethodRunner {
     }
 
     private Statement statementOrNull(Statement methodInvoker, Field field) {
-        if (field.getType().isAssignableFrom(Statement.class))
+        if (Statement.class.isAssignableFrom(field.getType()))
             return getOriginalStatement(methodInvoker, field);
 
         return null;
