@@ -8,6 +8,7 @@ import java.lang.reflect.*;
  * @author Pawel Lipinski
  */
 public class Utils {
+    public static final String REGEX_ALL_NEWLINES = "(\\r\\n|\\n|\\r)";
 
     public static String stringify(Object paramSet, int paramIdx) {
         String result = "[" + paramIdx + "] ";
@@ -23,8 +24,7 @@ public class Utils {
     }
 
     private static String trimSpecialChars(String result) {
-        return result.replace(System.getProperty("line.separator"), " ")
-            .replace('(', '[').replace(')', ']').replace("\r"," ");
+        return result.replace('(', '[').replace(')', ']').replaceAll(REGEX_ALL_NEWLINES, " ");
     }
 
     static Object[] safelyCastParamsToArray(Object paramSet) {
