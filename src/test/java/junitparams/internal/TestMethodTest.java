@@ -1,6 +1,6 @@
 package junitparams.internal;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -14,34 +14,34 @@ public class TestMethodTest {
 
     @Before
     public void setUp() throws Exception {
-        testMethod = new TestMethod(new FrameworkMethod(TestMethodTest.class.getMethod("sampleTest")),
+        testMethod = new TestMethod(new FrameworkMethod(TestMethodTest.class.getMethod("for_others_to_work", new Class[]{String.class})),
                 new TestClass(this.getClass()));
     }
 
     @Test
-    @Ignore
     @Parameters({"a","b"})
-    public void sampleTest(String arg) throws Exception {
+    public void for_others_to_work(String arg) throws Exception {
     }
 
     @Test
-    @Ignore
     public void flatTestMethodStructure() throws Exception {
-        Description expectedDescription = Description.createTestDescription(this.getClass(), "sampleTest");
+        System.setProperty("JUnitParams.flat", "true");
 
         Description description = testMethod.describe();
 
-        assertEquals(expectedDescription, description);
+        assertEquals("for_others_to_work(junitparams.internal.TestMethodTest)", description.getDisplayName());
+        assertTrue(description.getChildren().isEmpty());
     }
 
 
     @Test
-    @Ignore
     public void hierarchicalTestMethodStructure() throws Exception {
-        Description expectedDescription = Description.createTestDescription(this.getClass(), "sampleTest");
+        System.clearProperty("JUnitParams.flat");
 
         Description description = testMethod.describe();
 
-        assertEquals(expectedDescription, description);
+        assertEquals("for_others_to_work", description.getDisplayName());
+        assertEquals("[0] a (for_others_to_work)(junitparams.internal.TestMethodTest)", description.getChildren().get(0).getDisplayName());
+        assertEquals("[1] b (for_others_to_work)(junitparams.internal.TestMethodTest)", description.getChildren().get(1).getDisplayName());
     }
 }
