@@ -45,6 +45,11 @@ public class Samples_of_Usage_Test {
     private List<String> parametersForParams_in_collection() { return Arrays.asList("a"); }
 
     @Test
+    @Parameters
+    public void params_in_iterator(String p1) { }
+    private Iterator<String> parametersForParams_in_iterator() { return Arrays.asList("a").iterator(); }
+
+    @Test
     @Parameters({"SOME_VALUE", "OTHER_VALUE"})
     public void enums_as_params_in_annotation(PersonType person) { }
 
