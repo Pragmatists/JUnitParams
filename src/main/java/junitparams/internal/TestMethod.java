@@ -4,15 +4,14 @@ import java.io.*;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
-
 import javax.lang.model.type.*;
-
-import junitparams.*;
-import junitparams.mappers.*;
 
 import org.junit.*;
 import org.junit.runner.*;
 import org.junit.runners.model.*;
+
+import junitparams.*;
+import junitparams.mappers.*;
 
 /**
  * A wrapper for a test method
@@ -93,7 +92,7 @@ public class TestMethod {
     }
 
     Description describe() {
-        if (isNotIgnored()) {
+        if (isNotIgnored() && !describeFlat()) {
             Description parametrised = Description.createSuiteDescription(name());
             Object[] params = parametersSets();
             for (int i = 0; i < params.length; i++) {
@@ -105,6 +104,10 @@ public class TestMethod {
         } else {
             return Description.createTestDescription(testClass(), name(), annotations());
         }
+    }
+
+    private boolean describeFlat() {
+        return System.getProperty("JUnitParams.flat") != null;
     }
 
     public Object[] parametersSets() {
@@ -232,11 +235,13 @@ public class TestMethod {
             Object testObject = testClass.newInstance();
             provideMethod.setAccessible(true);
             Object result = provideMethod.invoke(testObject);
-            try {
+
+            if (Object[].class.isAssignableFrom(result.getClass())) {
                 Object[] params = (Object[]) result;
                 return encapsulateParamsIntoArrayIfSingleParamsetPassed(params);
-            } catch (ClassCastException e) {
-                // Iterable
+            }
+
+            if (Iterable.class.isAssignableFrom(result.getClass())) {
                 try {
                     ArrayList<Object[]> res = new ArrayList<Object[]>();
                     for (Object[] paramSet : (Iterable<Object[]>) result)
@@ -250,6 +255,26 @@ public class TestMethod {
                     return res.toArray();
                 }
             }
+
+            if (Iterator.class.isAssignableFrom(result.getClass())) {
+                try {
+                    ArrayList<Object[]> res = new ArrayList<Object[]>();
+                    Iterator<Object[]> iterator = (Iterator<Object[]>) result;
+                    while(iterator.hasNext())
+                        res.add(iterator.next());
+                    return res.toArray();
+                } catch (ClassCastException e1) {
+                    // Itertor with consecutive paramsets, each of one param
+                    ArrayList<Object> res = new ArrayList<Object>();
+                    Iterator<?> iterator = (Iterator<?>) result;
+                    while(iterator.hasNext())
+                        res.add(new Object[] { iterator.next() });
+                    return res.toArray();
+                }
+            }
+
+            throw new ClassCastException();
+
         } catch (ClassCastException e) {
             throw new RuntimeException("The return type of: " + provideMethod.getName() + " defined in class " + testClass
                 + " is not Object[][] nor Iterable<Object[]>. Fix it!", e);
