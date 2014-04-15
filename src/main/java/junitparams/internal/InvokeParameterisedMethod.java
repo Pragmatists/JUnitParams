@@ -2,7 +2,6 @@ package junitparams.internal;
 
 import java.lang.annotation.*;
 import java.util.*;
-import java.util.regex.*;
 
 import org.junit.runners.model.*;
 
@@ -19,8 +18,6 @@ public class InvokeParameterisedMethod extends Statement {
     private final FrameworkMethod testMethod;
     private final Object testClass;
     private final String paramsAsString;
-
-    private static Pattern splitPattern = Pattern.compile("\\s*(?<!\\\\)[|,]\\s*");
 
     public String getParamsAsString() {
         return paramsAsString;
@@ -45,7 +42,7 @@ public class InvokeParameterisedMethod extends Statement {
         Class<?>[] parameterTypes = testMethod.getMethod().getParameterTypes();
         Object[] columns = null;
         try {
-            columns = parseStringToParams(params, parameterTypes.length);
+            columns = splitAtCommaOrPipe(params);
             columns = castParamsUsingConverters(columns);
         } catch (RuntimeException e) {
             new IllegalArgumentException("Cannot parse parameters. Did you use , as column separator? " + params, e).printStackTrace();
@@ -87,13 +84,6 @@ public class InvokeParameterisedMethod extends Statement {
         return parametersBasedOnValues;
     }
 
-    private boolean isFirstParamSameTypeAsExpected(Object[] paramset) {
-        if (paramset == null || paramset[0] == null || testMethod.getMethod().getParameterTypes()[0].isPrimitive())
-            return true;
-
-        return testMethod.getMethod().getParameterTypes()[0].isAssignableFrom(paramset[0].getClass());
-    }
-
     private Object[] castParamsUsingConverters(Object[] columns) throws ConversionFailedException {
         Class<?>[] expectedParameterTypes = testMethod.getMethod().getParameterTypes();
         Annotation[][] parameterAnnotations = testMethod.getMethod().getParameterAnnotations();
@@ -102,15 +92,32 @@ public class InvokeParameterisedMethod extends Statement {
         return columns;
     }
 
-    private Object[] parseStringToParams(String params, int numberOfParams) {
-        String[] colls = splitPattern.split(params);
-        if ((numberOfParams == colls.length + 1) && (params.charAt(params.length() - 1) == ',')) {
-            String[] tmp = Arrays.copyOf(colls, colls.length + 1);
-            tmp[colls.length] = "";
-            colls = tmp;
-        }
+    private String[] splitAtCommaOrPipe(String input) {
+        ArrayList<String> result = new ArrayList<>();
 
-        return colls;
+        char character = '\0';
+        char previousCharacter;
+
+        StringBuilder value = new StringBuilder();
+        for (int i=0; i<input.length(); i++) {
+            previousCharacter = character;
+            character = input.charAt(i);
+
+            if (character == ',' || character == '|') {
+                if (previousCharacter == '\\') {
+                    value.setCharAt(i - 1, character);
+                    continue;
+                }
+                result.add(value.toString().trim());
+                value = new StringBuilder();
+                continue;
+            }
+
+            value.append(character);
+        }
+        result.add(value.toString().trim());
+
+        return result.toArray(new String[]{});
     }
 
     private Object[] castAllParametersToProperTypes(Object[] columns, Class<?>[] expectedParameterTypes,
