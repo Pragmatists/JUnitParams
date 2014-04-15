@@ -42,10 +42,10 @@ public class ParametersForMethodTest {
 
     @Test
     @Parameters
-    public void emptyParamset() {
+    public void shouldIgnoreWhenEmptyParamset() {
     }
 
-    private Object[] parametersForEmptyParamset() {
+    private Object[] parametersForShouldIgnoreWhenEmptyParamset() {
         return new Object[] {};
     }
 
