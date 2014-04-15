@@ -54,6 +54,9 @@ public class ParameterisedTestMethodRunner {
     }
 
     private Description findChildForParams(Statement methodInvoker, Description methodDescription) {
+        if (System.getProperty("JUnitParams.flat") != null)
+            return methodDescription;
+
         for (Description child : methodDescription.getChildren()) {
             InvokeParameterisedMethod parameterisedInvoker = findParameterisedMethodInvokerInChain(methodInvoker);
 

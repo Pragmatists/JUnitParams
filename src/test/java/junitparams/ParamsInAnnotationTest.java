@@ -26,10 +26,31 @@ public class ParamsInAnnotationTest {
     }
 
     @Test
-    @Parameters({ "1," })
-    public void emptyParam(int number, String empty) {
+    @Parameters({ ",1"})
+    public void emptyFirstParam(String empty, int number) {
+        assertEquals("", empty);
+        assertEquals(1, number);
+    }
+
+    @Test
+    @Parameters({ "1,"})
+    public void emptyLastParam(int number, String empty) {
         assertEquals(1, number);
         assertEquals("", empty);
     }
 
+    @Test
+    @Parameters({ "1,,1"})
+    public void emptyMiddleParam(int number1, String empty, int number2) {
+        assertEquals(1, number1);
+        assertEquals("", empty);
+        assertEquals(1, number2);
+    }
+
+    @Test
+    @Parameters({","})
+    public void allParamsEmpty(String empty1, String empty2) {
+        assertEquals("", empty1);
+        assertEquals("", empty2);
+    }
 }
