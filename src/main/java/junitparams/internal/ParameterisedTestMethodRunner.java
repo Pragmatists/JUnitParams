@@ -3,6 +3,7 @@ package junitparams.internal;
 import java.lang.reflect.*;
 
 import org.junit.internal.*;
+import org.junit.internal.runners.model.*;
 import org.junit.runner.*;
 import org.junit.runner.notification.*;
 import org.junit.runners.model.*;
@@ -38,18 +39,20 @@ public class ParameterisedTestMethodRunner {
         Description methodDescription = method.describe();
         Description methodWithParams = findChildForParams(methodInvoker, methodDescription);
 
-        notifier.fireTestStarted(methodWithParams);
         runMethodInvoker(notifier, methodDescription, methodInvoker, methodWithParams);
-        notifier.fireTestFinished(methodWithParams);
     }
 
     private void runMethodInvoker(RunNotifier notifier, Description description, Statement methodInvoker, Description methodWithParams) {
+        EachTestNotifier eachNotifier = new EachTestNotifier(notifier, methodWithParams);
+        eachNotifier.fireTestStarted();
         try {
             methodInvoker.evaluate();
         } catch (AssumptionViolatedException e) {
-            notifier.fireTestAssumptionFailed(new Failure(description, e));
+            eachNotifier.addFailedAssumption(e);
         } catch (Throwable e) {
-            notifier.fireTestFailure(new Failure(methodWithParams, e));
+            eachNotifier.addFailure(e);
+        } finally {
+            eachNotifier.fireTestFinished();
         }
     }
 

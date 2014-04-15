@@ -1,10 +1,11 @@
 package junitparams;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.*;
 import org.junit.rules.*;
 import org.junit.runner.*;
+
 
 @RunWith(JUnitParamsRunner.class)
 public class RulesTest {

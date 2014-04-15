@@ -105,7 +105,7 @@ public class InvokeParameterisedMethod extends Statement {
 
             if (character == ',' || character == '|') {
                 if (previousCharacter == '\\') {
-                    value.setCharAt(i - 1, character);
+                    value.setCharAt(value.length() - 1, character);
                     continue;
                 }
                 result.add(value.toString().trim());
