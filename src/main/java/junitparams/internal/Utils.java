@@ -4,7 +4,7 @@ import java.lang.reflect.*;
 
 /**
  * Some String utils to handle parameterised tests' results.
- * 
+ *
  * @author Pawel Lipinski
  */
 public class Utils {
@@ -29,10 +29,15 @@ public class Utils {
 
     static Object[] safelyCastParamsToArray(Object paramSet) {
         Object[] params;
-        try {
-            params = (Object[]) paramSet;
-        } catch (ClassCastException e) {
-            params = new Object[] { paramSet };
+
+        if (paramSet instanceof String[]) {
+            params = new Object[]{paramSet};
+        } else {
+            try {
+                params = (Object[]) paramSet;
+            } catch (ClassCastException e) {
+                params = new Object[]{paramSet};
+            }
         }
         return params;
     }
@@ -70,7 +75,7 @@ public class Utils {
     }
 
     private static void tryFindingOverridenToString(Object param)
-        throws NoSuchMethodException {
+            throws NoSuchMethodException {
         final Method toString = param.getClass().getMethod("toString");
 
         if (toString.getDeclaringClass().equals(Object.class)) {
