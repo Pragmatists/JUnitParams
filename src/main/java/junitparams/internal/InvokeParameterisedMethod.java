@@ -1,6 +1,7 @@
 package junitparams.internal;
 
 import java.lang.annotation.*;
+import java.lang.reflect.*;
 import java.util.*;
 
 import org.junit.runners.model.*;
@@ -39,7 +40,6 @@ public class InvokeParameterisedMethod extends Statement {
     }
 
     private Object[] castParamsFromString(String params) throws ConversionFailedException {
-        Class<?>[] parameterTypes = testMethod.getMethod().getParameterTypes();
         Object[] columns = null;
         try {
             columns = splitAtCommaOrPipe(params);
@@ -67,8 +67,16 @@ public class InvokeParameterisedMethod extends Statement {
 
     private Object createObjectOfExpectedTypeBasedOnParams(Object[] paramset, Class<?>[] typesOfParameters) {
         Object resultParam;
+
         try {
-            resultParam = testMethod.getMethod().getParameterTypes()[0].getConstructor(typesOfParameters).newInstance(paramset);
+            if (testMethod.getMethod().getParameterTypes()[0].isArray()) {
+                resultParam = Array.newInstance(typesOfParameters[0], paramset.length);
+                for (int i = 0; i < paramset.length; i++) {
+                    ((Object[]) resultParam)[i] = paramset[i];
+                }
+            } else {
+                resultParam = testMethod.getMethod().getParameterTypes()[0].getConstructor(typesOfParameters).newInstance(paramset);
+            }
         } catch (Exception e) {
             throw new IllegalStateException("While trying to create object of class " + testMethod.getMethod().getParameterTypes()[0]
                     + " could not find constructor with arguments matching (type-wise) the ones given in parameters.", e);
@@ -86,14 +94,22 @@ public class InvokeParameterisedMethod extends Statement {
 
     private Object[] castParamsUsingConverters(Object[] columns) throws ConversionFailedException {
         Class<?>[] expectedParameterTypes = testMethod.getMethod().getParameterTypes();
+        if (testMethodParamsAreVarargs(columns, expectedParameterTypes)) {
+            columns = new Object[] {columns};
+        }
+
         Annotation[][] parameterAnnotations = testMethod.getMethod().getParameterAnnotations();
         verifySameSizeOfArrays(columns, expectedParameterTypes);
         columns = castAllParametersToProperTypes(columns, expectedParameterTypes, parameterAnnotations);
         return columns;
     }
 
+    private boolean testMethodParamsAreVarargs(Object[] columns, Class<?>[] expectedParameterTypes) {
+        return expectedParameterTypes.length == 1 && columns.length > 1 && expectedParameterTypes[0].isArray();
+    }
+
     private String[] splitAtCommaOrPipe(String input) {
-        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> result = new ArrayList<String>();
 
         char character = '\0';
         char previousCharacter;
@@ -175,7 +191,9 @@ public class InvokeParameterisedMethod extends Statement {
             return object.toString().charAt(0);
         if (clazz.isAssignableFrom(Byte.TYPE) || clazz.isAssignableFrom(Byte.class))
             return Byte.parseByte((String) object);
-        throw new IllegalArgumentException("Parameter type cannot be handled! Only primitive types and Strings can be used.");
+        throw new IllegalArgumentException("Parameter type (" + clazz.getTypeName() + ") cannot be handled! Only primitive types and Strings can be" +
+                " used" +
+                ".");
     }
 
     private void verifySameSizeOfArrays(Object[] columns, Class<?>[] parameterTypes) {

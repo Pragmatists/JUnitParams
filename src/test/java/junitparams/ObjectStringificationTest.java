@@ -3,10 +3,11 @@ package junitparams;
 import static junitparams.internal.Utils.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import junitparams.internal.*;
 
 import org.junit.*;
 import org.junit.runner.*;
+
+import junitparams.internal.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class ObjectStringificationTest {
@@ -26,7 +27,7 @@ public class ObjectStringificationTest {
     }
 
     @Test
-    public void stringifyClassWithToStringAndmanyParams() throws Exception {
+    public void stringifyClassWithToStringAndManyParams() throws Exception {
         ClassWithToString obj1 = new ClassWithToString("one");
         ClassWithToString obj2 = new ClassWithToString("two");
 
