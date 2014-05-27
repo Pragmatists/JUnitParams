@@ -1,8 +1,7 @@
 package junitparams;
 
 import static junitparams.internal.Utils.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -16,14 +15,14 @@ public class ObjectStringificationTest {
     public void stringifyString() throws Exception {
         String obj = "test";
 
-        assertThat(stringify(obj, 0), is("[0] test"));
+        assertThat(stringify(obj, 0)).isEqualTo("[0] test");
     }
 
     @Test
     public void stringifyClassWithToStringAndOneParam() throws Exception {
         ClassWithToString obj = new ClassWithToString("test");
 
-        assertThat(stringify(obj, 0), is("[0] test"));
+        assertThat(stringify(obj, 0)).isEqualTo("[0] test");
     }
 
     @Test
@@ -31,8 +30,7 @@ public class ObjectStringificationTest {
         ClassWithToString obj1 = new ClassWithToString("one");
         ClassWithToString obj2 = new ClassWithToString("two");
 
-        assertThat(stringify(new Object[] { obj1, obj2 }, 0),
-                is("[0] one, two"));
+        assertThat(stringify(new Object[] { obj1, obj2 }, 0)).isEqualTo("[0] one, two");
     }
 
     @Test
@@ -40,7 +38,7 @@ public class ObjectStringificationTest {
         ClassWithToString obj = new ClassWithToString("dupa") {
         };
 
-        assertThat(Utils.stringify(obj, 0), is("[0] dupa"));
+        assertThat(Utils.stringify(obj, 0)).isEqualTo("[0] dupa");
     }
 
     private class ClassWithToString {

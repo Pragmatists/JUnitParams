@@ -1,7 +1,7 @@
 package junitparams;
 
 import static junitparams.JUnitParamsRunner.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.*;
 
@@ -57,7 +57,7 @@ public class ParametersProvidersTest {
     @Test
     @Parameters(source = OneIntegerProvider.class)
     public void providedPrimitiveParams(int integer) {
-        assertTrue(integer < 4);
+        assertThat(integer).isLessThan(4);
     }
 
     public static class OneIntegerProvider {
@@ -73,8 +73,8 @@ public class ParametersProvidersTest {
     @Test
     @Parameters(source = DomainObjectProvider.class)
     public void providedDomainParams(DomainClass object1, DomainClass object2) {
-        assertEquals("dupa1", object1.toString());
-        assertEquals("dupa2", object2.toString());
+        assertThat(object1.toString()).isEqualTo("dupa1");
+        assertThat(object2.toString()).isEqualTo("dupa2");
     }
 
     public static class DomainObjectProvider {
@@ -97,5 +97,4 @@ public class ParametersProvidersTest {
             return name;
         }
     }
-
 }

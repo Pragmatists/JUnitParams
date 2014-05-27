@@ -1,6 +1,6 @@
 package junitparams;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -11,7 +11,7 @@ public class ParamsInAnnotationTest {
     @Test
     @Parameters({ "1", "2" })
     public void singleParam(int number) {
-        assertTrue(number > 0);
+        assertThat(number).isGreaterThan(0);
     }
 
     @Test
@@ -22,35 +22,35 @@ public class ParamsInAnnotationTest {
     @Test
     @Parameters({ "1, false", "2, true" })
     public void multipleParams(int number, boolean what) throws Exception {
-        assertEquals(what, number > 1);
+        assertThat(number).isGreaterThan(1);
     }
 
     @Test
     @Parameters({ ",1"})
     public void emptyFirstParam(String empty, int number) {
-        assertEquals("", empty);
-        assertEquals(1, number);
+        assertThat(empty).isEmpty();
+        assertThat(number).isEqualTo(1);
     }
 
     @Test
     @Parameters({ "1,"})
     public void emptyLastParam(int number, String empty) {
-        assertEquals(1, number);
-        assertEquals("", empty);
+        assertThat(empty).isEmpty();
+        assertThat(number).isEqualTo(1);
     }
 
     @Test
     @Parameters({ "1,,1"})
     public void emptyMiddleParam(int number1, String empty, int number2) {
-        assertEquals(1, number1);
-        assertEquals("", empty);
-        assertEquals(1, number2);
+        assertThat(empty).isEmpty();
+        assertThat(number1).isEqualTo(1);
+        assertThat(number2).isEqualTo(1);
     }
 
     @Test
     @Parameters({","})
     public void allParamsEmpty(String empty1, String empty2) {
-        assertEquals("", empty1);
-        assertEquals("", empty2);
+        assertThat(empty1).isEmpty();
+        assertThat(empty2).isEmpty();
     }
 }

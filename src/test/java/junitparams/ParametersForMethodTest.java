@@ -1,7 +1,7 @@
 package junitparams;
 
 import static junitparams.JUnitParamsRunner.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -12,7 +12,7 @@ public class ParametersForMethodTest {
     @Test
     @Parameters
     public void oneParamDifferentTypes(int number, String a) {
-        assertTrue(number > 0);
+        assertThat(number).isGreaterThan(0);
     }
 
     private Object[] parametersForOneParamDifferentTypes() {

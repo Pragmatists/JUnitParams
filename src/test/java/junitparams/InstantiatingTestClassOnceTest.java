@@ -1,11 +1,9 @@
 package junitparams;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.hamcrest.CoreMatchers.*;
-
-import static org.junit.Assert.assertThat;
 
 @RunWith(JUnitParamsRunner.class)
 public class InstantiatingTestClassOnceTest {
@@ -15,7 +13,7 @@ public class InstantiatingTestClassOnceTest {
 
     @Test
     public void shouldBeInstantiatedOncePerTestMethod() {
-        assertThat(instantiationsCount, is(NUMBER_OF_TEST_METHODS_IN_THIS_CLASS));
+        assertThat(instantiationsCount).isEqualTo(NUMBER_OF_TEST_METHODS_IN_THIS_CLASS);
     }
 
     public InstantiatingTestClassOnceTest() {

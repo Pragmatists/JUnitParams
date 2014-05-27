@@ -1,6 +1,6 @@
 package junitparams;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -23,6 +23,6 @@ public class BeforeAfterClassTest {
     @Test
     @Parameters({ " " })
     public void test(String param) {
-        assertTrue(val);
+        assertThat(val).isTrue();
     }
 }

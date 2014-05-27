@@ -1,7 +1,7 @@
 package junitparams;
 
 import static junitparams.JUnitParamsRunner.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ public class CastingParamsTest {
     @Test
     @Parameters
     public void wrapWithTypeBySingleArgConstructor(PersonTest.Person person) {
-        assertTrue(person.getAge() > 0);
+        assertThat(person.getAge()).isGreaterThan(0);
     }
     List<Integer> parametersForWrapWithTypeBySingleArgConstructor() {
         return Arrays.asList(1, 2);
@@ -25,7 +25,7 @@ public class CastingParamsTest {
     @Test
     @Parameters
     public void wrapWithTypeByMultiArgConstructor(PersonTest.Person person) {
-        assertTrue(person.getAge() > 0);
+        assertThat(person.getAge()).isGreaterThan(0);
     }
     Object parametersForWrapWithTypeByMultiArgConstructor() {
         return $($("first", 1), $("second", 2));
