@@ -8,7 +8,7 @@
     </parent>
     <groupId>pl.pragmatists</groupId>
     <artifactId>JUnitParams</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>JUnitParams</name>
     <description>Better parameterised tests for JUnit</description>
@@ -54,7 +54,7 @@
                 <configuration>
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
             <plugin>
