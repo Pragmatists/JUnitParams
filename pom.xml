@@ -12,7 +12,7 @@
     <packaging>jar</packaging>
     <name>JUnitParams</name>
     <description>Better parameterised tests for JUnit</description>
-    <url>https://github.com/Pragmatists/junitparams</url>
+    <url>https://github.com/Pragmatists/JUnitParams</url>
     <developers>
         <developer>
             <id>pawel.lipinski</id>
@@ -32,12 +32,12 @@
     </licenses>
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/Pragmatists/junitparams/issues</url>
+        <url>https://github.com/Pragmatists/JUnitParams/issues</url>
     </issueManagement>
     <scm>
-        <connection>scm:git:git://github.com/Pragmatists/junitparams.git</connection>
-        <developerConnection>scm:git:git@github.com:Pragmatists/junitparams.git</developerConnection>
-        <url>https://github.com/Pragmatists/junitparams</url>
+        <connection>scm:git:git://github.com/Pragmatists/JUnitParams.git</connection>
+        <developerConnection>scm:git:git@github.com:Pragmatists/JUnitParams.git</developerConnection>
+        <url>https://github.com/Pragmatists/JUnitParams</url>
         <tag>HEAD</tag>
     </scm>
     <organization>
