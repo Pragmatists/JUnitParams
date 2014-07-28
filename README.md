@@ -10,13 +10,13 @@ JUnitParams project adds a new runner to JUnit and provides much easier and read
 
 Main differences to standard JUnit Parametrised runner:
 
-more explicit - params are in test method params, not class fields
-less code - you don't need a constructor to set up parameters
-you can mix parametrised with non-parametrised methods in one class
-params can be passed as a CSV string or from a parameters provider class
-parameters provider class can have as many parameters providing methods as you want, so that you can group different cases
-you can have a test method that provides parameters (no external classes or statics anymore)
-you can see actual parameter values in your IDE (in JUnit's Parametrised it's only consecutive numbers of parameters):
+* more explicit - params are in test method params, not class fields
+* less code - you don't need a constructor to set up parameters
+* you can mix parametrised with non-parametrised methods in one class
+* params can be passed as a CSV string or from a parameters provider class
+* parameters provider class can have as many parameters providing methods as you want, so that you can group different cases
+* you can have a test method that provides parameters (no external classes or statics anymore)
+* you can see actual parameter values in your IDE (in JUnit's Parametrised it's only consecutive numbers of parameters):
 
 ## Quickstart
 
