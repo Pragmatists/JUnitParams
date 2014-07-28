@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>oss-parent</artifactId>
 		<groupId>org.sonatype.oss</groupId>
-		<version>8</version>
+		<version>9</version>
 	</parent>
 	<groupId>pl.pragmatists</groupId>
 	<artifactId>JUnitParams</artifactId>
