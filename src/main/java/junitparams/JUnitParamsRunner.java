@@ -10,27 +10,27 @@ import org.junit.runners.model.*;
 import junitparams.internal.*;
 
 /**
- * <h1>JUnitParams</h1><br/>
+ * <h1>JUnitParams</h1><br>
  * <p>
  * This is a JUnit runner for parameterised tests that don't suck. Annotate your test class with
  * <code>&#064;RunWith(JUnitParamsRunner.class)</code> and place
  * <code>&#064;Parameters</code> annotation on each test method which requires
  * parameters. Nothing more needed - no special structure, no dirty tricks.
  * </p>
- * <br/>
- * <h2>Contents</h2> <b> <a href="#1">1. Parameterising tests</a><br/>
+ * <br>
+ * <h2>Contents</h2> <b> <a href="#p1">1. Parameterising tests</a><br>
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#a">a. Parameterising tests via values
- * in annotation</a><br/>
+ * in annotation</a><br>
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#b">b. Parameterising tests via a
- * method that returns parameter values</a><br/>
+ * method that returns parameter values</a><br>
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#c">c. Parameterising tests via
- * external classes</a><br/>
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#d">d. Loading parameters from files</a><br/>
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#d">e. Converting parameter values</a><br/>
- * <a href="#2">2. Usage with Spring</a><br/>
- * <a href="#3">3. Other options</a><br/>
- * </b><br/>
- * <h3 id="1">1. Parameterising tests</h3> Parameterised tests are a great way
+ * external classes</a><br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#d">d. Loading parameters from files</a><br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#d">e. Converting parameter values</a><br>
+ * <a href="#p2">2. Usage with Spring</a><br>
+ * <a href="#p3">3. Other options</a><br>
+ * </b><br>
+ * <h3 id="p1">1. Parameterising tests</h3> Parameterised tests are a great way
  * to limit the amount of test code when you need to test the same code under
  * different conditions. Ever tried to do it with standard JUnit tools like
  * Parameterized runner or Theories? I always thought they're so awkward to use,
@@ -63,8 +63,7 @@ import junitparams.internal.*;
  * public void passEnumAsParam(PersonType person) {
  * }
  * </pre>
- * 
- * </p>
+ *
  * <h4 id="b">b. Parameterising tests via a method that returns parameter values
  * </h4>
  * <p>
@@ -89,7 +88,7 @@ import junitparams.internal.*;
  * Where <code>$(...)</code> is a static method defined in
  * <code>JUnitParamsRunner</code> class, which returns its parameters as a
  * <code>Object[]</code> array. Just a shortcut, so that you don't need to write the ugly <code>new Object[] {}</code> kind of stuff.
- * </p>
+ *
  * <p>
  * <code>method</code> can take more than one method name - you can pass as many
  * of them as you want, separated by commas. This enables you to divide your
@@ -114,7 +113,6 @@ import junitparams.internal.*;
  *      );
  *   }
  * </pre>
- * </p>
  * <p>
  * The <code>method</code> argument of a <code>@Parameters</code> annotation can
  * be ommited if the method that provides parameters has a the same name as the
@@ -134,8 +132,7 @@ import junitparams.internal.*;
  *      );
  *   }
  * </pre>
- * 
- * </p>
+ *
  * <p>
  * If you don't like returning untyped values and arrays, you can equally well
  * return any Iterable of concrete objects:
@@ -183,9 +180,8 @@ import junitparams.internal.*;
  * superclass. That you can doesn't mean you should. Inheritance in tests is
  * usually a code smell (readability hurts), so make sure you know what you're
  * doing.
- * </p>
  * 
- * </p> <h4 id="c">c. Parameterising tests via external classes</h4>
+ * <h4 id="c">c. Parameterising tests via external classes</h4>
  * <p>
  * For more complex cases you may want to externalise the method that provides
  * parameters or use more than one method to provide parameters to a single test
@@ -213,7 +209,6 @@ import junitparams.internal.*;
  * 
  * All methods starting with <code>provide</code> are used as parameter
  * providers.
- * </p>
  * 
  * <p>
  * Sometimes though you may want to use just one or few methods of some class to
@@ -226,8 +221,7 @@ import junitparams.internal.*;
  *       ...
  *   }
  * </pre>
- * 
- * </p>
+ *
  * 
  * <h4 id="d">d. Loading parameters from files</h4> You may be interested in
  * loading parameters from a file. This is very easy if it's a CSV file with
@@ -256,7 +250,7 @@ import junitparams.internal.*;
  *     &#064;Override
  *     public Object[] map(Reader reader) {
  *         Object[] map = super.map(reader);
- *         List<Object[]> result = new LinkedList<Object[]>();
+ *         List&lt;Object[]&gt; result = new LinkedList&lt;Object[]&gt;();
  *         for (Object lineObj : map) {
  *             String line = (String) lineObj; // line in a format just like in the file
  *             result.add(new Object[] { ..... }); // some format edible by the test method
@@ -317,7 +311,7 @@ import junitparams.internal.*;
  *     }
  * </pre>
  * 
- * <h3 id="2">2. Usage with Spring</h3>
+ * <h3 id="p2">2. Usage with Spring</h3>
  * <p>
  * You can easily use JUnitParams together with Spring. The only problem is that
  * Spring's test framework is based on JUnit runners, and JUnit allows only one
@@ -337,28 +331,24 @@ import junitparams.internal.*;
  * 
  * This lets you use in your tests anything that Spring provides in its test
  * framework.
- * </p>
  * 
- * <h3 id="1">3. Other options</h3> <h4>Customizing how parameter objects are
+ * <h3 id="p3">3. Other options</h3> <h4>Customizing how parameter objects are
  * shown in IDE</h4>
  * <p>
  * Tests show up in your IDE as a tree with test class name being the root, test
  * methods being nodes, and parameter sets being the leaves. If you want to
  * customize the way an parameter object is shown, create a <b>toString</b>
  * method for it.
- * </p>
  * <h4>Empty parameter sets</h4>
  * <p>
  * If you create a parameterised test, but won't give it any parameter sets, it
  * will be ignored and you'll be warned about it.
- * </p>
  * <h4>Parameterised test with no parameters</h4>
  * <p>
  * If for some reason you want to have a normal non-parameterised method to be
  * annotated with @Parameters, then fine, you can do it. But it will be ignored
  * then, since there won't be any params for it, and parameterised tests need
  * parameters to execute properly (parameters are a part of test setup, right?)
- * </p>
  * <h4>JUnit Rules</h4>
  * <p>
  * The runner for parameterised test is trying to keep all the @Rule's running,
@@ -367,7 +357,6 @@ import junitparams.internal.*;
  * sometimes I need to guess how to call the next element in chain. If you have
  * your own rule, make sure it has a field of type Statement which is the next
  * statement in chain to call.
- * </p>
  * <h4>Test inheritance</h4>
  * <p>
  * Although usually a bad idea, since it makes tests less readable, sometimes
@@ -376,7 +365,6 @@ import junitparams.internal.*;
  * have separate parameters provider methods in the subclasses. Also the other
  * way around is ok, you can define parameter providers in superclass and have
  * tests in subclasses uses them as their input.
- * </p>
  *
  * @author Pawel Lipinski (lipinski.pawel@gmail.com)
  */

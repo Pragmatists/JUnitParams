@@ -29,7 +29,7 @@ public @interface Parameters {
      * group your examples. The resulting array should contain parameter sets in
      * its elements. Each parameter set must be another Object[] array, which
      * contains parameter values in its elements.
-     * Example: <code>@Parameters(source = PeopleProvider.class)
+     * Example: <code>@Parameters(source = PeopleProvider.class)</code>
      */
     Class<?> source() default NullType.class;
 
