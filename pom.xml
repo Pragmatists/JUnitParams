@@ -8,7 +8,7 @@
     </parent>
     <groupId>pl.pragmatists</groupId>
     <artifactId>JUnitParams</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.3</version>
     <packaging>jar</packaging>
     <name>JUnitParams</name>
     <description>Better parameterised tests for JUnit</description>
@@ -35,8 +35,8 @@
         <url>https://github.com/Pragmatists/junitparams/issues</url>
     </issueManagement>
     <scm>
-        <connection>scm:git:git://github.com/Pragmatists/junitparams.git/</connection>
-        <developerConnection>scm:git:git@github.com:Pragmatists/junitparams.git/</developerConnection>
+        <connection>scm:git:git://github.com/Pragmatists/junitparams.git</connection>
+        <developerConnection>scm:git:git@github.com:Pragmatists/junitparams.git</developerConnection>
         <url>https://github.com/Pragmatists/junitparams</url>
         <tag>HEAD</tag>
     </scm>
@@ -44,12 +44,6 @@
         <name>Pragmatists</name>
         <url>http://pragmatists.pl</url>
     </organization>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
     <build>
         <plugins>
             <plugin>
@@ -60,7 +54,7 @@
                 <configuration>
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>
             </plugin>
             <plugin>
@@ -117,16 +111,6 @@
                     <archive>
                         <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <mavenExecutorId>forked-path</mavenExecutorId>
-                    <useReleaseProfile>false</useReleaseProfile>
-                    <arguments>-Psonatype-oss-release</arguments>
                 </configuration>
             </plugin>
             <plugin>
