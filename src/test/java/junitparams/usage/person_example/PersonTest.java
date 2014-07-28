@@ -1,8 +1,7 @@
 package junitparams.usage.person_example;
 
 import static junitparams.JUnitParamsRunner.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -17,13 +16,13 @@ public class PersonTest {
             "17, false",
             "22, true" })
     public void isAdultAgeDirect(int age, boolean valid) throws Exception {
-        assertThat(new Person(age).isAdult(), is(valid));
+        assertThat(new Person(age).isAdult()).isEqualTo(valid);
     }
 
     @Test
     @Parameters(method = "adultValues")
     public void isAdultAgeDefinedMethod(int age, boolean valid) throws Exception {
-        assertThat(new Person(age).isAdult(), is(valid));
+        assertThat(new Person(age).isAdult()).isEqualTo(valid);
     }
 
     private Object[] adultValues() {
@@ -34,7 +33,7 @@ public class PersonTest {
     @Test
     @Parameters
     public void isAdultAgeDefaultMethod(int age, boolean valid) throws Exception {
-        assertThat(new Person(age).isAdult(), is(valid));
+        assertThat(new Person(age).isAdult()).isEqualTo(valid);
     }
 
     @SuppressWarnings("unused")
@@ -45,7 +44,7 @@ public class PersonTest {
     @Test
     @Parameters(source = PersonProvider.class)
     public void personIsAdult(Person person, boolean valid) {
-        assertThat(person.isAdult(), is(valid));
+        assertThat(person.isAdult()).isEqualTo(valid);
     }
 
     public static class PersonProvider {

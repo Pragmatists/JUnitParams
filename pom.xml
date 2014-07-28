@@ -11,7 +11,7 @@
 	<packaging>jar</packaging>
 	<name>JUnitParams</name>
 	<description>Better parameterised tests for JUnit</description>
-	<url>http://junitparams.googlecode.com</url>
+	<url>https://github.com/Pragmatists/junitparams</url>
 	<developers>
 		<developer>
 			<id>pawel.lipinski</id>
@@ -30,13 +30,13 @@
 		</license>
 	</licenses>
 	<issueManagement>
-		<system>Google Code</system>
-		<url>http://code.google.com/p/junitparams/issues/list</url>
+		<system>GitHub Issues</system>
+		<url>https://github.com/Pragmatists/junitparams/issues</url>
 	</issueManagement>
 	<scm>
-		<connection>scm:hg:http://junitparams.googlecode.com/hg/</connection>
-		<developerConnection>scm:hg:https://junitparams.googlecode.com/hg/</developerConnection>
-		<url>http://junitparams.googlecode.com/hg/</url>
+		<connection>scm:git:git://github.com/Pragmatists/junitparams.git/</connection>
+		<developerConnection>scm:git:git@github.com:Pragmatists/junitparams.git/</developerConnection>
+		<url>https://github.com/Pragmatists/junitparams</url>
 	  <tag>HEAD</tag>
   </scm>
 	<organization>
@@ -50,8 +50,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
@@ -73,7 +73,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.5</version>
                 <configuration>
                     <archive>
                         <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
@@ -97,6 +97,12 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
+		</dependency>
+        <dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>1.6.1</version>
+            <scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

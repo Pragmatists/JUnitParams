@@ -48,6 +48,7 @@ public class TestMethodTest {
 
     @Test
     public void hierarchicalTestMethodStructure() throws Exception {
+        System.clearProperty("JUnitParams.flat");
         Description description = plainTestMethod.describe();
 
         assertEquals("for_others_to_work", description.getDisplayName());
@@ -57,6 +58,7 @@ public class TestMethodTest {
 
     @Test
     public void hierarchicalArrayTestMethodStructure() throws Exception {
+        System.clearProperty("JUnitParams.flat");
         Description description = arrayTestMethod.describe();
 
         assertEquals("for_others_to_work_with_array", description.getDisplayName());

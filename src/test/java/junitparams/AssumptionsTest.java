@@ -1,12 +1,11 @@
 package junitparams;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assume.*;
 
 import org.junit.*;
 import org.junit.runner.*;
-
-import junitparams.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class AssumptionsTest {
@@ -14,7 +13,7 @@ public class AssumptionsTest {
     @Test
     @Parameters({ "true", "false" })
     public void assumeOnceWorksAndOnceIgnores(boolean value) {
-        assumeTrue(value);
-        assertTrue(value);
+        assumeThat(value, is(true));
+        assertThat(value).isTrue();
     }
 }

@@ -1,7 +1,7 @@
 package junitparams;
 
 import static junitparams.JUnitParamsRunner.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +12,7 @@ public abstract class SuperclassTest {
 	@Test
 	@Parameters(method = "paramForSuperclassMethod")
 	public void testWorky(int val) throws Exception {
-		assertTrue(val > 0);
+		assertThat(val).isGreaterThan(0);
 	}	
 
     protected Object[] paramsForIsAdult() {

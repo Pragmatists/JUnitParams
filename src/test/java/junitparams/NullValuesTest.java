@@ -1,7 +1,6 @@
 package junitparams;
 
 import static junitparams.JUnitParamsRunner.*;
-import static org.junit.Assert.*;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -11,9 +10,7 @@ public class NullValuesTest {
 
     @Test
     @Parameters(method = "singleParams")
-    public void passesForSingleParametersListWithTheWorkaround(Object param) {
-        assertTrue(true);
-    }
+    public void passesForSingleParametersListWithTheWorkaround(Object param) { }
 
     public Object[] singleParams() {
         return $(
@@ -24,9 +21,7 @@ public class NullValuesTest {
 
     @Test
     @Parameters(method = "multipleParams")
-    public void passesForMultipleParametersOutOfBox(Object param1, Object param2, Object param3) {
-        assertTrue(true);
-    }
+    public void passesForMultipleParametersOutOfBox(Object param1, Object param2, Object param3) { }
 
     public Object[] multipleParams() {
         return $(

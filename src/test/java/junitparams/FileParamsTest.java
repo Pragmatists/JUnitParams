@@ -1,6 +1,6 @@
 package junitparams;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -15,31 +15,30 @@ public class FileParamsTest {
     @Test
     @FileParameters("src/test/resources/test.csv")
     public void loadParamsFromFileWithIdentityMapper(int age, String name) {
-        assertTrue(age > 0);
+        assertThat(age).isGreaterThan(0);
     }
 
     @Test
     @FileParameters(value = "src/test/resources/test.csv", mapper = PersonMapper.class)
     public void loadParamsFromFileWithCustomMapper(Person person) {
-        assertTrue(person.getAge() > 0);
+        assertThat(person.getAge()).isGreaterThan(0);
     }
 
     @Test
     @FileParameters("classpath:test.csv")
     public void loadParamsFromFileAtClasspath(int age, String name) {
-        assertTrue(age > 0);
+        assertThat(age).isGreaterThan(0);
     }
 
     @Test
     @FileParameters("file:src/test/resources/test.csv")
     public void loadParamsFromFileAtFilesystem(int age, String name) {
-        assertTrue(age > 0);
+        assertThat(age).isGreaterThan(0);
     }
 
     @Test
     @FileParameters(value = "classpath:with_header.csv", mapper = CsvWithHeaderMapper.class)
     public void csvWithHeader(int id, String name) {
-        assertTrue(id > 0);
+        assertThat(id).isGreaterThan(0);
     }
-
 }

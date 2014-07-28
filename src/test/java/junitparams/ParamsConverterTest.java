@@ -1,6 +1,6 @@
 package junitparams;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.text.*;
 import java.util.*;
@@ -8,7 +8,6 @@ import java.util.*;
 import org.junit.*;
 import org.junit.runner.*;
 
-import junitparams.*;
 import junitparams.converters.*;
 
 @RunWith(JUnitParamsRunner.class)
@@ -29,7 +28,7 @@ public class ParamsConverterTest {
         @ConvertParam(LetterToNumberConverter.class) int num) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
-        assertEquals(1, num);
+        assertThat(num).isEqualTo(1);
     }
 
     @Test
@@ -45,9 +44,9 @@ public class ParamsConverterTest {
     }
 
     private void assertCalendarDate(Calendar calendar) {
-        assertEquals(2012, calendar.get(Calendar.YEAR));
-        assertEquals(11, calendar.get(Calendar.MONTH));
-        assertEquals(1, calendar.get(Calendar.DAY_OF_MONTH));
+        assertThat(calendar.get(Calendar.YEAR)).isEqualTo(2012);
+        assertThat(calendar.get(Calendar.MONTH)).isEqualTo(11);
+        assertThat(calendar.get(Calendar.DAY_OF_MONTH)).isEqualTo(1);
     }
 
     private Calendar createCalendarWithDate(Date date) {
