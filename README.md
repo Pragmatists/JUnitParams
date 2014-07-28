@@ -1,5 +1,6 @@
-# JUnitParams - *Parameterised tests that don't suck*
----
+# JUnitParams
+*Parameterised tests that don't suck*
+
 
 **Note**: We are currently moving the project from Google Code to Github. Some information may still be accessible only at https://code
 .google.com/p/junitparams/
