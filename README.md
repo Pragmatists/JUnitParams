@@ -1,4 +1,7 @@
 # JUnitParams
+
+[![Build Status](https://secure.travis-ci.org/Pragmatists/JUnitParams.png)](http://travis-ci.org/Pragmatists/JUnitParams)
+
 *Parameterised tests that don't suck*
 
 ## Example
