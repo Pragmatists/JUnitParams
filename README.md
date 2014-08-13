@@ -1,8 +1,16 @@
 # JUnitParams
 *Parameterised tests that don't suck*
 
+## Example
 
-**Note**: We are currently moving the project from Google Code to Github. Some information may still be accessible only at https://code.google.com/p/junitparams/
+``` java
+  @Test
+  @Parameters({"17, false", 
+               "22, true" })
+  public void personIsAdult(int age, boolean valid) throws Exception {
+    assertThat(new Person(age).isAdult(), is(valid));
+  }
+```
 
 ## About
 JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit >=4.6.
@@ -27,3 +35,5 @@ You can also have a look at [Wiki:Quickstart](https://github.com/Pragmatists/jun
 ## News
 
 Latest news are available in our [Wiki](https://github.com/Pragmatists/junitparams/wiki/)
+
+**Note**: We are currently moving the project from Google Code to Github. Some information may still be accessible only at https://code.google.com/p/junitparams/
