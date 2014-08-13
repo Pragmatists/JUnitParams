@@ -2,8 +2,7 @@
 *Parameterised tests that don't suck*
 
 
-**Note**: We are currently moving the project from Google Code to Github. Some information may still be accessible only at https://code
-.google.com/p/junitparams/
+**Note**: We are currently moving the project from Google Code to Github. Some information may still be accessible only at https://code.google.com/p/junitparams/
 
 ## About
 JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit >=4.6.
