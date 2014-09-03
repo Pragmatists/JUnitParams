@@ -1,8 +1,9 @@
 package junitparams;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-import javax.lang.model.type.*;
+import javax.lang.model.type.NullType;
 
 /**
  * THE annotation for the test parameters. Use it to say that a method takes
@@ -42,6 +43,24 @@ public @interface Parameters {
      * 
      * You can use multiple methods to provide parameters - use comma to do it:
      * Example: <code>@Parameters(method = "womenParams, menParams")</code>
+     * 
+     * You can provide parameters to the method using the attribute
+     * {@link #methodParams()}
      */
     String method() default "";
+
+    /**
+     * Parameter values for the method used to generate parameter values for the
+     * test method.
+     * Example: <code>@Parameters(method = "getTestCase",
+     * 							  methodParams = {"case1", "case2"})</code>
+     * 
+     * Note that this will be applied to every method specified in method()
+     * Example: <code>@Parameters(method = "womenParams, menParams",
+     * 							  methodParams = {"case1", "case2"})</code>
+     * 
+     * If <code>methodParams</code> attribute is provided, the method must have
+     * an <code>Object[]</code> as the sole argument.
+     */
+    String[] methodParams() default {};
 }

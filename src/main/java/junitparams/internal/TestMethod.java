@@ -183,13 +183,14 @@ public class TestMethod {
 
     private Object[] paramsFromMethod(Class<?> classWithMethod) {
         String methodAnnotation = parametersAnnotation.method();
+        String[] methodParamsAnnotation = parametersAnnotation.methodParams();
 
         if (methodAnnotation.isEmpty())
-            return invokeMethodWithParams(defaultMethodName(), classWithMethod);
+            return invokeMethodWithParams(defaultMethodName(), classWithMethod, methodParamsAnnotation);
 
         List<Object> result = new ArrayList<Object>();
         for (String methodName : methodAnnotation.split(",")) {
-            for (Object param : invokeMethodWithParams(methodName.trim(), classWithMethod))
+            for (Object param : invokeMethodWithParams(methodName.trim(), classWithMethod, methodParamsAnnotation))
                 result.add(param);
         }
 
@@ -207,18 +208,22 @@ public class TestMethod {
         return methodName;
     }
 
-    private Object[] invokeMethodWithParams(String methodName, Class<?> testClass) {
-        Method provideMethod = findParamsProvidingMethodInTestclassHierarchy(methodName, testClass);
+    private Object[] invokeMethodWithParams(String methodName, Class<?> testClass, String[] methodParams) {
+        Method provideMethod = findParamsProvidingMethodInTestclassHierarchy(methodName, testClass, methodParams);
 
-        return invokeParamsProvidingMethod(testClass, provideMethod);
+        return invokeParamsProvidingMethod(testClass, provideMethod, methodParams);
     }
 
-    private Method findParamsProvidingMethodInTestclassHierarchy(String methodName, Class<?> testClass) {
+    private Method findParamsProvidingMethodInTestclassHierarchy(String methodName, Class<?> testClass, String[] methodParams) {
         Method provideMethod = null;
         Class<?> declaringClass = testClass;
         while (declaringClass.getSuperclass() != null) {
             try {
-                provideMethod = declaringClass.getDeclaredMethod(methodName);
+            	if(methodParams.length != 0){
+            		provideMethod = declaringClass.getDeclaredMethod(methodName, Object[].class);
+            	} else {
+                    provideMethod = declaringClass.getDeclaredMethod(methodName);
+            	}
                 break;
             } catch (Exception e) {
             }
@@ -230,11 +235,16 @@ public class TestMethod {
     }
 
     @SuppressWarnings("unchecked")
-    private Object[] invokeParamsProvidingMethod(Class<?> testClass, Method provideMethod) {
+    private Object[] invokeParamsProvidingMethod(Class<?> testClass, Method provideMethod, String[] methodParams) {
         try {
             Object testObject = testClass.newInstance();
             provideMethod.setAccessible(true);
-            Object result = provideMethod.invoke(testObject);
+            Object result;
+            if(methodParams.length != 0){
+            	result = provideMethod.invoke(testObject, (Object)methodParams);
+            } else {
+            	result = provideMethod.invoke(testObject);
+            }
 
             if (Object[].class.isAssignableFrom(result.getClass())) {
                 Object[] params = (Object[]) result;
