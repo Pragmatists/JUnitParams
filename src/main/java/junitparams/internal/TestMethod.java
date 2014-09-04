@@ -257,16 +257,23 @@ public class TestMethod {
             }
 
             if (Iterator.class.isAssignableFrom(result.getClass())) {
+            	Object iteratedElement = null;
                 try {
                     ArrayList<Object[]> res = new ArrayList<Object[]>();
                     Iterator<Object[]> iterator = (Iterator<Object[]>) result;
-                    while(iterator.hasNext())
-                        res.add(iterator.next());
+                    while(iterator.hasNext()){
+                    	iteratedElement = iterator.next();
+                    	// ClassCastException will occur in the following line
+                    	// if the iterator is actually Iterator<Object> in Java 7
+                        res.add((Object[])iteratedElement);
+                    }
                     return res.toArray();
                 } catch (ClassCastException e1) {
-                    // Itertor with consecutive paramsets, each of one param
+                    // Iterator with consecutive paramsets, each of one param
                     ArrayList<Object> res = new ArrayList<Object>();
                     Iterator<?> iterator = (Iterator<?>) result;
+                    // The first element is already stored in iteratedElement
+                    res.add(iteratedElement);
                     while(iterator.hasNext())
                         res.add(new Object[] { iterator.next() });
                     return res.toArray();
