@@ -220,7 +220,7 @@ public class TestMethod {
         while (declaringClass.getSuperclass() != null) {
             try {
             	if(methodParams.length != 0){
-            		provideMethod = declaringClass.getDeclaredMethod(methodName, Object[].class);
+            		provideMethod = declaringClass.getDeclaredMethod(methodName, String[].class);
             	} else {
                     provideMethod = declaringClass.getDeclaredMethod(methodName);
             	}

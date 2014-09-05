@@ -60,7 +60,7 @@ public @interface Parameters {
      * 							  methodParams = {"case1", "case2"})</code>
      * 
      * If <code>methodParams</code> attribute is provided, the method must have
-     * an <code>Object[]</code> as the sole argument.
+     * an <code>String[]</code> as the sole argument.
      */
     String[] methodParams() default {};
 }
