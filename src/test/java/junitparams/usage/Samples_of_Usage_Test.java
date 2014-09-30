@@ -1,16 +1,26 @@
 package junitparams.usage;
 
-import static junitparams.JUnitParamsRunner.*;
+import static junitparams.JUnitParamsRunner.$;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
-import org.junit.*;
-import org.junit.runner.*;
+import junitparams.FileParameters;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
+import junitparams.ParametersProvidersTest;
+import junitparams.ParamsConverterTest;
+import junitparams.converters.ConvertParam;
+import junitparams.mappers.CsvWithHeaderMapper;
+import junitparams.usage.person_example.PersonMapper;
+import junitparams.usage.person_example.PersonTest;
+import junitparams.usage.person_example.PersonType;
 
-import junitparams.*;
-import junitparams.converters.*;
-import junitparams.mappers.*;
-import junitparams.usage.person_example.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 @RunWith(JUnitParamsRunner.class)
 public class Samples_of_Usage_Test {
@@ -82,5 +92,27 @@ public class Samples_of_Usage_Test {
     @Test
     @Parameters({ "01.12.2012" })
     public void convert_params(@ConvertParam(value = ParamsConverterTest.StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {}
+    
+    private static HashMap<String, Integer> keyValues = new HashMap<String, Integer>();
+    static{
+    	keyValues.put("one", 1);
+    	keyValues.put("two", 2);
+    	keyValues.put("three", 3);
+    }
+    
+    @Test
+    @Parameters(methodParams={"one"})
+    public void params_in_method_with_params(int n){}
+    private Object[] parametersForParams_in_method_with_params(String[] args){
+    	Object[] result = new Object[args.length];
+    	for(int i=0; i<args.length; i++){
+    		result[i] = keyValues.get(args[i]);
+    	}
+    	return result;
+    }
+    
+    @Test
+    @Parameters(method="parametersForParams_in_method_with_params", methodParams={"two", "three"})
+    public void params_in_named_method_with_params(int n){}
 
 }
