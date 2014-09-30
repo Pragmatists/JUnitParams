@@ -7,6 +7,7 @@ import org.junit.runner.*;
 import org.junit.runners.model.*;
 
 import junitparams.*;
+import static junitparams.JUnitParamsRunner.$;
 
 @RunWith(JUnitParamsRunner.class)
 public class TestMethodTest {
@@ -66,5 +67,52 @@ public class TestMethodTest {
                 description.getChildren().get(0).getDisplayName());
         assertEquals("[1] b,a (for_others_to_work_with_array)(junitparams.internal.TestMethodTest)",
                 description.getChildren().get(1).getDisplayName());
+    }
+    
+    @Test
+    @Parameters
+    public void testVarargs(String... strs){
+    	assertArrayEquals("Hello world".split(" "), strs);
+    }
+    
+    protected Object[] parametersForTestVarargs(){
+    	return new Object[]{
+    			$("Hello", "world")
+    	};
+    }
+    
+    @Test
+    @Parameters
+    public void testVarargsCustomClass(Pair... pairs){
+		assertEquals(pairs[0].x, pairs[0].y);
+		assertEquals(pairs[1].x, pairs[1].y);
+		assertNotEquals(pairs[2].x, pairs[2].y);
+    }
+    
+    protected Object[] parametersForTestVarargsCustomClass(){
+    	return new Object[]{
+    			$(new Pair(0,0), new Pair(1,1), new Pair(2,3))
+    	};
+    }
+    
+    @Test
+    @Parameters
+    public void testVarargsMoreArgs(int xVal, Pair... pairs){
+		assertEquals(xVal, pairs[0].x);
+		assertNotEquals(xVal, pairs[1].x);
+    }
+    
+    protected Object[] parametersForTestVarargsMoreArgs(){
+    	return new Object[]{
+    			$(10, new Pair(10,20), new Pair(20,30))
+    	};
+    }
+    
+    private class Pair{
+    	int x,y;
+    	public Pair(int x, int y){
+    		this.x = x;
+    		this.y = y;
+    	}
     }
 }

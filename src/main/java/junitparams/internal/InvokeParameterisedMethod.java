@@ -97,9 +97,9 @@ public class InvokeParameterisedMethod extends Statement {
         Class<?>[] expectedParameterTypes = testMethod.getMethod().getParameterTypes();
         if (testMethodParamsAreVarargs(columns, expectedParameterTypes)) {
         	Class<?> varArgType = expectedParameterTypes[expectedParameterTypes.length-1].getComponentType();
-        	Object[] varArgs = (Object[])Array.newInstance(varArgType, columns.length - expectedParameterTypes.length);
+        	Object[] varArgs = (Object[])Array.newInstance(varArgType, columns.length - expectedParameterTypes.length + 1);
         	for(int i=0; i<varArgs.length; i++){
-        		varArgs[i] = columns[i+expectedParameterTypes.length];
+        		varArgs[i] = columns[i+expectedParameterTypes.length-1];
         	}
         	Object[] tmp = new Object[expectedParameterTypes.length];
         	for(int i=0; i<tmp.length-1; i++){
