@@ -30,6 +30,15 @@ Main differences to standard JUnit Parametrised runner:
 
 ## Quickstart
 
+JUnitParams is available as Maven artifact:
+```
+<dependency>
+  <groupId>pl.pragmatists</groupId>
+  <artifactId>JUnitParams</artifactId>
+  <version>1.0.3</version>
+</dependency>
+```
+
 If you want to see just one simple test class with all main ways to use JUnitParams see here:
 https://github.com/Pragmatists/junitparams/tree/master/src/test/java/junitparams/usage
 
