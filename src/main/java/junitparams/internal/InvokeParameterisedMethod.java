@@ -117,7 +117,8 @@ public class InvokeParameterisedMethod extends Statement {
 
     private boolean testMethodParamsAreVarargs(Object[] columns, Class<?>[] expectedParameterTypes) {
     	int paramLen = expectedParameterTypes.length;
-        return expectedParameterTypes.length <= columns.length && expectedParameterTypes[paramLen-1].isArray();
+        return expectedParameterTypes.length <= columns.length && expectedParameterTypes[paramLen-1].isArray()
+        		&& expectedParameterTypes[paramLen-1].getComponentType().equals(columns[paramLen-1].getClass());
     }
 
     private String[] splitAtCommaOrPipe(String input) {
