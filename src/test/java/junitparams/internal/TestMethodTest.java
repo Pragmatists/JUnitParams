@@ -1,13 +1,18 @@
 package junitparams.internal;
 
+import static junitparams.JUnitParamsRunner.*;
 import static org.junit.Assert.*;
 
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runners.model.*;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.runner.RunWith;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.TestClass;
 
-import junitparams.*;
-import static junitparams.JUnitParamsRunner.$;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 
 @RunWith(JUnitParamsRunner.class)
 public class TestMethodTest {
@@ -97,16 +102,38 @@ public class TestMethodTest {
     
     @Test
     @Parameters
-    public void testVarargsMoreArgs(int xVal, Pair... pairs){
-		assertEquals(xVal, pairs[0].x);
-		assertNotEquals(xVal, pairs[1].x);
+    public void testVarargsMoreArgs(int sumOfX, int sumOfY, Pair... pairs){
+        int sumOfXFromPairs = 0;
+        int sumOfYFromPairs = 0;
+        for (Pair pair : pairs) {
+            sumOfXFromPairs += pair.x;
+            sumOfYFromPairs += pair.y;
+        }
+        assertEquals(sumOfX, sumOfXFromPairs);
+        assertEquals(sumOfY, sumOfYFromPairs);
     }
     
-    protected Object[] parametersForTestVarargsMoreArgs(){
-    	return new Object[]{
-    			$(10, new Pair(10,20), new Pair(20,30))
-    	};
+    protected Object parametersForTestVarargsMoreArgs(){
+    	return $(
+                    $(40, 50, new Pair(17,21), new Pair(12,18), new Pair(11,11)),
+                    $(10, 20, new Pair(3,15), new Pair(7,5))
+                );
     }
+
+    @Test
+    @Parameters
+    public void testVargsMoreArgsTheSameType(Pair sum, Pair... pairs) {
+        assertEquals(sum.x, pairs[0].x + pairs[1].x);
+        assertEquals(sum.y, pairs[0].y + pairs[1].y);
+    }
+
+    protected Object parametersForTestVargsMoreArgsTheSameType(){
+        return $(
+                    $(new Pair(10,30), new Pair(7,17), new Pair(3,13)),
+                    $(new Pair(20,40), new Pair(18,21), new Pair(2,19))
+                );
+    }
+
     
     private class Pair{
     	int x,y;

@@ -95,18 +95,9 @@ public class InvokeParameterisedMethod extends Statement {
 
     private Object[] castParamsUsingConverters(Object[] columns) throws ConversionFailedException {
         Class<?>[] expectedParameterTypes = testMethod.getMethod().getParameterTypes();
-        if (testMethodParamsAreVarargs(columns, expectedParameterTypes)) {
-        	Class<?> varArgType = expectedParameterTypes[expectedParameterTypes.length-1].getComponentType();
-        	Object[] varArgs = (Object[])Array.newInstance(varArgType, columns.length - expectedParameterTypes.length + 1);
-        	for(int i=0; i<varArgs.length; i++){
-        		varArgs[i] = columns[i+expectedParameterTypes.length-1];
-        	}
-        	Object[] tmp = new Object[expectedParameterTypes.length];
-        	for(int i=0; i<tmp.length-1; i++){
-        		tmp[i] = columns[i];
-        	}
-        	tmp[tmp.length-1] = varArgs;
-            columns = tmp;
+
+        if (testMethodParamsHasVarargs(columns, expectedParameterTypes)) {
+            columns = columnsWithVarargs(columns, expectedParameterTypes);
         }
 
         Annotation[][] parameterAnnotations = testMethod.getMethod().getParameterAnnotations();
@@ -115,7 +106,30 @@ public class InvokeParameterisedMethod extends Statement {
         return columns;
     }
 
-    private boolean testMethodParamsAreVarargs(Object[] columns, Class<?>[] expectedParameterTypes) {
+    private Object[] columnsWithVarargs(Object[] columns, Class<?>[] expectedParameterTypes) {
+        Object[] allParameters = standardParameters(columns, expectedParameterTypes);
+        allParameters[allParameters.length-1] = varargsParameters(columns, expectedParameterTypes);
+        return allParameters;
+    }
+
+    private Object[] varargsParameters(Object[] columns, Class<?>[] expectedParameterTypes) {
+        Class<?> varArgType = expectedParameterTypes[expectedParameterTypes.length-1].getComponentType();
+        Object[] varArgsParameters = (Object[]) Array.newInstance(varArgType, columns.length - expectedParameterTypes.length + 1);
+        for(int i=0; i<varArgsParameters.length; i++){
+            varArgsParameters[i] = columns[i+expectedParameterTypes.length-1];
+        }
+        return varArgsParameters;
+    }
+
+    private Object[] standardParameters(Object[] columns, Class<?>[] expectedParameterTypes) {
+        Object[] standardParameters = new Object[expectedParameterTypes.length];
+        for(int i=0; i<standardParameters.length-1; i++){
+            standardParameters[i] = columns[i];
+        }
+        return standardParameters;
+    }
+
+    private boolean testMethodParamsHasVarargs(Object[] columns, Class<?>[] expectedParameterTypes) {
     	int paramLen = expectedParameterTypes.length;
         return expectedParameterTypes.length <= columns.length && expectedParameterTypes[paramLen-1].isArray()
         		&& expectedParameterTypes[paramLen-1].getComponentType().equals(columns[paramLen-1].getClass());
