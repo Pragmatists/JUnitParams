@@ -59,6 +59,7 @@ public class InvokeParameterisedMethod extends Statement {
         } catch (ConversionFailedException e) {
             throw e;
         } catch (Exception e) {
+        	e.printStackTrace();
             Class<?>[] typesOfParameters = createArrayOfTypesOf(paramset);
             Object resultParam = createObjectOfExpectedTypeBasedOnParams(paramset, typesOfParameters);
             return new Object[]{resultParam};
@@ -95,7 +96,17 @@ public class InvokeParameterisedMethod extends Statement {
     private Object[] castParamsUsingConverters(Object[] columns) throws ConversionFailedException {
         Class<?>[] expectedParameterTypes = testMethod.getMethod().getParameterTypes();
         if (testMethodParamsAreVarargs(columns, expectedParameterTypes)) {
-            columns = new Object[] {columns};
+        	Class<?> varArgType = expectedParameterTypes[expectedParameterTypes.length-1].getComponentType();
+        	Object[] varArgs = (Object[])Array.newInstance(varArgType, columns.length - expectedParameterTypes.length + 1);
+        	for(int i=0; i<varArgs.length; i++){
+        		varArgs[i] = columns[i+expectedParameterTypes.length-1];
+        	}
+        	Object[] tmp = new Object[expectedParameterTypes.length];
+        	for(int i=0; i<tmp.length-1; i++){
+        		tmp[i] = columns[i];
+        	}
+        	tmp[tmp.length-1] = varArgs;
+            columns = tmp;
         }
 
         Annotation[][] parameterAnnotations = testMethod.getMethod().getParameterAnnotations();
@@ -105,7 +116,9 @@ public class InvokeParameterisedMethod extends Statement {
     }
 
     private boolean testMethodParamsAreVarargs(Object[] columns, Class<?>[] expectedParameterTypes) {
-        return expectedParameterTypes.length == 1 && columns.length > 1 && expectedParameterTypes[0].isArray();
+    	int paramLen = expectedParameterTypes.length;
+        return expectedParameterTypes.length <= columns.length && expectedParameterTypes[paramLen-1].isArray()
+        		&& expectedParameterTypes[paramLen-1].getComponentType().equals(columns[paramLen-1].getClass());
     }
 
     private String[] splitAtCommaOrPipe(String input) {
