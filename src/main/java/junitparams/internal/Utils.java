@@ -1,6 +1,6 @@
 package junitparams.internal;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 
 /**
  * Some String utils to handle parameterised tests' results.
@@ -18,7 +18,7 @@ public class Utils {
         else if (paramSet instanceof String)
             result += paramSet;
         else
-            result += asCsvString(safelyCastParamsToArray(paramSet), paramIdx);
+            result += asCsvString(safelyCastParamsToArray(paramSet));
 
         return trimSpecialChars(result);
     }
@@ -28,21 +28,16 @@ public class Utils {
     }
 
     static Object[] safelyCastParamsToArray(Object paramSet) {
-        Object[] params;
-
-        if (paramSet instanceof String[]) {
-            params = new Object[]{paramSet};
+        final Object[] params;
+        if (paramSet instanceof Object[]) {
+            params = (Object[]) paramSet;
         } else {
-            try {
-                params = (Object[]) paramSet;
-            } catch (ClassCastException e) {
-                params = new Object[]{paramSet};
-            }
+            params = new Object[] {paramSet};
         }
         return params;
     }
 
-    private static String asCsvString(Object[] params, int paramIdx) {
+    private static String asCsvString(Object[] params) {
         if (params == null)
             return "null";
 
