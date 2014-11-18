@@ -18,16 +18,16 @@ public class InvokeParameterisedMethod extends Statement {
     private final Object[] params;
     private final FrameworkMethod testMethod;
     private final Object testClass;
-    private final String paramsAsString;
+    private final String uniqueMethodId;
 
-    public String getParamsAsString() {
-        return paramsAsString;
+    public String getUniqueMethodId() {
+        return uniqueMethodId;
     }
 
     public InvokeParameterisedMethod(FrameworkMethod testMethod, Object testClass, Object params, int paramSetIdx) {
         this.testMethod = testMethod;
         this.testClass = testClass;
-        paramsAsString = Utils.stringify(params, paramSetIdx - 1);
+        uniqueMethodId = Utils.stringify(params, paramSetIdx - 1) + " (" + testMethod.getName() + ")";
         try {
             if (params instanceof String)
                 this.params = castParamsFromString((String) params);

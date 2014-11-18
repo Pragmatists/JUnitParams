@@ -63,7 +63,7 @@ public class ParameterisedTestMethodRunner {
         for (Description child : methodDescription.getChildren()) {
             InvokeParameterisedMethod parameterisedInvoker = findParameterisedMethodInvokerInChain(methodInvoker);
 
-            if (child.getMethodName().startsWith(parameterisedInvoker.getParamsAsString()))
+            if (child.hashCode() == parameterisedInvoker.getUniqueMethodId().hashCode())
                 return child;
         }
         return null;

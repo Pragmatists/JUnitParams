@@ -106,9 +106,11 @@ public class TestMethod {
             for (int i = 0; i < params.length; i++) {
                 Object paramSet = params[i];
                 String name = namingStrategy.getTestCaseName(i, paramSet);
+                String uniqueMethodId = Utils.stringify(paramSet, i) + " (" + name() + ")";
 
                 parametrised.addChild(
-                    Description.createTestDescription(testClass(), name, annotations()));
+                    Description.createTestDescription(testClass().getName(), name, uniqueMethodId)
+                );
             }
             return parametrised;
         } else {
