@@ -95,6 +95,10 @@ public class TestMethod {
         return frameworkMethod.getAnnotations();
     }
 
+    public <T extends java.lang.annotation.Annotation> T getAnnotation(Class<? extends Annotation> annotationType) {
+        return (T) frameworkMethod.getAnnotation(annotationType);
+    }
+
     Description describe() {
         if (isNotIgnored() && !describeFlat()) {
             Description parametrised = Description.createSuiteDescription(name());

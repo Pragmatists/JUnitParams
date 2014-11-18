@@ -13,12 +13,17 @@ public class Utils {
     public static String stringify(Object paramSet, int paramIdx) {
         String result = "[" + paramIdx + "] ";
 
+        return result + stringify(paramSet);
+    }
+
+    public static String stringify(Object paramSet) {
+        String result;
         if (paramSet == null)
-            result += "null";
+            result = "null";
         else if (paramSet instanceof String)
-            result += paramSet;
+            result = paramSet.toString();
         else
-            result += asCsvString(safelyCastParamsToArray(paramSet), paramIdx);
+            result = asCsvString(safelyCastParamsToArray(paramSet));
 
         return trimSpecialChars(result);
     }
@@ -42,7 +47,7 @@ public class Utils {
         return params;
     }
 
-    private static String asCsvString(Object[] params, int paramIdx) {
+    private static String asCsvString(Object[] params) {
         if (params == null)
             return "null";
 
