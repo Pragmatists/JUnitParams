@@ -28,6 +28,15 @@ public class Utils {
         return trimSpecialChars(result);
     }
 
+    public static String getParameterStringByIndexOrEmpty(Object paramSet, int parameterIndex) {
+        Object[] params = safelyCastParamsToArray(paramSet);
+        if (parameterIndex >= 0 && parameterIndex < params.length) {
+            return addParamToResult("", params[parameterIndex]);
+        }
+
+        return "";
+    }
+
     private static String trimSpecialChars(String result) {
         return result.replace('(', '[').replace(')', ']').replaceAll(REGEX_ALL_NEWLINES, " ");
     }

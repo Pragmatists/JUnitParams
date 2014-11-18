@@ -16,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 @RunWith(JUnitParamsRunner.class)
 public class MacroSubstitutionNamingStrategyTest {
 
-    @Parameters
     public Object parametersForTestNaming() {
         return $(
             $("withoutTestCaseAnnotation", "[0] value (withoutTestCaseAnnotation)"),
@@ -27,7 +26,9 @@ public class MacroSubstitutionNamingStrategyTest {
             $("withParamsMacro", "value"),
             $("withMethodNameMacro", "withMethodNameMacro"),
             $("withCombinationOfMacros", "0: withCombinationOfMacros(value)"),
-            $("withMacroNameWrittenInDifferentCase", "value value value")
+            $("withMacroNameWrittenInDifferentCase", "value value value"),
+            $("withMethodParameterIndexInsideArgumentsArray", "value"),
+            $("withMethodParameterIndexOutsideArgumentsArray", "")
         );
     }
 
@@ -66,6 +67,12 @@ public class MacroSubstitutionNamingStrategyTest {
 
     @TestCaseName("{params} {PARAMS} {PaRams}")
     public void withMacroNameWrittenInDifferentCase(String param1) { }
+
+    @TestCaseName("{0}")
+    public void withMethodParameterIndexInsideArgumentsArray(String param1) { }
+
+    @TestCaseName("{100}")
+    public void withMethodParameterIndexOutsideArgumentsArray(String param1) { }
 
     private TestCaseNamingStrategy createNamingStrategyForMethod(String name, Class... parameterTypes) throws NoSuchMethodException {
         TestMethod method = getCurrentClassMethod(name, parameterTypes);

@@ -65,8 +65,25 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
             case "index": return String.valueOf(parametersIndex);
             case "params": return Utils.stringify(parameters);
             case "method": return method.name();
-            default: return macro;
+            default: return substituteDynamicMacro(macro, macroKey, parameters);
         }
+    }
+
+    private String substituteDynamicMacro(String macro, String macroKey, Object parameters) {
+        if (isMethodParameterIndex(macroKey)) {
+            int index = parseIndex(macroKey);
+            return Utils.getParameterStringByIndexOrEmpty(parameters, index);
+        }
+
+        return macro;
+    }
+
+    private boolean isMethodParameterIndex(String macroKey) {
+        return macroKey.matches("\\d+");
+    }
+
+    private int parseIndex(String macroKey) {
+        return Integer.parseInt(macroKey);
     }
 
     private String getMacroKey(String macro) {
