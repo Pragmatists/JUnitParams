@@ -6,6 +6,8 @@ import java.lang.reflect.*;
 import java.util.*;
 import javax.lang.model.type.*;
 
+import junitparams.testnaming.MacroSubstitutionNamingStrategy;
+import junitparams.testnaming.TestCaseNamingStrategy;
 import org.junit.*;
 import org.junit.runner.*;
 import org.junit.runners.model.*;
@@ -23,6 +25,7 @@ public class TestMethod {
     private Class<?> testClass;
     private Parameters parametersAnnotation;
     private FileParameters fileParametersAnnotation;
+    private TestCaseNamingStrategy namingStrategy;
     private Object[] params;
 
     public TestMethod(FrameworkMethod method, TestClass testClass) {
@@ -35,6 +38,7 @@ public class TestMethod {
             throw new IllegalArgumentException("Both @Parameters and @FileParameters exist on " + frameworkMethod.getName()
                 + ". Remove one of them!");
         }
+        namingStrategy = new MacroSubstitutionNamingStrategy(this);
     }
 
     public String name() {
@@ -97,8 +101,10 @@ public class TestMethod {
             Object[] params = parametersSets();
             for (int i = 0; i < params.length; i++) {
                 Object paramSet = params[i];
+                String name = namingStrategy.getTestCaseName(i, paramSet);
+
                 parametrised.addChild(
-                    Description.createTestDescription(testClass(), Utils.stringify(paramSet, i) + " (" + name() + ")", annotations()));
+                    Description.createTestDescription(testClass(), name, annotations()));
             }
             return parametrised;
         } else {
