@@ -3,6 +3,8 @@ package junitparams.testnaming;
 import junitparams.internal.TestMethod;
 import junitparams.internal.Utils;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -14,7 +16,6 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
     private static final String MACRO_END = "}";
     static final String DEFAULT_TEMPLATE = "[{index}] {params} ({method})";
     private TestMethod method;
-
 
     public MacroSubstitutionNamingStrategy(TestMethod testMethod) {
         this.method = testMethod;
@@ -61,10 +62,10 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
     private String lookupMacroValue(String macro, int parametersIndex, Object parameters) {
         String macroKey = getMacroKey(macro);
 
-        switch (macroKey) {
-            case "index": return String.valueOf(parametersIndex);
-            case "params": return Utils.stringify(parameters);
-            case "method": return method.name();
+        switch (Macro.parse(macroKey)) {
+            case INDEX: return String.valueOf(parametersIndex);
+            case PARAMS: return Utils.stringify(parameters);
+            case METHOD: return method.name();
             default: return substituteDynamicMacro(macro, macroKey, parameters);
         }
     }
@@ -89,10 +90,29 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
     private String getMacroKey(String macro) {
         return macro
                 .substring(MACRO_START.length(), macro.length() - MACRO_END.length())
-                .toLowerCase(Locale.ENGLISH);
+                .toUpperCase(Locale.ENGLISH);
     }
 
     private boolean isMacro(String part) {
         return part.startsWith(MACRO_START) && part.endsWith(MACRO_END);
+    }
+
+    private enum Macro {
+        INDEX,
+        PARAMS,
+        METHOD,
+        NONE;
+
+        public static Macro parse(String value) {
+            if (macros.contains(value)) {
+                return Macro.valueOf(value);
+            } else {
+                return Macro.NONE;
+            }
+        }
+
+        private static final HashSet<String> macros = new HashSet<>(Arrays.asList(
+                Macro.INDEX.toString(), Macro.PARAMS.toString(), Macro.METHOD.toString())
+        );
     }
 }
