@@ -2,7 +2,6 @@ package junitparams.internal;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
-import java.util.*;
 
 import org.junit.runners.model.*;
 
@@ -42,7 +41,7 @@ public class InvokeParameterisedMethod extends Statement {
     private Object[] castParamsFromString(String params) throws ConversionFailedException {
         Object[] columns = null;
         try {
-            columns = splitAtCommaOrPipe(params);
+            columns = Utils.splitAtCommaOrPipe(params);
             columns = castParamsUsingConverters(columns);
         } catch (RuntimeException e) {
             new IllegalArgumentException("Cannot parse parameters. Did you use , as column separator? " + params, e).printStackTrace();
@@ -133,34 +132,6 @@ public class InvokeParameterisedMethod extends Statement {
     	int paramLen = expectedParameterTypes.length;
         return expectedParameterTypes.length <= columns.length && expectedParameterTypes[paramLen-1].isArray()
         		&& expectedParameterTypes[paramLen-1].getComponentType().equals(columns[paramLen-1].getClass());
-    }
-
-    private String[] splitAtCommaOrPipe(String input) {
-        ArrayList<String> result = new ArrayList<String>();
-
-        char character = '\0';
-        char previousCharacter;
-
-        StringBuilder value = new StringBuilder();
-        for (int i=0; i<input.length(); i++) {
-            previousCharacter = character;
-            character = input.charAt(i);
-
-            if (character == ',' || character == '|') {
-                if (previousCharacter == '\\') {
-                    value.setCharAt(value.length() - 1, character);
-                    continue;
-                }
-                result.add(value.toString().trim());
-                value = new StringBuilder();
-                continue;
-            }
-
-            value.append(character);
-        }
-        result.add(value.toString().trim());
-
-        return result.toArray(new String[]{});
     }
 
     private Object[] castAllParametersToProperTypes(Object[] columns, Class<?>[] expectedParameterTypes,

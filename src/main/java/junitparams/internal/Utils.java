@@ -1,6 +1,7 @@
 package junitparams.internal;
 
 import java.lang.reflect.*;
+import java.util.ArrayList;
 
 /**
  * Some String utils to handle parameterised tests' results.
@@ -30,11 +31,42 @@ public class Utils {
 
     public static String getParameterStringByIndexOrEmpty(Object paramSet, int parameterIndex) {
         Object[] params = safelyCastParamsToArray(paramSet);
+        if (paramSet instanceof String) {
+            params = splitAtCommaOrPipe((String)paramSet);
+        }
         if (parameterIndex >= 0 && parameterIndex < params.length) {
             return addParamToResult("", params[parameterIndex]);
         }
 
         return "";
+    }
+
+    public static String[] splitAtCommaOrPipe(String input) {
+        ArrayList<String> result = new ArrayList<String>();
+
+        char character = '\0';
+        char previousCharacter;
+
+        StringBuilder value = new StringBuilder();
+        for (int i=0; i< input.length(); i++) {
+            previousCharacter = character;
+            character = input.charAt(i);
+
+            if (character == ',' || character == '|') {
+                if (previousCharacter == '\\') {
+                    value.setCharAt(value.length() - 1, character);
+                    continue;
+                }
+                result.add(value.toString().trim());
+                value = new StringBuilder();
+                continue;
+            }
+
+            value.append(character);
+        }
+        result.add(value.toString().trim());
+
+        return result.toArray(new String[]{});
     }
 
     private static String trimSpecialChars(String result) {
