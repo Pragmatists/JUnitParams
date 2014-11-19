@@ -11,6 +11,7 @@ import junitparams.*;
 import junitparams.converters.*;
 import junitparams.mappers.*;
 import junitparams.usage.person_example.*;
+import junitparams.testnaming.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class Samples_of_Usage_Test {
@@ -83,4 +84,17 @@ public class Samples_of_Usage_Test {
     @Parameters({ "01.12.2012" })
     public void convert_params(@ConvertParam(value = ParamsConverterTest.StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {}
 
+    @Test
+    @Parameters("please\\, escape commas if you use it here and don't want your parameters to be splitted")
+    public void commas_in_parameters_usage(String phrase) { }
+
+    @Test
+    @Parameters({ "1,1", "2,2", "3,6" })
+    @TestCaseName("factorial({0}) = {1}")
+    public void custom_names_for_test_case(int argument, int result) { }
+
+    @Test
+    @Parameters({ "value1, value2", "value3, value4" })
+    @TestCaseName("[{index}] {method}: {params}")
+    public void predefined_macro_for_test_case_name(String param1, String param2) { }
 }

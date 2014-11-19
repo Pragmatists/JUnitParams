@@ -3,6 +3,7 @@ package junitparams.usage.person_example;
 import static junitparams.JUnitParamsRunner.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import junitparams.testnaming.TestCaseName;
 import org.junit.*;
 import org.junit.runner.*;
 
@@ -59,6 +60,13 @@ public class PersonTest {
                 $(new Person(12), false),
                 $(new Person(17), false));
         }
+    }
+
+    @Test
+    @Parameters(method = "adultValues")
+    @TestCaseName("Is person with age {0} adult? It's {1} statement.")
+    public void isAdultWithCustomTestName(int age, boolean valid) throws Exception {
+        assertThat(new Person(age).isAdult()).isEqualTo(valid);
     }
 
     public static class Person {
