@@ -21,6 +21,7 @@ public class MacroSubstitutionNamingStrategyTest {
             $("withoutTestCaseAnnotation", "[0] value (withoutTestCaseAnnotation)"),
             $("withAnnotationWithoutTemplate", "[0] value (withAnnotationWithoutTemplate)"),
             $("withEmptyTemplate", "[0] value (withEmptyTemplate)"),
+            $("whenTemplateResultedToEmptyName", "[0] value (whenTemplateResultedToEmptyName)"),
             $("withoutMacro", "plain name"),
             $("withIndexMacro", "0"),
             $("withParamsMacro", "value"),
@@ -28,7 +29,8 @@ public class MacroSubstitutionNamingStrategyTest {
             $("withCombinationOfMacros", "0: withCombinationOfMacros(value)"),
             $("withMacroNameWrittenInDifferentCase", "value value value"),
             $("withMethodParameterIndexInsideArgumentsArray", "value"),
-            $("withMethodParameterIndexOutsideArgumentsArray", "")
+            $("withMethodParameterIndexOutsideArgumentsArray", "Here is 100 argument:"),
+            $("whenGivenMacroNotExists", "{not_existing_macro}")
         );
     }
 
@@ -71,8 +73,14 @@ public class MacroSubstitutionNamingStrategyTest {
     @TestCaseName("{0}")
     public void withMethodParameterIndexInsideArgumentsArray(String param1) { }
 
-    @TestCaseName("{100}")
+    @TestCaseName("Here is 100 argument:{100}")
     public void withMethodParameterIndexOutsideArgumentsArray(String param1) { }
+
+    @TestCaseName("{100}")
+    public void whenTemplateResultedToEmptyName(String param1) { }
+
+    @TestCaseName("{not_existing_macro}")
+    public void whenGivenMacroNotExists(String param1) { }
 
     private TestCaseNamingStrategy createNamingStrategyForMethod(String name, Class... parameterTypes) throws NoSuchMethodException {
         TestMethod method = getCurrentClassMethod(name, parameterTypes);

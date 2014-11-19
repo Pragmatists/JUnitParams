@@ -26,12 +26,17 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
         TestCaseName testCaseName = method.getAnnotation(TestCaseName.class);
 
         String template = getTemplate(testCaseName);
+        String builtName = buildNameByTemplate(template, parametersIndex, parameters);
 
-        return buildNameByTemplate(template, parametersIndex, parameters);
+        if (builtName.trim().isEmpty()) {
+            return buildNameByTemplate(DEFAULT_TEMPLATE, parametersIndex, parameters);
+        } else {
+            return builtName;
+        }
     }
 
     private String getTemplate(TestCaseName testCaseName) {
-        if (testCaseName != null && !testCaseName.value().trim().isEmpty()) {
+        if (testCaseName != null) {
             return testCaseName.value();
         }
 
