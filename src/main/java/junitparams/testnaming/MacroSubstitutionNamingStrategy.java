@@ -116,7 +116,7 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
             }
         }
 
-        private static final HashSet<String> macros = new HashSet<>(Arrays.asList(
+        private static final HashSet<String> macros = new HashSet<String>(Arrays.asList(
                 Macro.INDEX.toString(), Macro.PARAMS.toString(), Macro.METHOD.toString())
         );
     }
