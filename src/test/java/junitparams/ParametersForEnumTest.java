@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 public class ParametersForEnumTest {
 
   /**
-   * Ensures that
+   * Ensures that the test is thread-safe.
    */
   private static ThreadLocal<EnumSet<Fruit>> threadUntested = new ThreadLocal<EnumSet<Fruit>>() {
     @Override
