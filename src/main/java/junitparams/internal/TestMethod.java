@@ -287,7 +287,7 @@ public class TestMethod {
     private Object[] fillResultWithAllParamProviderMethods(Class<?> sourceClass) {
         List<Object> result;
         if (sourceClass.isEnum()) {
-            result = Arrays.asList(sourceClass.getEnumConstants());
+            return sourceClass.getEnumConstants();
         } else {
             result = getParamsFromSourceHierarchy(sourceClass);
         }
