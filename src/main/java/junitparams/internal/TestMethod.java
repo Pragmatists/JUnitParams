@@ -285,12 +285,11 @@ public class TestMethod {
     }
 
     private Object[] fillResultWithAllParamProviderMethods(Class<?> sourceClass) {
-        List<Object> result;
         if (sourceClass.isEnum()) {
             return sourceClass.getEnumConstants();
-        } else {
-            result = getParamsFromSourceHierarchy(sourceClass);
         }
+
+        List<Object> result = getParamsFromSourceHierarchy(sourceClass);
         if (result.isEmpty())
             throw new RuntimeException(
                 "No methods starting with provide or they return no result in the parameters source class: "
