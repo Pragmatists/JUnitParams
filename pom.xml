@@ -88,7 +88,7 @@
                     <sourcepath>${project.basedir}/src/main/javadoc;${project.basedir}/src/main/java</sourcepath>
                     <reportOutputDirectory>${project.basedir}</reportOutputDirectory>
                     <docfilessubdirs>false</docfilessubdirs>
-                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <additionalparam>${javadoc-parameters}</additionalparam>
                 </configuration>
                 <executions>
                     <execution>
@@ -172,6 +172,15 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>java8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <properties>
+                <javadoc-parameters>-Xdoclint:none</javadoc-parameters>
+            </properties>
         </profile>
     </profiles>
     <dependencies>
