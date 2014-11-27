@@ -88,6 +88,7 @@
                     <sourcepath>${project.basedir}/src/main/javadoc;${project.basedir}/src/main/java</sourcepath>
                     <reportOutputDirectory>${project.basedir}</reportOutputDirectory>
                     <docfilessubdirs>false</docfilessubdirs>
+                    <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
                 <executions>
                     <execution>
