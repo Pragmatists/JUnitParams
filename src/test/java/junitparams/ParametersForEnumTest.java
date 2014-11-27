@@ -1,40 +1,30 @@
 package junitparams;
 
-import junitparams.internal.TestMethod;
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-
-/**
- * Tests for {@link TestMethod#fillResultWithAllParamProviderMethods} that
- * verifies that enumeration values are passed.
- *
- * @author Bob Browning
- */
 @RunWith(JUnitParamsRunner.class)
 public class ParametersForEnumTest {
 
-    /**
-     * Set of fruits remaining to be tested.
-     */
-    private static Set<Fruit> untested =
-            Collections.synchronizedSet(EnumSet.allOf(Fruit.class));
+    private static Set<Fruit> testedFruits = new HashSet<Fruit>();
 
     @AfterClass
-    public static void after() {
-        assertThat(untested).isEmpty();
+    public static void checkAllFruitsTested() {
+        assertThat(testedFruits).contains(Fruit.class.getEnumConstants());
     }
 
-    /**
-     * Sample enumeration.
-     */
+    @Test
+    @Parameters(source = Fruit.class)
+    public void testAFruit(Fruit fruit) throws Exception {
+        testedFruits.add(fruit);
+    }
+
     public enum Fruit {
         APPLE,
         BANANA,
@@ -42,12 +32,4 @@ public class ParametersForEnumTest {
         PLUM
     }
 
-    @Test
-    @Parameters(source = Fruit.class)
-    public void testAllFruitsTested(Fruit fruit) throws Exception {
-        // verify and remove fruit from outstanding expectations
-        assertThat(fruit).isIn(untested);
-        assertTrue("Failed to remove fruit from expectations",
-                untested.remove(fruit));
-    }
 }

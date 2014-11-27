@@ -1,17 +1,27 @@
 package junitparams.internal;
 
-import java.io.*;
-import java.lang.annotation.*;
-import java.lang.reflect.*;
-import java.util.*;
-import javax.lang.model.type.*;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import javax.lang.model.type.NullType;
 
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runners.model.*;
+import org.junit.Ignore;
+import org.junit.runner.Description;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.TestClass;
 
-import junitparams.*;
-import junitparams.mappers.*;
+import junitparams.FileParameters;
+import junitparams.Parameters;
+import junitparams.mappers.DataMapper;
 
 /**
  * A wrapper for a test method
@@ -302,7 +312,7 @@ public class TestMethod {
                 "No methods starting with provide or they return no result in the parameters source class: "
                     + sourceClass.getName());
 
-        return result.toArray(new Object[] {});
+        return result.toArray();
     }
 
     private List<Object> getParamsFromSourceHierarchy(Class<?> sourceClass) {
