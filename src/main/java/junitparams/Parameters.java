@@ -18,7 +18,7 @@ public @interface Parameters {
      * parameters in order and type.
      * Example: <code>@Parameters({
      *                    "1, joe, 26.4, true", 
-     *                    "2, angie, 37.2, false"}</code>
+     *                    "2, angie, 37.2, false"})</code>
      */
     String[] value() default {};
 

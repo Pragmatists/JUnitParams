@@ -8,7 +8,7 @@ import org.junit.runner.*;
 
 @SuppressWarnings("unused")
 @RunWith(JUnitParamsRunner.class)
-public class ParametersForMethodTest {
+public class ParametersReaderForMethodTest {
     @Test
     @Parameters
     public void oneParamDifferentTypes(int number, String a) {

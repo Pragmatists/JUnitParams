@@ -36,7 +36,7 @@ public class Samples_of_Usage_Test {
     private Object named3() { return $($("BBB", 2)); }
 
     @Test
-    @Parameters(source = ParametersProvidersTest.OneIntegerProvider.class)
+    @Parameters(source = ParametersReaderProvidersTest.OneIntegerProvider.class)
     public void parameters_from_external_class(int integer) { }
 
     @Test
