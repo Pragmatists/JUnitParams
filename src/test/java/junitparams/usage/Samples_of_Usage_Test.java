@@ -59,6 +59,11 @@ public class Samples_of_Usage_Test {
     private PersonType[] parametersForEnums_as_params_in_method() { return (PersonType[]) new PersonType[] {PersonType.SOME_VALUE}; }
 
     @Test
+    @Parameters(source = PersonType.class)
+    public void enum_as_source(PersonType personType) {
+    }
+
+    @Test
     @Parameters
     public void wrap_params_with_constructor(PersonTest.Person person) { }
     private Object parametersForWrap_params_with_constructor() { return $($("first", 1), $("second", 2)); }
