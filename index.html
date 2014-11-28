@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Junitparams : Parameterised tests that don&#39;t suck">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Junitparams</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Pragmatists/JUnitParams">View on GitHub</a>
+
+          <h1 id="project_title">Junitparams</h1>
+          <h2 id="project_tagline">Parameterised tests that don&#39;t suck</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Pragmatists/JUnitParams/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Pragmatists/JUnitParams/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="junitparams" class="anchor" href="#junitparams" aria-hidden="true"><span class="octicon octicon-link"></span></a>JUnitParams</h1>
+
+<p><em>Parameterised tests that don't suck</em></p>
+
+<h2>
+<a id="example" class="anchor" href="#example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h2>
+
+<div class="highlight highlight-java"><pre>  @<span class="pl-stj">Test</span>
+  @Parameters({<span class="pl-s1"><span class="pl-pds">"</span>17, false<span class="pl-pds">"</span></span>, 
+               <span class="pl-s1"><span class="pl-pds">"</span>22, true<span class="pl-pds">"</span></span> })
+  <span class="pl-s">public</span> <span class="pl-st">void</span> personIsAdult(<span class="pl-st">int</span> age, <span class="pl-st">boolean</span> valid) throws <span class="pl-stj">Exception</span> {
+    assertThat(<span class="pl-k">new</span> <span class="pl-stj">Person</span>(age)<span class="pl-k">.</span>isAdult(), is(valid));
+  }</pre></div>
+
+<h2>
+<a id="about" class="anchor" href="#about" aria-hidden="true"><span class="octicon octicon-link"></span></a>About</h2>
+
+<p>JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit &gt;=4.6.</p>
+
+<p>Main differences to standard JUnit Parametrised runner:</p>
+
+<ul>
+<li>more explicit - params are in test method params, not class fields</li>
+<li>less code - you don't need a constructor to set up parameters</li>
+<li>you can mix parametrised with non-parametrised methods in one class</li>
+<li>params can be passed as a CSV string or from a parameters provider class</li>
+<li>parameters provider class can have as many parameters providing methods as you want, so that you can group different cases</li>
+<li>you can have a test method that provides parameters (no external classes or statics anymore)</li>
+<li>you can see actual parameter values in your IDE (in JUnit's Parametrised it's only consecutive numbers of parameters):</li>
+</ul>
+
+<h2>
+<a id="quickstart" class="anchor" href="#quickstart" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quickstart</h2>
+
+<p>JUnitParams is available as Maven artifact:</p>
+
+<pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;pl.pragmatists&lt;/groupId&gt;
+  &lt;artifactId&gt;JUnitParams&lt;/artifactId&gt;
+  &lt;version&gt;1.0.3&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>If you want to see just one simple test class with all main ways to use JUnitParams see here:
+<a href="https://github.com/Pragmatists/junitparams/tree/master/src/test/java/junitparams/usage">https://github.com/Pragmatists/junitparams/tree/master/src/test/java/junitparams/usage</a></p>
+
+<p>You can also have a look at <a href="https://github.com/Pragmatists/junitparams/wiki/Quickstart">Wiki:Quickstart</a></p>
+
+<h2>
+<a id="news" class="anchor" href="#news" aria-hidden="true"><span class="octicon octicon-link"></span></a>News</h2>
+
+<p>Latest news are available in our <a href="https://github.com/Pragmatists/junitparams/wiki/">Wiki</a></p>
+
+<p><strong>Note</strong>: We are currently moving the project from Google Code to Github. Some information may still be accessible only at <a href="https://code.google.com/p/junitparams/">https://code.google.com/p/junitparams/</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Junitparams maintained by <a href="https://github.com/Pragmatists">Pragmatists</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
