@@ -67,7 +67,7 @@ public class MethodAnnotationArgumentTest {
 
     @Test
     @Parameters(method = "multiStringParams")
-    public void shouldPassStringParamsWithNullFromMethod(String first, String second) {
+    public void shouldPassMultiStringParams(String first, String second) {
         assertThat(first).isEqualTo(second);
     }
 
