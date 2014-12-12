@@ -62,7 +62,7 @@ public class MethodAnnotationArgumentTest {
     }
 
     Object[] stringParamsWithNull() {
-        return genericArray("1", "2", "3");
+        return genericArray("1", "2", "3", null);
     }
 
     @Test
