@@ -52,8 +52,8 @@ public class MethodAnnotationArgumentTest {
     }
 
     @Test
-    @Parameters(method = "stringParams")
-    public void shouldPassStringParamsFromMethod(String parameter) {
+    @Parameters(method = "stringParamsWithNull")
+    public void shouldPassStringParamsWithNullFromMethod(String parameter) {
         // given
         List<String> acceptedParams = Arrays.asList("1", "2", "3", null);
 
@@ -61,8 +61,20 @@ public class MethodAnnotationArgumentTest {
         assertThat(acceptedParams).contains(parameter);
     }
 
-    Object[] stringParams() {
-        return genericArray("1", "2", "3", null);
+    Object[] stringParamsWithNull() {
+        return genericArray("1", "2", "3");
+    }
+
+    @Test
+    @Parameters(method = "multiStringParams")
+    public void shouldPassStringParamsWithNullFromMethod(String first, String second) {
+        assertThat(first).isEqualTo(second);
+    }
+
+    Object[] multiStringParams() {
+        return genericArray(
+                genericArray("test", "test"),
+                genericArray("ble", "ble"));
     }
 
     private static <T> T[] genericArray(T... elements) {
