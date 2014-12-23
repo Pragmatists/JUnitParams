@@ -13,7 +13,7 @@ import org.junit.runners.model.*;
 import junitparams.internal.*;
 
 @RunWith(JUnitParamsRunner.class)
-public class ParametersProvidersTest {
+public class ParametersReaderProvidersTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();

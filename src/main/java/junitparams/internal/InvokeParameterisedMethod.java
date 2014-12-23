@@ -189,7 +189,7 @@ public class InvokeParameterisedMethod extends Statement {
             return object.toString().charAt(0);
         if (clazz.isAssignableFrom(Byte.TYPE) || clazz.isAssignableFrom(Byte.class))
             return Byte.parseByte((String) object);
-        throw new IllegalArgumentException("Parameter type (" + clazz.getTypeName() + ") cannot be handled! Only primitive types and Strings can be" +
+        throw new IllegalArgumentException("Parameter type (" + clazz.getName() + ") cannot be handled! Only primitive types and Strings can be" +
                 " used" +
                 ".");
     }

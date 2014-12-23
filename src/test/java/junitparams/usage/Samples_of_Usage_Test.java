@@ -37,7 +37,7 @@ public class Samples_of_Usage_Test {
     private Object named3() { return $($("BBB", 2)); }
 
     @Test
-    @Parameters(source = ParametersProvidersTest.OneIntegerProvider.class)
+    @Parameters(source = ParametersReaderProvidersTest.OneIntegerProvider.class)
     public void parameters_from_external_class(int integer) { }
 
     @Test
@@ -58,6 +58,11 @@ public class Samples_of_Usage_Test {
     @Parameters
     public void enums_as_params_in_method(PersonType person) { }
     private PersonType[] parametersForEnums_as_params_in_method() { return (PersonType[]) new PersonType[] {PersonType.SOME_VALUE}; }
+
+    @Test
+    @Parameters(source = PersonType.class)
+    public void enum_as_source(PersonType personType) {
+    }
 
     @Test
     @Parameters
