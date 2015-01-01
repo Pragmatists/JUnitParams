@@ -16,13 +16,13 @@ public class ParamsInAnnotationTest {
 
     @Test
     @Parameters({ "a \n b", "a(asdf)", "a \r a" })
-    public void specialCharsInParam(String a) {
+    public void specialCharsInParam(String a) throws Exception {
         assertThat(a).isIn("a \n b", "a(asdf)", "a \r a");
     }
 
     @Test
     @Parameters({ "1, false", "2, true" })
-    public void multipleParams(int number, boolean what) {
+    public void multipleParams(int number, boolean what) throws Exception {
         if (what)
             assertThat(number).isGreaterThan(1);
         else
