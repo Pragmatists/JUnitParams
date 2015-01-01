@@ -15,7 +15,7 @@ public class MethodAnnotationArgumentTest {
     @Test
     @Parameters(method = "return1")
     public void testSingleMethodName(int number) {
-        assertThat(1).isEqualTo(number);
+        assertThat(number).isEqualTo(1);
     }
 
     private Integer[] return1() {

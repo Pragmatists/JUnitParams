@@ -21,6 +21,8 @@ public class ParametersReaderProvidersTest {
     @Test
     @Parameters(source = SingleParamSetProvider.class)
     public void oneParamSetFromClass(String a, String b) {
+        assertThat(a).isEqualTo("a");
+        assertThat(b).isEqualTo("b");
     }
 
     public static class SingleParamSetProvider {

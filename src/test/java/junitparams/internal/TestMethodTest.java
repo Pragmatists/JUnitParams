@@ -1,6 +1,7 @@
 package junitparams.internal;
 
 import static junitparams.JUnitParamsRunner.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
@@ -31,12 +32,14 @@ public class TestMethodTest {
     @Test
     @Parameters({"a","b"})
     public void for_others_to_work(String arg) throws Exception {
+        assertThat(arg).isIn("a","b");
     }
 
 
     @Test
     @Parameters({"a,b","b,a"})
     public void for_others_to_work_with_array(String... arg) throws Exception {
+        assertThat(arg).containsOnlyOnce("a","b");
     }
 
     @Test
