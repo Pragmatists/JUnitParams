@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A Data Mapper based on Buferred Reader.
+ * A Data Mapper based on Buffered Reader.
  */
 class BufferedReaderDataMapper implements DataMapper {
 
