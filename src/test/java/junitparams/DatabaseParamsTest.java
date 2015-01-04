@@ -12,8 +12,8 @@ import org.junit.runner.RunWith;
 public class DatabaseParamsTest {
 
     @Test
-    @DatabaseParameters(url = "jdbc:h2:mem:testdb",
-            sql = "select name, age from persons;",
+    @DatabaseParameters(sql = "select name, age from persons;",
+            url = "jdbc:h2:mem:testdb",
             executor = PersonQueryExecutor.class)
     public void shouldLoadParamsWithAnnotationConfigAndSimpleResultSetMapper(String name, int age) {
         assertThat(name).isNotEmpty();
@@ -21,10 +21,9 @@ public class DatabaseParamsTest {
     }
 
     @Test
-    @DatabaseParameters(url = "jdbc:h2:mem:testdb",
-            sql = "select name, age from persons;",
-            executor = PersonQueryExecutor.class,
-            mapper = PersonResultSetMapper.class)
+    @DatabaseParameters(sql = "select name, age from persons;",
+            driverClass = "org.h2.Driver", url = "jdbc:h2:mem:testdb", user = "sa", password = "sa",
+            executor = PersonQueryExecutor.class, mapper = PersonResultSetMapper.class)
     public void shouldLoadParamsWithAnnotationConfigAndCustomResultSetMapper(Person person) {
         assertThat(person.getName()).isEqualTo(person.getName().toUpperCase());
         assertThat(person.getAge()).isGreaterThan(0);

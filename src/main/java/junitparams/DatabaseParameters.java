@@ -14,10 +14,10 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DatabaseParameters {
 
+    String sql();
+
     /**
      * Drivers supporting JDBC 4.0 does not need to call Class.forName()
-     *
-     * @return
      */
     String driverClass() default "";
 
@@ -26,8 +26,6 @@ public @interface DatabaseParameters {
     String user() default "";
 
     String password() default "";
-
-    String sql();
 
     Class<? extends QueryExecutor> executor() default JdbcQueryExecutor.class;
 
