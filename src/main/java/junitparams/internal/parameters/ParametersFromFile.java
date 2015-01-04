@@ -1,5 +1,6 @@
 package junitparams.internal.parameters;
 
+import junitparams.DatabaseParameters;
 import junitparams.FileParameters;
 import junitparams.Parameters;
 import junitparams.mappers.DataMapper;
@@ -24,8 +25,9 @@ class ParametersFromFile implements ParametrizationStrategy {
 
     @Override
     public boolean isApplicable() {
-        return frameworkMethod.getAnnotation(Parameters.class) == null &&
-                frameworkMethod.getAnnotation(FileParameters.class) != null;
+        return frameworkMethod.getAnnotation(FileParameters.class) != null
+            && frameworkMethod.getAnnotation(Parameters.class) == null
+            && frameworkMethod.getAnnotation(DatabaseParameters.class) == null;
     }
 
     private Object[] paramsFromFile(FileParameters fileParametersAnnotation) {

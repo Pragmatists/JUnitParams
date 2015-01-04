@@ -1,5 +1,6 @@
 package junitparams.internal.parameters;
 
+import junitparams.DatabaseParameters;
 import junitparams.FileParameters;
 import junitparams.Parameters;
 import org.junit.runners.model.FrameworkMethod;
@@ -21,7 +22,8 @@ public class ParametersReader {
                 new ParametersFromExternalClassProvideMethod(frameworkMethod),
                 new ParametersFromExternalClassMethod(frameworkMethod),
                 new ParametersFromTestClassMethod(frameworkMethod, testClass),
-                new ParametersFromFile(frameworkMethod));
+                new ParametersFromFile(frameworkMethod),
+                new ParametersFromDatabase(frameworkMethod));
     }
 
     public Object[] read() {
@@ -44,6 +46,6 @@ public class ParametersReader {
         throw new IllegalStateException( format("Illegal usage of JUnitParams in method %s. " +
                         "Check if you use only one supported parameters evaluation strategy. " +
                         "Common case is to use both %s and %s annotations.",
-                        frameworkMethod.getName(), Parameters.class, FileParameters.class));
+                        frameworkMethod.getName(), Parameters.class, FileParameters.class, DatabaseParameters.class));
     }
 }
