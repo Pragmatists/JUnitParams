@@ -14,12 +14,12 @@ public class JdbcQueryExecutor extends QueryExecutor {
     @Override
     public Connection getConnection() throws SQLException {
         ConnectionProperties properties = getProperties();
-        String driverClass = properties.driverClass();
-        if (!driverClass.isEmpty()) {
+        String driver = properties.driver();
+        if (!driver.isEmpty()) {
             try {
-                Class.forName(driverClass);
+                Class.forName(driver);
             } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("Could not successfully load driver class: " + driverClass, e);
+                throw new IllegalArgumentException("Could not successfully load driver class: " + driver, e);
             }
         }
         return DriverManager.getConnection(properties.url(), properties.user(), properties.password());

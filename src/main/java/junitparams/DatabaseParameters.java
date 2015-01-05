@@ -19,7 +19,7 @@ public @interface DatabaseParameters {
     /**
      * Drivers supporting JDBC 4.0 does not need to call Class.forName()
      */
-    String driverClass() default "";
+    String driver() default "";
 
     String url();
 

@@ -22,7 +22,7 @@ public class DatabaseParamsTest {
 
     @Test
     @DatabaseParameters(sql = "select name, age from persons;",
-            driverClass = "org.h2.Driver", url = "jdbc:h2:mem:testdb", user = "sa", password = "sa",
+            driver = "org.h2.Driver", url = "jdbc:h2:mem:testdb", user = "sa", password = "sa",
             executor = PersonQueryExecutor.class, mapper = PersonResultSetMapper.class)
     public void shouldLoadParamsWithAnnotationConfigAndCustomResultSetMapper(Person person) {
         assertThat(person.getName()).isEqualTo(person.getName().toUpperCase());

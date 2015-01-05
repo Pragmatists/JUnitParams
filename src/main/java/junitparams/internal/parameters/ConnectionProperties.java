@@ -2,20 +2,20 @@ package junitparams.internal.parameters;
 
 public class ConnectionProperties {
 
-    private final String driverClass;
+    private final String driver;
     private final String url;
     private final String user;
     private final String password;
 
-    ConnectionProperties(String driverClass, String url, String user, String password) {
-        this.driverClass = driverClass;
+    ConnectionProperties(String driver, String url, String user, String password) {
+        this.driver = driver;
         this.url = url;
         this.user = user;
         this.password = password;
     }
 
-    public String driverClass() {
-        return driverClass;
+    public String driver() {
+        return driver;
     }
 
     public String url() {
