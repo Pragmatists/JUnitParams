@@ -3,12 +3,15 @@ package junitparams.internal.parameters;
 import junitparams.DatabaseParameters;
 import junitparams.FileParameters;
 import junitparams.Parameters;
-import junitparams.mappers.ResultSetMapper;
+import junitparams.mappers.RowMapper;
 import org.junit.runners.model.FrameworkMethod;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 
 class ParametersFromDatabase implements ParametrizationStrategy {
 
@@ -37,15 +40,15 @@ class ParametersFromDatabase implements ParametrizationStrategy {
             Statement statement = null;
             try {
                 ConnectionProperties connectionProperties = ConnectionPropertiesFactory.of(dbParamsAnnotation);
-                queryExecutor = dbParamsAnnotation.executor()
-                        .getDeclaredConstructor(ConnectionProperties.class)
-                        .newInstance(connectionProperties);
+                queryExecutor = dbParamsAnnotation.executor().
+                        getDeclaredConstructor(ConnectionProperties.class).
+                        newInstance(connectionProperties);
                 connection = queryExecutor.getConnection();
                 queryExecutor.executeBefore(connection);
                 ResultSet resultSet = queryExecutor.execute(connection, dbParamsAnnotation.sql());
                 statement = resultSet.getStatement();
-                ResultSetMapper mapper = dbParamsAnnotation.mapper().newInstance();
-                return mapper.map(resultSet);
+                RowMapper mapper = dbParamsAnnotation.mapper().newInstance();
+                return mapRecords(resultSet, mapper);
             } finally {
                 if (statement != null) {
                     statement.close();
@@ -60,5 +63,15 @@ class ParametersFromDatabase implements ParametrizationStrategy {
             throw new RuntimeException(
                     "Could not successfully read parameters from database: " + dbParamsAnnotation.url(), e);
         }
+    }
+
+    private Object[] mapRecords(ResultSet resultSet, RowMapper mapper) throws SQLException {
+        List<Object[]> records = new LinkedList<Object[]>();
+        int columnCount = resultSet.getMetaData().getColumnCount();
+        while (resultSet.next()) {
+            Object[] record = mapper.map(resultSet, columnCount);
+            records.add(record);
+        }
+        return records.toArray();
     }
 }

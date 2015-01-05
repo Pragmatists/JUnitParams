@@ -2,8 +2,8 @@ package junitparams;
 
 import junitparams.internal.parameters.QueryExecutor;
 import junitparams.internal.parameters.JdbcQueryExecutor;
-import junitparams.mappers.ResultSetMapper;
-import junitparams.mappers.SimpleResultSetMapper;
+import junitparams.mappers.RowMapper;
+import junitparams.mappers.ResultSetRowMapper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,5 +29,5 @@ public @interface DatabaseParameters {
 
     Class<? extends QueryExecutor> executor() default JdbcQueryExecutor.class;
 
-    Class<? extends ResultSetMapper> mapper() default SimpleResultSetMapper.class;
+    Class<? extends RowMapper> mapper() default ResultSetRowMapper.class;
 }
