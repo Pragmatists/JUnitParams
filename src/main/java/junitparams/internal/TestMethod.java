@@ -8,8 +8,8 @@ import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
-import junitparams.testnaming.MacroSubstitutionNamingStrategy;
-import junitparams.testnaming.TestCaseNamingStrategy;
+import junitparams.naming.MacroSubstitutionNamingStrategy;
+import junitparams.naming.TestCaseNamingStrategy;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

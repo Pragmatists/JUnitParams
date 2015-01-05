@@ -11,7 +11,7 @@ import junitparams.*;
 import junitparams.converters.*;
 import junitparams.mappers.*;
 import junitparams.usage.person_example.*;
-import junitparams.testnaming.*;
+import junitparams.naming.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class Samples_of_Usage_Test {

@@ -3,7 +3,7 @@ package junitparams.usage.person_example;
 import static junitparams.JUnitParamsRunner.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import junitparams.testnaming.TestCaseName;
+import junitparams.naming.TestCaseName;
 import org.junit.*;
 import org.junit.runner.*;
 

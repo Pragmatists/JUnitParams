@@ -1,4 +1,4 @@
-package junitparams.testnaming;
+package junitparams.naming;
 
 /**
  * A strategy that can resolve a test case method name by it's parameters.

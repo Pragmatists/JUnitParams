@@ -1,4 +1,4 @@
-package junitparams.testnaming;
+package junitparams.naming;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;

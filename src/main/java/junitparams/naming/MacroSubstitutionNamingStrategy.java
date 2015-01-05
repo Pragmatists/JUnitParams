@@ -1,4 +1,4 @@
-package junitparams.testnaming;
+package junitparams.naming;
 
 import junitparams.internal.TestMethod;
 import junitparams.internal.Utils;
