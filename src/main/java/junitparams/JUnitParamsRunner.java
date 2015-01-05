@@ -1,15 +1,18 @@
 package junitparams;
 
-import java.util.*;
+import java.util.List;
 
-import org.junit.runner.*;
+import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
-import org.junit.runner.notification.*;
-import org.junit.runners.*;
-import org.junit.runners.model.*;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 
-import junitparams.internal.*;
+import junitparams.internal.ParameterisedTestClassRunner;
+import junitparams.internal.TestMethod;
 
 /**
  * <h1>JUnitParams</h1><br>
@@ -374,7 +377,6 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
     private ParameterisedTestClassRunner parameterisedRunner;
     private Description description;
-    private Filter filter;
 
     public JUnitParamsRunner(Class<?> klass) throws InitializationError {
         super(klass);
@@ -384,7 +386,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     @Override
     public void filter(Filter filter) throws NoTestsRemainException {
         super.filter(filter);
-        this.filter = filter;
+        parameterisedRunner.filter(filter);
     }
 
     protected void collectInitializationErrors(List<Throwable> errors) {
@@ -430,35 +432,13 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     public Description getDescription() {
         if (description == null) {
             description = Description.createSuiteDescription(getName(), getTestClass().getAnnotations());
-            List<FrameworkMethod> resultMethods = getListOfMethods();
+            List<FrameworkMethod> resultMethods = parameterisedRunner.returnListOfMethods();
 
             for (FrameworkMethod method : resultMethods)
                 description.addChild(describeMethod(method));
         }
 
         return description;
-    }
-
-    private List<FrameworkMethod> getListOfMethods() {
-        List<FrameworkMethod> frameworkMethods = parameterisedRunner.returnListOfMethods();
-
-        if (filter == null) {
-            return frameworkMethods;
-        }
-
-        return getFilteredListOfMethods(filter, frameworkMethods);
-    }
-
-    private List<FrameworkMethod> getFilteredListOfMethods(Filter filter, List<FrameworkMethod> frameworkMethods) {
-        List<FrameworkMethod> filteredMethods = new ArrayList<FrameworkMethod>();
-
-        for (FrameworkMethod frameworkMethod : frameworkMethods) {
-            if (filter.shouldRun(describeChild(frameworkMethod))) {
-                filteredMethods.add(frameworkMethod);
-            }
-        }
-
-        return filteredMethods;
     }
 
     protected Description describeMethod(FrameworkMethod method) {
