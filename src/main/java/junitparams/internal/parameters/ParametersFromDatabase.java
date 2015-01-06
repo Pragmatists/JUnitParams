@@ -6,16 +6,43 @@ import junitparams.Parameters;
 import junitparams.mappers.RowMapper;
 import org.junit.runners.model.FrameworkMethod;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
 class ParametersFromDatabase implements ParametrizationStrategy {
 
     private FrameworkMethod frameworkMethod;
+
+    private class DatabaseParametersFactory {
+
+        DatabaseParameters parameters;
+
+        DatabaseParametersFactory(DatabaseParameters parameters) {
+            this.parameters = parameters;
+        }
+
+        Session session() {
+            Session session = newInstance(parameters.session());
+            ConnectionProperties properties = ConnectionProperties.Factory.of(parameters);
+            session.setProperties(properties);
+            return session;
+        }
+
+        RowMapper mapper() {
+            return newInstance(parameters.mapper());
+        }
+
+        <T> T newInstance(Class<T> clazz) {
+            try {
+                return clazz.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Could not successfully create new instance of: " + clazz, e);
+            }
+        }
+    }
 
     ParametersFromDatabase(FrameworkMethod frameworkMethod) {
         this.frameworkMethod = frameworkMethod;
@@ -35,28 +62,14 @@ class ParametersFromDatabase implements ParametrizationStrategy {
 
     private Object[] paramsFromDatabase(DatabaseParameters dbParamsAnnotation) {
         try {
-            QueryExecutor queryExecutor = null;
-            Connection connection = null;
-            Statement statement = null;
+            DatabaseParametersFactory dbParamsFactory = new DatabaseParametersFactory(dbParamsAnnotation);
+            Session session = dbParamsFactory.session();
             try {
-                ConnectionProperties connectionProperties = ConnectionPropertiesFactory.of(dbParamsAnnotation);
-                queryExecutor = dbParamsAnnotation.executor().
-                        getDeclaredConstructor(ConnectionProperties.class).
-                        newInstance(connectionProperties);
-                connection = queryExecutor.getConnection();
-                queryExecutor.executeBefore(connection);
-                ResultSet resultSet = queryExecutor.execute(connection, dbParamsAnnotation.sql());
-                statement = resultSet.getStatement();
-                RowMapper mapper = dbParamsAnnotation.mapper().newInstance();
+                ResultSet resultSet = session.select(dbParamsAnnotation.sql());
+                RowMapper mapper = dbParamsFactory.mapper();
                 return mapRecords(resultSet, mapper);
             } finally {
-                if (statement != null) {
-                    statement.close();
-                }
-                if (connection != null) {
-                    queryExecutor.executeAfter(connection);
-                    connection.close();
-                }
+                session.close();
             }
         } catch (Exception e) {
             e.printStackTrace();

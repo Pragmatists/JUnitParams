@@ -1,9 +1,9 @@
 package junitparams;
 
-import junitparams.internal.parameters.QueryExecutor;
-import junitparams.internal.parameters.JdbcQueryExecutor;
+import junitparams.internal.parameters.JdbcSession;
+import junitparams.internal.parameters.Session;
+import junitparams.mappers.JdbcRowMapper;
 import junitparams.mappers.RowMapper;
-import junitparams.mappers.ResultSetRowMapper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,7 +27,7 @@ public @interface DatabaseParameters {
 
     String password() default "";
 
-    Class<? extends QueryExecutor> executor() default JdbcQueryExecutor.class;
+    Class<? extends Session> session() default JdbcSession.class;
 
-    Class<? extends RowMapper> mapper() default ResultSetRowMapper.class;
+    Class<? extends RowMapper> mapper() default JdbcRowMapper.class;
 }

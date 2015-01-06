@@ -1,5 +1,7 @@
 package junitparams.internal.parameters;
 
+import junitparams.DatabaseParameters;
+
 public class ConnectionProperties {
 
     private final String driver;
@@ -7,7 +9,14 @@ public class ConnectionProperties {
     private final String user;
     private final String password;
 
-    ConnectionProperties(String driver, String url, String user, String password) {
+    static class Factory {
+        static ConnectionProperties of(DatabaseParameters dbParamsAnnotation) {
+            return new ConnectionProperties(dbParamsAnnotation.driver(), dbParamsAnnotation.url(),
+                    dbParamsAnnotation.user(), dbParamsAnnotation.password());
+        }
+    }
+
+    private ConnectionProperties(String driver, String url, String user, String password) {
         this.driver = driver;
         this.url = url;
         this.user = user;

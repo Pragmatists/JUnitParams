@@ -3,7 +3,7 @@ package junitparams.mappers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ResultSetRowMapper implements RowMapper {
+public class JdbcRowMapper implements RowMapper {
 
     @Override
     public Object[] map(ResultSet resultSet, int columnCount) throws SQLException {
