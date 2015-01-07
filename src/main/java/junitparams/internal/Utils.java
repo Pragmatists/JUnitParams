@@ -1,6 +1,6 @@
 package junitparams.internal;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -127,5 +127,9 @@ public class Utils {
         if (toString.getDeclaringClass().equals(Object.class)) {
             throw new NoSuchMethodException();
         }
+    }
+
+    static String uniqueMethodId(int index, Object paramSet, String methodName) {
+        return stringify(paramSet, index) + " (" + methodName + ")";
     }
 }

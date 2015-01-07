@@ -1,11 +1,15 @@
 package junitparams.internal;
 
-import java.lang.annotation.*;
-import java.lang.reflect.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 
-import org.junit.runners.model.*;
+import org.junit.runner.Description;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
 
-import junitparams.converters.*;
+import junitparams.converters.ConversionFailedException;
+import junitparams.converters.ConvertParam;
+import junitparams.converters.ParamConverter;
 
 /**
  * JUnit invoker for parameterised test methods
@@ -19,14 +23,10 @@ public class InvokeParameterisedMethod extends Statement {
     private final Object testClass;
     private final String uniqueMethodId;
 
-    public String getUniqueMethodId() {
-        return uniqueMethodId;
-    }
-
     public InvokeParameterisedMethod(FrameworkMethod testMethod, Object testClass, Object params, int paramSetIdx) {
         this.testMethod = testMethod;
         this.testClass = testClass;
-        uniqueMethodId = Utils.stringify(params, paramSetIdx - 1) + " (" + testMethod.getName() + ")";
+        this.uniqueMethodId = Utils.uniqueMethodId(paramSetIdx - 1, params, testMethod.getName());
         try {
             if (params instanceof String)
                 this.params = castParamsFromString((String) params);
@@ -200,6 +200,10 @@ public class InvokeParameterisedMethod extends Statement {
                     "Number of parameters inside @Parameters annotation doesn't match the number of test method parameters.\nThere are "
                             + columns.length + " parameters in annotation, while there's " + parameterTypes.length + " parameters in the "
                             + testMethod.getName() + " method.");
+    }
+
+    boolean matchesDescription(Description description) {
+        return description.hashCode() == uniqueMethodId.hashCode();
     }
 
     @Override

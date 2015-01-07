@@ -1,19 +1,19 @@
 package junitparams.internal;
 
-import junitparams.FileParameters;
-import junitparams.Parameters;
-import junitparams.internal.parameters.ParametersReader;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
+import junitparams.FileParameters;
+import junitparams.Parameters;
+import junitparams.internal.parameters.ParametersReader;
 import junitparams.naming.MacroSubstitutionNamingStrategy;
 import junitparams.naming.TestCaseNamingStrategy;
-
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A wrapper for a test method
@@ -100,7 +100,7 @@ public class TestMethod {
             for (int i = 0; i < params.length; i++) {
                 Object paramSet = params[i];
                 String name = namingStrategy.getTestCaseName(i, paramSet);
-                String uniqueMethodId = Utils.stringify(paramSet, i) + " (" + name() + ")";
+                String uniqueMethodId = Utils.uniqueMethodId(i, paramSet, name());
 
                 parametrised.addChild(
                     Description.createTestDescription(testClass().getName(), name, uniqueMethodId)
