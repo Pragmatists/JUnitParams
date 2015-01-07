@@ -85,6 +85,20 @@ public class Samples_of_Usage_Test {
     public void load_params_from_csv_with_header(int id, String name) { }
 
     @Test
+    @DatabaseParameters(sql = "select current_date();", url = "jdbc:h2:mem:testdb")
+    public void load_params_from_database(Date date) { }
+
+    @Test
+    @DatabaseParameters(sql = "select name, age from persons;", url = "jdbc:h2:mem:testdb", session = PersonSession.class)
+    public void load_params_from_database_with_custom_session(String name, int age) { }
+
+    @Test
+    @DatabaseParameters(sql = "select name, age from persons;",
+            url = "jdbc:h2:mem:testdb", driver = "org.h2.Driver", user = "sa", password = "sa",
+            session = PersonSession.class, mapper = PersonRowMapper.class)
+    public void load_params_from_database_with_custom_session_and_mapper(PersonTest.Person person) { }
+
+    @Test
     @Parameters({ "01.12.2012" })
     public void convert_params(@ConvertParam(value = ParamsConverterTest.StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {}
 
