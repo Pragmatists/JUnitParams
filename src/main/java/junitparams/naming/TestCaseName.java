@@ -19,11 +19,11 @@ public @interface TestCaseName {
      * <li><b>{params}</b> - parameters set joined by comma.</li>
      * <li><b>{method}</b> - testing method name.</li>
      * <li>
-     *     <b>{0}</b>, <b>{1}</b>, <b>{2}</b> - single parameter by index in a current parameters set.
+     *     <b>{0}</b>, <b>{1}</b>, <b>{2}</b> - single parameter by index in current parameters set.
      *     If there is no parameter with such index, it will use empty string.
      * </li>
      * </ul>
-     * Lets assume, that we are testing Fibonacci sequence generator. We have a test with signature
+     * Lets assume, that we are testing Fibonacci sequence generator. We have a test with the following signature
      * <pre><code>
      * {@literal @}Parameters({ "0,1", "8,34" })
      * public void testFibonacci(int indexInSequence, int expectedNumber) { ... }
@@ -33,7 +33,7 @@ public @interface TestCaseName {
      * <li>{method}({params}) => testFibonacci(0, 1), testFibonacci(8, 34)</li>
      * <li>fibonacci({0}) = {1} => fibonacci(0) = 1, fibonacci(8) = 34</li>
      * <li>{0} element should be {1} => 0 element should be 1, 8 element should be 34</li>
-     * <li>Fibonacci sequence test #{index} => Fibonacci sequence test #1, Fibonacci sequence test #2</li>
+     * <li>Fibonacci sequence test #{index} => Fibonacci sequence test #0, Fibonacci sequence test #1</li>
      * </ul>
      */
     String value() default MacroSubstitutionNamingStrategy.DEFAULT_TEMPLATE;
