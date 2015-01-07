@@ -1,6 +1,7 @@
 package junitparams.internal;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 /**
  * Some String utils to handle parameterised tests' results.
@@ -13,14 +14,59 @@ public class Utils {
     public static String stringify(Object paramSet, int paramIdx) {
         String result = "[" + paramIdx + "] ";
 
+        return result + stringify(paramSet);
+    }
+
+    public static String stringify(Object paramSet) {
+        String result;
         if (paramSet == null)
-            result += "null";
+            result = "null";
         else if (paramSet instanceof String)
-            result += paramSet;
+            result = paramSet.toString();
         else
-            result += asCsvString(safelyCastParamsToArray(paramSet));
+            result = asCsvString(safelyCastParamsToArray(paramSet));
 
         return trimSpecialChars(result);
+    }
+
+    public static String getParameterStringByIndexOrEmpty(Object paramSet, int parameterIndex) {
+        Object[] params = safelyCastParamsToArray(paramSet);
+        if (paramSet instanceof String) {
+            params = splitAtCommaOrPipe((String) paramSet);
+        }
+        if (parameterIndex >= 0 && parameterIndex < params.length) {
+            return addParamToResult("", params[parameterIndex]);
+        }
+
+        return "";
+    }
+
+    public static String[] splitAtCommaOrPipe(String input) {
+        ArrayList<String> result = new ArrayList<String>();
+
+        char character = '\0';
+        char previousCharacter;
+
+        StringBuilder value = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            previousCharacter = character;
+            character = input.charAt(i);
+
+            if (character == ',' || character == '|') {
+                if (previousCharacter == '\\') {
+                    value.setCharAt(value.length() - 1, character);
+                    continue;
+                }
+                result.add(value.toString().trim());
+                value = new StringBuilder();
+                continue;
+            }
+
+            value.append(character);
+        }
+        result.add(value.toString().trim());
+
+        return result.toArray(new String[]{});
     }
 
     private static String trimSpecialChars(String result) {
@@ -32,7 +78,7 @@ public class Utils {
         if (paramSet instanceof Object[]) {
             params = (Object[]) paramSet;
         } else {
-            params = new Object[] {paramSet};
+            params = new Object[]{paramSet};
         }
         return params;
     }
@@ -76,5 +122,9 @@ public class Utils {
         if (toString.getDeclaringClass().equals(Object.class)) {
             throw new NoSuchMethodException();
         }
+    }
+
+    static String uniqueMethodId(int index, Object paramSet, String methodName) {
+        return stringify(paramSet, index) + " (" + methodName + ")";
     }
 }
