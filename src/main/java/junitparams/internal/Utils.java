@@ -1,6 +1,6 @@
 package junitparams.internal;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -74,20 +74,15 @@ public class Utils {
     }
 
     static Object[] safelyCastParamsToArray(Object paramSet) {
-        Object[] params;
-
-        if (paramSet instanceof String[]) {
-            params = new Object[]{paramSet};
+        final Object[] params;
+        if (paramSet instanceof Object[]) {
+            params = (Object[]) paramSet;
         } else {
-            try {
-                params = (Object[]) paramSet;
-            } catch (ClassCastException e) {
-                params = new Object[]{paramSet};
-            }
+            params = new Object[] {paramSet};
         }
         return params;
     }
-
+    
     private static String asCsvString(Object[] params) {
         if (params == null)
             return "null";
