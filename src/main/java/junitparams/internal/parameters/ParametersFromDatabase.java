@@ -66,8 +66,7 @@ class ParametersFromDatabase implements ParametrizationStrategy {
             Session session = dbParamsFactory.session();
             try {
                 ResultSet resultSet = session.select(dbParamsAnnotation.sql());
-                RowMapper mapper = dbParamsFactory.mapper();
-                return mapRecords(resultSet, mapper);
+                return mapRecords(resultSet, dbParamsFactory.mapper());
             } finally {
                 session.close();
             }

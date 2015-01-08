@@ -3,6 +3,10 @@ package junitparams.mappers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Default implementation of {@link junitparams.mappers.RowMapper} retrieving all available columns
+ * by {@link java.sql.ResultSet#getObject(int)}.
+ */
 public class JdbcRowMapper implements RowMapper {
 
     @Override

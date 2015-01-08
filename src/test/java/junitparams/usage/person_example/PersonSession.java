@@ -22,6 +22,10 @@ public class PersonSession extends JdbcSession {
         super.close();
     }
 
+    private void update(String sql) throws SQLException {
+        createStatement(sql).executeUpdate();
+    }
+
     private String fileContentFromStrem(String resourceName) {
         try {
             InputStream is = getClass().getResourceAsStream(resourceName);
