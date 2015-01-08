@@ -1,29 +1,35 @@
 package junitparams.internal;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runner.notification.*;
-import org.junit.runners.model.*;
+import org.junit.Test;
+import org.junit.runner.Description;
+import org.junit.runner.manipulation.Filter;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
+import org.junit.runners.model.TestClass;
 
 /**
  * Testclass-level functionalities to handle parameters from a JUnit runner
  * class.
- * 
+ *
  * @author Pawel Lipinski
- * 
  */
 public class ParameterisedTestClassRunner {
 
     protected Map<TestMethod, ParameterisedTestMethodRunner> parameterisedMethods = new HashMap<TestMethod, ParameterisedTestMethodRunner>();
     protected Map<FrameworkMethod, TestMethod> testMethods = new HashMap<FrameworkMethod, TestMethod>();
     protected List<TestMethod> testMethodsList;
+    private Filter filter = Filter.ALL;
 
     /**
      * Creates a runner for a given test class. Computes all the test methods
      * that are annotated as tests. Retrieves and caches all parameter values.
-     * 
+     *
      * @param testClass
      */
     public ParameterisedTestClassRunner(TestClass testClass) {
@@ -45,17 +51,19 @@ public class ParameterisedTestClassRunner {
      * Returns a list of <code>FrameworkMethod</code>s. Handles both
      * parameterised methods (counts them as many times as many paramsets they
      * have) and nonparameterised methods (just counts them once).
-     * 
+     *
      * @return a list of FrameworkMethod objects
      */
     public List<FrameworkMethod> computeFrameworkMethods() {
         List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
 
         for (TestMethod testMethod : testMethodsList) {
-            if (testMethod.isParameterised())
-                addTestMethodForEachParamSet(resultMethods, testMethod);
-            else
-                addTestMethodOnce(resultMethods, testMethod);
+            if (isNotFilteredOut(testMethod)) {
+                if (testMethod.isParameterised())
+                    addTestMethodForEachParamSet(resultMethods, testMethod);
+                else
+                    addTestMethodOnce(resultMethods, testMethod);
+            }
         }
 
         return resultMethods;
@@ -70,12 +78,18 @@ public class ParameterisedTestClassRunner {
         List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
 
         for (TestMethod testMethod : testMethodsList) {
-            addTestMethodOnce(resultMethods, testMethod);
-            cacheMethodRunner(testMethod);
-            testMethod.warnIfNoParamsGiven();
+            if (isNotFilteredOut(testMethod)) {
+                addTestMethodOnce(resultMethods, testMethod);
+                cacheMethodRunner(testMethod);
+                testMethod.warnIfNoParamsGiven();
+            }
         }
 
         return resultMethods;
+    }
+
+    private boolean isNotFilteredOut(TestMethod testMethod) {
+        return filter.shouldRun(testMethod.describe());
     }
 
     private void addTestMethodForEachParamSet(List<FrameworkMethod> resultMethods, TestMethod testMethod) {
@@ -100,9 +114,8 @@ public class ParameterisedTestClassRunner {
     /**
      * Returns a InvokeParameterisedMethod for parameterised methods and null
      * for nonparameterised
-     * 
-     * @param method
-     *            Test method
+     *
+     * @param method    Test method
      * @param testClass
      * @return a Statement with the invoker for the parameterised method
      */
@@ -124,7 +137,7 @@ public class ParameterisedTestClassRunner {
 
     /**
      * Tells if method should be run by this runner.
-     * 
+     *
      * @param testMethod
      * @return true, iff testMethod should be run by this runner.
      */
@@ -134,7 +147,7 @@ public class ParameterisedTestClassRunner {
 
     /**
      * Executes parameterised method.
-     * 
+     *
      * @param method
      * @param methodInvoker
      * @param notifier
@@ -145,10 +158,8 @@ public class ParameterisedTestClassRunner {
 
     /**
      * Returns description of a parameterised method.
-     * 
-     * @param method
-     *            TODO
-     * 
+     *
+     * @param method TODO
      * @return Description of a method or null if it's not parameterised.
      */
     public Description describeParameterisedMethod(FrameworkMethod method) {
@@ -165,11 +176,16 @@ public class ParameterisedTestClassRunner {
      * This object has all the params already retrieved, so use this one and not
      * TestMethod's constructor if you want to have everything retrieved once
      * and cached.
-     * 
+     *
      * @param method
      * @return a cached TestMethod instance
      */
     public TestMethod testMethodFor(FrameworkMethod method) {
         return testMethods.get(method);
     }
+
+    public void filter(Filter filter) {
+        this.filter = filter;
+    }
+
 }

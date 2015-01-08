@@ -1,18 +1,17 @@
 package junitparams.internal;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
 
-import org.junit.internal.*;
-import org.junit.internal.runners.model.*;
-import org.junit.runner.*;
-import org.junit.runner.notification.*;
-import org.junit.runners.model.*;
+import org.junit.internal.AssumptionViolatedException;
+import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.Statement;
 
 /**
  * Testmethod-level functionalities for parameterised tests
- * 
+ *
  * @author Pawel Lipinski
- * 
  */
 public class ParameterisedTestMethodRunner {
 
@@ -36,13 +35,12 @@ public class ParameterisedTestMethodRunner {
     }
 
     void runTestMethod(Statement methodInvoker, RunNotifier notifier) {
-        Description methodDescription = method.describe();
-        Description methodWithParams = findChildForParams(methodInvoker, methodDescription);
+        Description methodWithParams = findChildForParams(methodInvoker, method.describe());
 
-        runMethodInvoker(notifier, methodDescription, methodInvoker, methodWithParams);
+        runMethodInvoker(notifier, methodInvoker, methodWithParams);
     }
 
-    private void runMethodInvoker(RunNotifier notifier, Description description, Statement methodInvoker, Description methodWithParams) {
+    private void runMethodInvoker(RunNotifier notifier, Statement methodInvoker, Description methodWithParams) {
         EachTestNotifier eachNotifier = new EachTestNotifier(notifier, methodWithParams);
         eachNotifier.fireTestStarted();
         try {
@@ -60,10 +58,10 @@ public class ParameterisedTestMethodRunner {
         if (System.getProperty("JUnitParams.flat") != null)
             return methodDescription;
 
-        for (Description child : methodDescription.getChildren()) {
-            InvokeParameterisedMethod parameterisedInvoker = findParameterisedMethodInvokerInChain(methodInvoker);
+        InvokeParameterisedMethod parameterisedInvoker = findParameterisedMethodInvokerInChain(methodInvoker);
 
-            if (child.getMethodName().startsWith(parameterisedInvoker.getParamsAsString()))
+        for (Description child : methodDescription.getChildren()) {
+            if (parameterisedInvoker.matchesDescription(child))
                 return child;
         }
         return null;

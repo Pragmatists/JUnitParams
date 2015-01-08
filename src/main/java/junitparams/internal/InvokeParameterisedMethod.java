@@ -1,12 +1,15 @@
 package junitparams.internal;
 
-import java.lang.annotation.*;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 
-import org.junit.runners.model.*;
+import org.junit.runner.Description;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
 
-import junitparams.converters.*;
+import junitparams.converters.ConversionFailedException;
+import junitparams.converters.ConvertParam;
+import junitparams.converters.ParamConverter;
 
 /**
  * JUnit invoker for parameterised test methods
@@ -18,16 +21,12 @@ public class InvokeParameterisedMethod extends Statement {
     private final Object[] params;
     private final FrameworkMethod testMethod;
     private final Object testClass;
-    private final String paramsAsString;
-
-    public String getParamsAsString() {
-        return paramsAsString;
-    }
+    private final String uniqueMethodId;
 
     public InvokeParameterisedMethod(FrameworkMethod testMethod, Object testClass, Object params, int paramSetIdx) {
         this.testMethod = testMethod;
         this.testClass = testClass;
-        paramsAsString = Utils.stringify(params, paramSetIdx - 1);
+        this.uniqueMethodId = Utils.uniqueMethodId(paramSetIdx - 1, params, testMethod.getName());
         try {
             if (params instanceof String)
                 this.params = castParamsFromString((String) params);
@@ -42,7 +41,7 @@ public class InvokeParameterisedMethod extends Statement {
     private Object[] castParamsFromString(String params) throws ConversionFailedException {
         Object[] columns = null;
         try {
-            columns = splitAtCommaOrPipe(params);
+            columns = Utils.splitAtCommaOrPipe(params);
             columns = castParamsUsingConverters(columns);
         } catch (RuntimeException e) {
             new IllegalArgumentException("Cannot parse parameters. Did you use , as column separator? " + params, e).printStackTrace();
@@ -135,34 +134,6 @@ public class InvokeParameterisedMethod extends Statement {
         		&& expectedParameterTypes[paramLen-1].getComponentType().equals(columns[paramLen-1].getClass());
     }
 
-    private String[] splitAtCommaOrPipe(String input) {
-        ArrayList<String> result = new ArrayList<String>();
-
-        char character = '\0';
-        char previousCharacter;
-
-        StringBuilder value = new StringBuilder();
-        for (int i=0; i<input.length(); i++) {
-            previousCharacter = character;
-            character = input.charAt(i);
-
-            if (character == ',' || character == '|') {
-                if (previousCharacter == '\\') {
-                    value.setCharAt(value.length() - 1, character);
-                    continue;
-                }
-                result.add(value.toString().trim());
-                value = new StringBuilder();
-                continue;
-            }
-
-            value.append(character);
-        }
-        result.add(value.toString().trim());
-
-        return result.toArray(new String[]{});
-    }
-
     private Object[] castAllParametersToProperTypes(Object[] columns, Class<?>[] expectedParameterTypes,
                                                     Annotation[][] parameterAnnotations) throws ConversionFailedException {
         Object[] result = new Object[columns.length];
@@ -229,6 +200,10 @@ public class InvokeParameterisedMethod extends Statement {
                     "Number of parameters inside @Parameters annotation doesn't match the number of test method parameters.\nThere are "
                             + columns.length + " parameters in annotation, while there's " + parameterTypes.length + " parameters in the "
                             + testMethod.getName() + " method.");
+    }
+
+    boolean matchesDescription(Description description) {
+        return description.hashCode() == uniqueMethodId.hashCode();
     }
 
     @Override
