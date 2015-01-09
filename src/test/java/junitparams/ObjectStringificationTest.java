@@ -2,6 +2,7 @@ package junitparams;
 
 import static junitparams.internal.Utils.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 import org.junit.*;
 import org.junit.runner.*;
@@ -57,15 +58,22 @@ public class ObjectStringificationTest {
     @Test
     @Parameters
     public void shouldCreateParameterObjectsOnce(Object object) {
-
+        assertThat(object).isInstanceOf(A.class);
     }
 
     public Object[] parametersForShouldCreateParameterObjectsOnce() {
         return new Object[] { new A() };
     }
 
-    class A {
+    static class A {
+        static int instances = 0;
         String test = "test";
+
+        A() {
+            if (++instances > 1) {
+                fail();
+            }
+        }
 
         @Override
         public String toString() {
