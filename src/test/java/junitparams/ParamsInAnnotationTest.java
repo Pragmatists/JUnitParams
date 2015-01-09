@@ -15,17 +15,26 @@ public class ParamsInAnnotationTest {
     }
 
     @Test
-    @Parameters({ "a \n b", "a(asdf)", "a \r a" })
-    public void specialCharsInParam(String a) throws Exception {
+    @Parameters({ "1, true", "2, false" })
+    public void multipleParamsCommaSeparated(int number, boolean isOne) throws Exception {
+        if (isOne)
+            assertThat(number).isEqualTo(1);
+        else
+            assertThat(number).isNotEqualTo(1);
     }
 
     @Test
-    @Parameters({ "1, false", "2, true" })
-    public void multipleParams(int number, boolean what) throws Exception {
-        if (what)
-            assertThat(number).isGreaterThan(1);
-        else
+    @Parameters({ "1 | true", "2 | false" })
+    public void multipleParamsPipeSeparated(int number, boolean isOne) throws Exception {
+        if (isOne)
             assertThat(number).isEqualTo(1);
+        else
+            assertThat(number).isNotEqualTo(1);
+    }
+
+    @Test
+    @Parameters({ "a \n b", "a(asdf)", "a \r a" })
+    public void specialCharsInParam(String a) throws Exception {
     }
 
     @Test

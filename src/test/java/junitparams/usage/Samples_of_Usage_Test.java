@@ -21,6 +21,10 @@ public class Samples_of_Usage_Test {
     public void params_in_annotation(String p1, Integer p2) { }
 
     @Test
+    @Parameters({"AAA|1", "BBB|2"})
+    public void params_in_annotation_pipe_separated(String p1, Integer p2) { }
+
+    @Test
     @Parameters
     public void params_in_default_method(String p1, Integer p2) { }
     private Object parametersForParams_in_default_method() { return $($("AAA", 1), $("BBB", 2)); }

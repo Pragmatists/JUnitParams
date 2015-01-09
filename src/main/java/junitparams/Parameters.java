@@ -14,8 +14,8 @@ import javax.lang.model.type.*;
 public @interface Parameters {
     /**
      * Parameter values defined as a String array. Each element in the array is
-     * a full parameter set, comma-separated. The values must match the method
-     * parameters in order and type.
+     * a full parameter set, comma-separated or pipe-separated ('|').
+     * The values must match the method parameters in order and type.
      * Example: <code>@Parameters({
      *                    "1, joe, 26.4, true", 
      *                    "2, angie, 37.2, false"})</code>

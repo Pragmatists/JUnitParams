@@ -44,7 +44,8 @@ public class InvokeParameterisedMethod extends Statement {
             columns = Utils.splitAtCommaOrPipe(params);
             columns = castParamsUsingConverters(columns);
         } catch (RuntimeException e) {
-            new IllegalArgumentException("Cannot parse parameters. Did you use , as column separator? " + params, e).printStackTrace();
+            new IllegalArgumentException("Cannot parse parameters. Did you use ',' or '|' as column separator? "
+                    + params, e).printStackTrace();
         }
 
         return columns;
