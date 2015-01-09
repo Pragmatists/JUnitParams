@@ -15,22 +15,6 @@ import java.util.*;
  * @author Pawel Lipinski
  * 
  */
-public class IdentityMapper implements DataMapper {
-    public Object[] map(Reader reader) {
-        BufferedReader br = new BufferedReader(reader);
-        String line;
-        List<String> result = new LinkedList<String>();
-        try {
-            try {
-                while ((line = br.readLine()) != null) {
-                    result.add(line);
-                }
-                return result.toArray();
-            } finally {
-                reader.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+public class IdentityMapper extends BufferedReaderDataMapper{
+
 }
