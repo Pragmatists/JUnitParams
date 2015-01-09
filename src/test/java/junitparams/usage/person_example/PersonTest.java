@@ -70,6 +70,8 @@ public class PersonTest {
     }
 
     public static class Person {
+
+        private String name;
         private int age;
 
         public Person(Integer age) {
@@ -77,7 +79,12 @@ public class PersonTest {
         }
 
         public Person(String name, Integer age) {
+            this.name = name;
             this.age = age;
+        }
+
+        public String getName() {
+            return name;
         }
 
         public boolean isAdult() {

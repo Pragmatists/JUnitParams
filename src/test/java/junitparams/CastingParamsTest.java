@@ -33,7 +33,11 @@ public class CastingParamsTest {
 
     @Test
     @Parameters
-    public void cartoonCharacters(PersonTest.Person character) { }
+    public void cartoonCharacters(PersonTest.Person character) {
+        assertThat(character.getName()).isIn("Tarzan", "Jane");
+        assertThat(character.getAge()).isIn(0, 20);
+    }
+
     private List<?> parametersForCartoonCharacters() {
         return Arrays.asList(
             $("Tarzan", 0),
@@ -41,14 +45,17 @@ public class CastingParamsTest {
             );
     }
 
-    @Parameters(method = "strings")
     @Test
-    public void stringArrayFromMethod(String... values) {}
+    @Parameters(method = "strings")
+    public void stringArrayFromMethod(String... values) {
+        assertThat(values).containsOnlyOnce("1", "2");
+    }
     private Object strings() { return $($("1","2"), $("2","1")); }
 
-
-    @Parameters({"a,b", "b,a"})
     @Test
-    public void stringArrayFromAnnotation(String... values) { }
+    @Parameters({"a,b", "b,a"})
+    public void stringArrayFromAnnotation(String... values) {
+        assertThat(values).containsOnlyOnce("a","b");
+    }
 
 }

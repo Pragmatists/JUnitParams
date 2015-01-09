@@ -35,6 +35,7 @@ public class ParamsInAnnotationTest {
     @Test
     @Parameters({ "a \n b", "a(asdf)", "a \r a" })
     public void specialCharsInParam(String a) throws Exception {
+        assertThat(a).isIn("a \n b", "a(asdf)", "a \r a");
     }
 
     @Test
