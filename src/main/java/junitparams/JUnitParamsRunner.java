@@ -12,6 +12,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import junitparams.internal.ParameterisedTestClassRunner;
+import junitparams.internal.ParametrizedTestMethodsFilter;
 import junitparams.internal.TestMethod;
 
 /**
@@ -375,6 +376,7 @@ import junitparams.internal.TestMethod;
  */
 public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
+    private ParametrizedTestMethodsFilter parametrizedTestMethodsFilter = new ParametrizedTestMethodsFilter(this);
     private ParameterisedTestClassRunner parameterisedRunner;
     private Description description;
 
@@ -386,7 +388,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     @Override
     public void filter(Filter filter) throws NoTestsRemainException {
         super.filter(filter);
-        parameterisedRunner.filter(filter);
+        this.parametrizedTestMethodsFilter = new ParametrizedTestMethodsFilter(this,filter);
     }
 
     protected void collectInitializationErrors(List<Throwable> errors) {
@@ -432,7 +434,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     public Description getDescription() {
         if (description == null) {
             description = Description.createSuiteDescription(getName(), getTestClass().getAnnotations());
-            List<FrameworkMethod> resultMethods = parameterisedRunner.returnListOfMethods();
+            List<FrameworkMethod> resultMethods = getListOfMethods();
 
             for (FrameworkMethod method : resultMethods)
                 description.addChild(describeMethod(method));
@@ -441,7 +443,12 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
         return description;
     }
 
-    protected Description describeMethod(FrameworkMethod method) {
+    private List<FrameworkMethod> getListOfMethods() {
+        List<FrameworkMethod> frameworkMethods = parameterisedRunner.returnListOfMethods();
+        return parametrizedTestMethodsFilter.filteredMethods(frameworkMethods);
+    }
+
+    public Description describeMethod(FrameworkMethod method) {
         Description child = parameterisedRunner.describeParameterisedMethod(method);
 
         if (child == null)

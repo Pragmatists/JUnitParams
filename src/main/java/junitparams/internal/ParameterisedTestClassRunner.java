@@ -24,7 +24,6 @@ public class ParameterisedTestClassRunner {
     protected Map<TestMethod, ParameterisedTestMethodRunner> parameterisedMethods = new HashMap<TestMethod, ParameterisedTestMethodRunner>();
     protected Map<FrameworkMethod, TestMethod> testMethods = new HashMap<FrameworkMethod, TestMethod>();
     protected List<TestMethod> testMethodsList;
-    private Filter filter = Filter.ALL;
 
     /**
      * Creates a runner for a given test class. Computes all the test methods
@@ -58,12 +57,10 @@ public class ParameterisedTestClassRunner {
         List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
 
         for (TestMethod testMethod : testMethodsList) {
-            if (isNotFilteredOut(testMethod)) {
-                if (testMethod.isParameterised())
-                    addTestMethodForEachParamSet(resultMethods, testMethod);
-                else
-                    addTestMethodOnce(resultMethods, testMethod);
-            }
+            if (testMethod.isParameterised())
+                addTestMethodForEachParamSet(resultMethods, testMethod);
+            else
+                addTestMethodOnce(resultMethods, testMethod);
         }
 
         return resultMethods;
@@ -78,18 +75,12 @@ public class ParameterisedTestClassRunner {
         List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
 
         for (TestMethod testMethod : testMethodsList) {
-            if (isNotFilteredOut(testMethod)) {
-                addTestMethodOnce(resultMethods, testMethod);
-                cacheMethodRunner(testMethod);
-                testMethod.warnIfNoParamsGiven();
-            }
+            addTestMethodOnce(resultMethods, testMethod);
+            cacheMethodRunner(testMethod);
+            testMethod.warnIfNoParamsGiven();
         }
 
         return resultMethods;
-    }
-
-    private boolean isNotFilteredOut(TestMethod testMethod) {
-        return filter.shouldRun(testMethod.describe());
     }
 
     private void addTestMethodForEachParamSet(List<FrameworkMethod> resultMethods, TestMethod testMethod) {
@@ -182,10 +173,6 @@ public class ParameterisedTestClassRunner {
      */
     public TestMethod testMethodFor(FrameworkMethod method) {
         return testMethods.get(method);
-    }
-
-    public void filter(Filter filter) {
-        this.filter = filter;
     }
 
 }
