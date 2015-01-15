@@ -1,6 +1,6 @@
 # JUnitParams
 
-[![Build Status](https://secure.travis-ci.org/Pragmatists/JUnitParams.png)](http://travis-ci.org/Pragmatists/JUnitParams)
+[![Build Status](https://secure.travis-ci.org/Pragmatists/JUnitParams.png)](http://travis-ci.org/Pragmatists/JUnitParams) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/pl.pragmatists/JUnitParams/badge.svg)](https://maven-badges.herokuapp.com/maven-central/pl.pragmatists/JUnitParams)
 
 *Parameterised tests that don't suck*
 
