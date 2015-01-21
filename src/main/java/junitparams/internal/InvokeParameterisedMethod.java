@@ -59,7 +59,6 @@ public class InvokeParameterisedMethod extends Statement {
         } catch (ConversionFailedException e) {
             throw e;
         } catch (Exception e) {
-        	e.printStackTrace();
             Class<?>[] typesOfParameters = createArrayOfTypesOf(paramset);
             Object resultParam = createObjectOfExpectedTypeBasedOnParams(paramset, typesOfParameters);
             return new Object[]{resultParam};
