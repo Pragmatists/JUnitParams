@@ -73,7 +73,7 @@ import junitparams.internal.TestMethod;
  * <h4 id="b">b. Parameterising tests via a method that returns parameter values
  * </h4>
  * <p>
- * Obivously passing parameters as strings is handy only for trivial situations,
+ * Obviously passing parameters as strings is handy only for trivial situations,
  * that's why for normal cases you have a method that gives you a collection of
  * parameters:
  *
@@ -338,8 +338,16 @@ import junitparams.internal.TestMethod;
  * This lets you use in your tests anything that Spring provides in its test
  * framework.
  *
- * <h3 id="p3">3. Other options</h3> <h4>Customizing how parameter objects are
- * shown in IDE</h4>
+ * <h3 id="p3">3. Other options</h3>
+ * <h4> Enhancing test case description</h4>
+ * You can use <code>TestCaseName</code> annotation to provide template of the individual test case name:
+ * <pre>
+ *     &#064;TestCaseName("factorial({0}) = {1}")
+ *     &#064;Parameters({ "1,1"})
+ *     public void fractional_test(int argument, int result) { }
+ * </pre>
+ * Will be displayed as 'fractional(1)=1'
+ * <h4>Customizing how parameter objects are shown in IDE</h4>
  * <p>
  * Tests show up in your IDE as a tree with test class name being the root, test
  * methods being nodes, and parameter sets being the leaves. If you want to
