@@ -35,7 +35,7 @@ JUnitParams is available as Maven artifact:
 <dependency>
   <groupId>pl.pragmatists</groupId>
   <artifactId>JUnitParams</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ```
 
