@@ -17,7 +17,7 @@
 
 ## Latest News
 
-* 2015-01-23 JUnitParams 1.04 released. Check [release info.](RELEASES.md)
+* 2015-01-23 JUnitParams 1.0.4 released. Check [release info.](RELEASES.md)
 
 ## About
 JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit >=4.6.
