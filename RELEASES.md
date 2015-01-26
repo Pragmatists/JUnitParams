@@ -1,4 +1,4 @@
-## JUnitParams 1.04 release. Release date : 2015-01-23
+## JUnitParams 1.0.4 release. Release date : 2015-01-23
 ### Configurable test case name
 New annotation `@TestCaseName` that can be used for test case name configuration:
 
