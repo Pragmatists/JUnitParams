@@ -9,6 +9,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
+import junitparams.DatabaseParameters;
 import junitparams.FileParameters;
 import junitparams.Parameters;
 import junitparams.internal.parameters.ParametersReader;
@@ -125,7 +126,8 @@ public class TestMethod {
 
     public boolean isParameterised() {
         return frameworkMethod.getMethod().isAnnotationPresent(Parameters.class)
-            || frameworkMethod.getMethod().isAnnotationPresent(FileParameters.class);
+            || frameworkMethod.getMethod().isAnnotationPresent(FileParameters.class)
+            || frameworkMethod.getMethod().isAnnotationPresent(DatabaseParameters.class);
     }
 
     void warnIfNoParamsGiven() {
