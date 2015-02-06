@@ -1,6 +1,5 @@
 package junitparams;
 
-import static junitparams.JUnitParamsRunner.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
@@ -16,9 +15,6 @@ public abstract class SuperclassTest {
 	}	
 
     protected Object[] paramsForIsAdult() {
-        return $($(11, false),
-                $(17, false),
-                $(18, true),
-                $(22, true));
+        return new Object[]{new Object[]{11, false}, new Object[]{17, false}, new Object[]{18, true}, new Object[]{22, true}};
     }
 }

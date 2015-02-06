@@ -1,6 +1,5 @@
 package junitparams;
 
-import static junitparams.JUnitParamsRunner.*;
 import static org.junit.Assert.assertEquals;
 
 import java.util.*;
@@ -37,8 +36,8 @@ public class IteratorMethodTest {
 
     public Iterator<Object[]> parametersForShouldHandleIteratorsWithObjectArray() {
         ArrayList<Object[]> params = new ArrayList<Object[]>();
-        params.add($("a"));
-        params.add($("b"));
+        params.add(new Object[]{"a"});
+        params.add(new Object[]{"b"});
         return params.iterator();
     }
     

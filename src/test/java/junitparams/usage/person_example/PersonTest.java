@@ -1,6 +1,5 @@
 package junitparams.usage.person_example;
 
-import static junitparams.JUnitParamsRunner.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import junitparams.naming.TestCaseName;
@@ -27,8 +26,7 @@ public class PersonTest {
     }
 
     private Object[] adultValues() {
-        return $($(17, false),
-            $(22, true));
+        return new Object[]{new Object[]{17, false}, new Object[]{22, true}};
     }
 
     @Test
@@ -50,15 +48,11 @@ public class PersonTest {
 
     public static class PersonProvider {
         public static Object[] provideAdults() {
-            return $(
-                $(new Person(25), true),
-                $(new Person(32), true));
+            return new Object[]{new Object[]{new Person(25), true}, new Object[]{new Person(32), true}};
         }
 
         public static Object[] provideTeens() {
-            return $(
-                $(new Person(12), false),
-                $(new Person(17), false));
+            return new Object[]{new Object[]{new Person(12), false}, new Object[]{new Person(17), false}};
         }
     }
 

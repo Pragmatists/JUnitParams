@@ -1,6 +1,6 @@
 package junitparams.usage;
 
-import static junitparams.JUnitParamsRunner.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.*;
 
@@ -27,18 +27,33 @@ public class Samples_of_Usage_Test {
     @Test
     @Parameters
     public void params_in_default_method(String p1, Integer p2) { }
-    private Object parametersForParams_in_default_method() { return $($("AAA", 1), $("BBB", 2)); }
+    private Object parametersForParams_in_default_method() {
+        return new Object[]{new Object[]{"AAA", 1}, new Object[]{"BBB", 2}};
+    }
 
     @Test
     @Parameters(method = "named1")
     public void params_in_named_method(String p1, Integer p2) { }
-    private Object named1() { return $($("AAA", 1)); }
+    private Object named1() {
+        return new Object[]{"AAA", 1};
+    }
 
     @Test
     @Parameters(method = "named2,named3")
     public void params_in_multiple_methods(String p1, Integer p2) { }
-    private Object named2() { return $($("AAA", 1)); }
-    private Object named3() { return $($("BBB", 2)); }
+    private Object named2() {
+        return new Object[]{"AAA", 1};
+    }
+    private Object named3() {
+        return new Object[]{"BBB", 2};
+    }
+
+    @Test
+    @Parameters(method = "named4")
+    public void params_with_varargs(String... args) {
+        assertThat(args).isEqualTo(new String[]{"AAA", "BBB"});
+    }
+    private Object named4() { return new Object[]{new String[]{"AAA", "BBB"}}; }
 
     @Test
     @Parameters(source = ParametersReaderProvidersTest.OneIntegerProvider.class)
@@ -71,7 +86,9 @@ public class Samples_of_Usage_Test {
     @Test
     @Parameters
     public void wrap_params_with_constructor(PersonTest.Person person) { }
-    private Object parametersForWrap_params_with_constructor() { return $($("first", 1), $("second", 2)); }
+    private Object parametersForWrap_params_with_constructor() {
+        return new Object[]{new Object[]{"first", 1}, new Object[]{"second", 2}};
+    }
 
     @Test
     @FileParameters("src/test/resources/test.csv")

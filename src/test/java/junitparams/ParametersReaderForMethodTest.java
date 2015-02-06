@@ -1,6 +1,5 @@
 package junitparams;
 
-import static junitparams.JUnitParamsRunner.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
@@ -19,7 +18,7 @@ public class ParametersReaderForMethodTest {
     }
 
     private Object[] parametersForOneParamDifferentTypes() {
-        return $($(1, "a"));
+        return new Object[]{1, "a"};
     }
 
     @Test
@@ -30,7 +29,7 @@ public class ParametersReaderForMethodTest {
     }
 
     private Object[] parametersForOneParamSetOneNull() {
-        return $($(null, "b"));
+        return new Object[]{null, "b"};
     }
 
     @Test
@@ -40,7 +39,7 @@ public class ParametersReaderForMethodTest {
     }
 
     private Object[] parametersForNoToString() {
-        return $($(new NoToStringObject()));
+        return new Object[]{new NoToStringObject()};
     }
 
     public class NoToStringObject {

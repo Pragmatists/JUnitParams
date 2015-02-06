@@ -18,7 +18,7 @@ public class SampleTestCase {
     }
 
     private Object[] getParameters() {
-        return JUnitParamsRunner.$("a", "b");
+        return new Object[]{"a", "b"};
     }
 
 }

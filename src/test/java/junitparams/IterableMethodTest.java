@@ -1,12 +1,13 @@
 package junitparams;
 
-import static junitparams.JUnitParamsRunner.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 @RunWith(JUnitParamsRunner.class)
 public class IterableMethodTest {
@@ -19,7 +20,7 @@ public class IterableMethodTest {
 
     public List<Object[]> parametersForShouldHandleIterables() {
         ArrayList<Object[]> params = new ArrayList<Object[]>();
-        params.add($("a"));
+        params.add(new Object[]{"a"});
         return params;
     }
 

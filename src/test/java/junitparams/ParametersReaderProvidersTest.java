@@ -1,6 +1,5 @@
 package junitparams;
 
-import static junitparams.JUnitParamsRunner.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.*;
@@ -27,7 +26,7 @@ public class ParametersReaderProvidersTest {
 
     public static class SingleParamSetProvider {
         public static Object[] provideOneParamSetSameTypes() {
-            return $($("a", "b"));
+            return new Object[]{"a", "b"};
         }
     }
 
@@ -64,11 +63,11 @@ public class ParametersReaderProvidersTest {
 
     public static class OneIntegerProvider {
         public static Object[] provideTwoNumbers() {
-            return $($(1), $(2));
+            return new Object[]{new Object[]{1}, new Object[]{2}};
         }
 
         public static Object[] provideOneNumber() {
-            return new Object[] { $(3) };
+            return new Object[] {new Object[]{3}};
         }
     }
 

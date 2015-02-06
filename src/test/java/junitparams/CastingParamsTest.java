@@ -1,6 +1,5 @@
 package junitparams;
 
-import static junitparams.JUnitParamsRunner.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.*;
@@ -28,7 +27,7 @@ public class CastingParamsTest {
         assertThat(person.getAge()).isGreaterThan(0);
     }
     Object parametersForWrapWithTypeByMultiArgConstructor() {
-        return $($("first", 1), $("second", 2));
+        return new Object[]{new Object[]{"first", 1}, new Object[]{"second", 2}};
     }
 
     @Test
@@ -40,8 +39,8 @@ public class CastingParamsTest {
 
     private List<?> parametersForCartoonCharacters() {
         return Arrays.asList(
-            $("Tarzan", 0),
-            $("Jane", 20)
+                new Object[]{"Tarzan", 0},
+                new Object[]{"Jane", 20}
             );
     }
 
@@ -50,7 +49,9 @@ public class CastingParamsTest {
     public void stringArrayFromMethod(String... values) {
         assertThat(values).containsOnlyOnce("1", "2");
     }
-    private Object strings() { return $($("1","2"), $("2","1")); }
+    private Object strings() {
+        return new Object[]{new Object[]{"1", "2"}, new Object[]{"2", "1"}};
+    }
 
     @Test
     @Parameters({"a,b", "b,a"})

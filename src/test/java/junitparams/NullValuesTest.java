@@ -1,6 +1,5 @@
 package junitparams;
 
-import static junitparams.JUnitParamsRunner.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.*;
@@ -9,7 +8,8 @@ import org.junit.runner.*;
 @RunWith(JUnitParamsRunner.class)
 public class NullValuesTest {
 
-    private Object[] expectedSingleParams = $(null, "string", Long.valueOf(1));
+    private Object[] expectedSingleParams = new Object[]{null, "string", Long.valueOf(1)};
+
     private static int expectedSingleParamsIndex;
 
     private Object[] expectedMultipleParams = multipleParams();
@@ -23,10 +23,7 @@ public class NullValuesTest {
     }
 
     public Object[] singleParams() {
-        return $(
-            new Object[] { null }, // the workaround
-            "string",
-            Long.valueOf(1));
+        return new Object[]{new Object[]{null}, "string", Long.valueOf(1)};
     }
 
     @Test
@@ -39,10 +36,8 @@ public class NullValuesTest {
     }
 
     public Object[] multipleParams() {
-        return $(
-            $(null, "string", null),
-            $("string", Long.valueOf(1), null),
-            $(null, null, null));
+        return new Object[]{new Object[]{null, "string", null}, new Object[]{"string", Long
+                .valueOf(1), null}, new Object[]{null, null, null}};
     }
 
 }

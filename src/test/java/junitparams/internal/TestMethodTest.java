@@ -1,6 +1,5 @@
 package junitparams.internal;
 
-import static junitparams.JUnitParamsRunner.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 
@@ -84,8 +83,8 @@ public class TestMethodTest {
     }
     
     protected Object[] parametersForTestVarargs(){
-    	return new Object[]{
-    			$("Hello", "world")
+        return new Object[]{
+                new Object[]{"Hello", "world"}
     	};
     }
     
@@ -98,8 +97,8 @@ public class TestMethodTest {
     }
     
     protected Object[] parametersForTestVarargsCustomClass(){
-    	return new Object[]{
-    			$(new Pair(0,0), new Pair(1,1), new Pair(2,3))
+        return new Object[]{
+                new Object[]{new Pair(0, 0), new Pair(1, 1), new Pair(2, 3)}
     	};
     }
     
@@ -117,10 +116,8 @@ public class TestMethodTest {
     }
     
     protected Object parametersForTestVarargsMoreArgs(){
-    	return $(
-                    $(40, 50, new Pair(17,21), new Pair(12,18), new Pair(11,11)),
-                    $(10, 20, new Pair(3,15), new Pair(7,5))
-                );
+        return new Object[]{new Object[]{40, 50, new Pair(17, 21), new Pair(12, 18), new Pair(11, 11)}, new Object[]{10, 20, new Pair(3,
+                15), new Pair(7, 5)}};
     }
 
     @Test
@@ -131,10 +128,8 @@ public class TestMethodTest {
     }
 
     protected Object parametersForTestVargsMoreArgsTheSameType(){
-        return $(
-                    $(new Pair(10,30), new Pair(7,17), new Pair(3,13)),
-                    $(new Pair(20,40), new Pair(18,21), new Pair(2,19))
-                );
+        return new Object[]{new Object[]{new Pair(10, 30), new Pair(7, 17), new Pair(3, 13)}, new Object[]{new Pair(20, 40), new Pair(18,
+                21), new Pair(2, 19)}};
     }
 
     

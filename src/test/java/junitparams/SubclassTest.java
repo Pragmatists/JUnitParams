@@ -1,6 +1,5 @@
 package junitparams;
 
-import static junitparams.JUnitParamsRunner.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
@@ -18,6 +17,6 @@ public class SubclassTest extends SuperclassTest {
 
     @SuppressWarnings("unused")
     private Object[] paramForSuperclassMethod() {
-        return $(1);
+        return new Object[]{1};
     }
 }
