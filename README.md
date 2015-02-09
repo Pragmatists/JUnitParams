@@ -18,6 +18,7 @@
 ## Latest News
 
 * 2015-01-23 JUnitParams 1.0.4 released. Check [release info.](RELEASES.md)
+[more here](https://github.com/Pragmatists/JUnitParams/wiki)
 
 ## About
 JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit >=4.6.
@@ -47,9 +48,5 @@ If you want to see just one simple test class with all main ways to use JUnitPar
 https://github.com/Pragmatists/junitparams/tree/master/src/test/java/junitparams/usage
 
 You can also have a look at [Wiki:Quickstart](https://github.com/Pragmatists/junitparams/wiki/Quickstart)
-
-## News
-
-Latest news are available in our [Wiki](https://github.com/Pragmatists/junitparams/wiki/)
 
 **Note**: We are currently moving the project from Google Code to Github. Some information may still be accessible only at https://code.google.com/p/junitparams/
