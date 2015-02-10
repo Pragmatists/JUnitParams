@@ -1,10 +1,9 @@
 package junitparams;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.*;
 
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 @SuppressWarnings("unused")
 @RunWith(JUnitParamsRunner.class)
@@ -43,16 +42,6 @@ public class ParametersReaderForMethodTest {
     }
 
     public class NoToStringObject {
-    }
-
-    @Test
-    @Parameters
-    public void shouldIgnoreWhenEmptyParamset() {
-        fail();
-    }
-
-    private Object[] parametersForShouldIgnoreWhenEmptyParamset() {
-        return new Object[] {};
     }
 
     @Test

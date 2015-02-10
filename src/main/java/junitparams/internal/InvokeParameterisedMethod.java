@@ -26,7 +26,7 @@ public class InvokeParameterisedMethod extends Statement {
     public InvokeParameterisedMethod(FrameworkMethod testMethod, Object testClass, Object params, int paramSetIdx) {
         this.testMethod = testMethod;
         this.testClass = testClass;
-        this.uniqueMethodId = Utils.uniqueMethodId(paramSetIdx - 1, params, testMethod.getName());
+        this.uniqueMethodId = Utils.uniqueMethodId(paramSetIdx, params, testMethod.getName());
         try {
             if (params instanceof String)
                 this.params = castParamsFromString((String) params);
@@ -53,6 +53,10 @@ public class InvokeParameterisedMethod extends Statement {
 
     private Object[] castParamsFromObjects(Object params) throws ConversionFailedException {
         Object[] paramset = Utils.safelyCastParamsToArray(params);
+        if (paramset.length == 0) {
+            throw new IllegalStateException("Illegal usage of JUnitParams. Usually it means that you have added @Parameters annotation to" +
+                    " your test, but forgot to specify at least one test case. Add test case parameters or remove the annotation");
+        }
 
         try {
             return castParamsUsingConverters(paramset);

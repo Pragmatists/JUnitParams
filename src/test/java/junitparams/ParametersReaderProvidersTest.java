@@ -1,15 +1,19 @@
 package junitparams;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
-import org.junit.*;
-import org.junit.rules.*;
-import org.junit.runner.*;
-import org.junit.runners.model.*;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.TestClass;
 
-import junitparams.internal.*;
+import junitparams.internal.ParametrisedTestMethodRunner;
+import junitparams.internal.TestMethod;
 
 @RunWith(JUnitParamsRunner.class)
 public class ParametersReaderProvidersTest {
@@ -32,16 +36,18 @@ public class ParametersReaderProvidersTest {
 
     @Test
     public void shouldPutProviderClassNameInExceptionMessageForProviderWithNoValidMethods() {
-        ParameterisedTestMethodRunner runner = new ParameterisedTestMethodRunner(getTestMethodWithInvalidProvider());
+        TestClass testClass = new TestClass(TestClassWithProviderClassWithNoValidMethods.class);
+
+        ParametrisedTestMethodRunner runner = new ParametrisedTestMethodRunner(getTestMethodWithInvalidProvider(testClass));
 
         exception.expect(RuntimeException.class);
         exception.expectMessage(ProviderClassWithNoValidMethods.class.getName());
-        runner.method.parametersSets();
+        TestMethod.listFrom(Arrays.<FrameworkMethod>asList(runner.method), testClass);
     }
 
-    private TestMethod getTestMethodWithInvalidProvider() {
-        Method testMethod = TestClassWithProviderClassWithNoValidMethods.class.getMethods()[0];
-        return new TestMethod(new FrameworkMethod(testMethod), new TestClass(TestClassWithProviderClassWithNoValidMethods.class));
+    private TestMethod getTestMethodWithInvalidProvider(TestClass testClass) {
+        Method testMethod = testClass.getJavaClass().getMethods()[0];
+        return new TestMethod(new FrameworkMethod(testMethod), testClass, new Object[]{}, 0);
     }
 
     @RunWith(JUnitParamsRunner.class)

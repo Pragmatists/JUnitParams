@@ -1,6 +1,5 @@
 package junitparams.internal;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,54 +16,55 @@ import junitparams.naming.TestCaseNamingStrategy;
 
 /**
  * A wrapper for a test method
- * 
+ *
  * @author Pawel Lipinski
  */
-public class TestMethod {
-    private FrameworkMethod frameworkMethod;
+public class TestMethod extends FrameworkMethod {
+    private final int index;
+    private final Object params;
+
     private Class<?> testClass;
-    private ParametersReader parametersReader;
-    private Object[] cachedParameters;
     private TestCaseNamingStrategy namingStrategy;
 
-    public TestMethod(FrameworkMethod method, TestClass testClass) {
-        this.frameworkMethod = method;
+    private DescriptionCache descriptionCache = DescriptionCache.INSTANCE;
+
+    public TestMethod(FrameworkMethod method, TestClass testClass, Object params, int index) {
+        super(method.getMethod());
+        this.index = index;
+        this.params = params;
         this.testClass = testClass.getJavaClass();
-        parametersReader = new ParametersReader(testClass(), frameworkMethod);
 
-		namingStrategy = new MacroSubstitutionNamingStrategy(this);
-    }
-
-    public String name() {
-        return frameworkMethod.getName();
+        namingStrategy = new MacroSubstitutionNamingStrategy(this);
     }
 
     public static List<TestMethod> listFrom(List<FrameworkMethod> annotatedMethods, TestClass testClass) {
         List<TestMethod> methods = new ArrayList<TestMethod>();
 
-        for (FrameworkMethod frameworkMethod : annotatedMethods)
-            methods.add(new TestMethod(frameworkMethod, testClass));
+        for (FrameworkMethod frameworkMethod : annotatedMethods) {
+
+            ParametersReader parametersReader = new ParametersReader(testClass.getJavaClass(), frameworkMethod);
+            boolean notIgnored = !frameworkMethod.getMethod().isAnnotationPresent(Ignore.class);
+
+            if (notIgnored && parametersReader.isParametrized()) {
+                Object[] paramsSet = parametersReader.read();
+                if (paramsSet.length == 0) {
+                    methods.add(singleTestMethod(testClass, frameworkMethod));
+                } else {
+                    for (int i = 0; i < paramsSet.length; i++) {
+                        Object params = paramsSet[i];
+                        methods.add(new TestMethod(frameworkMethod, testClass, params, i));
+                    }
+                }
+            } else {
+                methods.add(singleTestMethod(testClass, frameworkMethod));
+            }
+        }
 
         return methods;
     }
 
-    @Override
-    public int hashCode() {
-        return frameworkMethod.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof TestMethod))
-            return false;
-
-        if (!frameworkMethod.getName().equals(((TestMethod) obj).frameworkMethod.getName()))
-            return false;
-
-        if (!frameworkMethod.getMethod().getParameterTypes().equals(((TestMethod) obj).frameworkMethod.getMethod().getParameterTypes()))
-            return false;
-
-        return true;
+    private static TestMethod singleTestMethod(TestClass testClass, FrameworkMethod frameworkMethod) {
+        return new TestMethod(frameworkMethod, testClass, new Object[]{}, 0);
     }
 
     Class<?> testClass() {
@@ -72,43 +72,30 @@ public class TestMethod {
     }
 
     public boolean isIgnored() {
-        if (frameworkMethod.getAnnotation(Ignore.class) != null)
-            return true;
-
-        if (isParameterised() && parametersSets().length == 0)
-            return true;
-
-        return false;
+        return getMethod().isAnnotationPresent(Ignore.class);
     }
 
     public boolean isNotIgnored() {
         return !isIgnored();
     }
 
-    public Annotation[] annotations() {
-        return frameworkMethod.getAnnotations();
-    }
-
-    public <T extends java.lang.annotation.Annotation> T getAnnotation(Class<? extends Annotation> annotationType) {
-        return (T) frameworkMethod.getAnnotation(annotationType);
-    }
-
     Description describe() {
         if (isNotIgnored() && !describeFlat()) {
-            Description parametrised = Description.createSuiteDescription(name());
-            Object[] params = parametersSets();
-            for (int i = 0; i < params.length; i++) {
-                Object paramSet = params[i];
-                String name = namingStrategy.getTestCaseName(i, paramSet);
-                String uniqueMethodId = Utils.uniqueMethodId(i, paramSet, name());
+            Description parentDescription = descriptionCache.putIfAbsent(getMethod(), Description.createSuiteDescription(getName()));
+            addToParentIfNotExists(parentDescription);
 
-                parametrised.addChild(
-                    Description.createTestDescription(testClass().getName(), name, uniqueMethodId)
-                );
-            }
-            return parametrised;
+            return parentDescription;
         } else {
-            return Description.createTestDescription(testClass(), name(), annotations());
+            return Description.createTestDescription(testClass(), getName(), getAnnotations());
+        }
+    }
+
+    private void addToParentIfNotExists(Description parentDescription) {
+        String name = namingStrategy.getTestCaseName(index);
+        String uniqueMethodId = Utils.uniqueMethodId(index, params, getName());
+        Description description = Description.createTestDescription(testClass().getName(), name, uniqueMethodId);
+        if (!parentDescription.getChildren().contains(description)) {
+            parentDescription.addChild(description);
         }
     }
 
@@ -116,25 +103,61 @@ public class TestMethod {
         return System.getProperty("JUnitParams.flat") != null;
     }
 
-    public Object[] parametersSets() {
-        if (cachedParameters == null) {
-            cachedParameters = parametersReader.read();
-        }
-        return cachedParameters;
-    }
-
     public boolean isParameterised() {
-        return frameworkMethod.getMethod().isAnnotationPresent(Parameters.class)
-            || frameworkMethod.getMethod().isAnnotationPresent(FileParameters.class);
+        return getMethod().isAnnotationPresent(Parameters.class)
+            || getMethod().isAnnotationPresent(FileParameters.class);
     }
 
     void warnIfNoParamsGiven() {
-        if (isNotIgnored() && isParameterised() && parametersSets().length == 0)
-            System.err.println("Method " + name() + " gets empty list of parameters, so it's being ignored!");
+        if (isNotIgnored() && isParameterised() && params == null)
+            System.err.println("Method " + getName() + " gets empty list of parameters, so it's being ignored!");
     }
 
-    public FrameworkMethod frameworkMethod() {
-        return frameworkMethod;
+    public Object getParameters() {
+        return params;
     }
 
+    public int getIndex() {
+        return index;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        TestMethod that = (TestMethod) o;
+
+        if (index != that.index) {
+            return false;
+        }
+        if (params != null ? !params.equals(that.params) : that.params != null) {
+            return false;
+        }
+        if (testClass != null ? !testClass.equals(that.testClass) : that.testClass != null) {
+            return false;
+        }
+        if (getMethod() != null ? !getMethod().equals(that.getMethod()) : that.getMethod() != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + index;
+        result = 31 * result + (params != null ? params.hashCode() : 0);
+        result = 31 * result + (testClass != null ? testClass.hashCode() : 0);
+        result = 31 * result + (getMethod() != null ? getMethod().hashCode() : 0);
+        return result;
+    }
 }
