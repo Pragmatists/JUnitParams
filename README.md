@@ -7,13 +7,20 @@
 ## Example
 
 ``` java
+@RunWith(JUnitParamsRunner.class)
+public class PersonTest {
+
   @Test
   @Parameters({"17, false", 
                "22, true" })
   public void personIsAdult(int age, boolean valid) throws Exception {
     assertThat(new Person(age).isAdult(), is(valid));
   }
+  
+}
 ```
+See more [examples](https://github.com/Pragmatists/JUnitParams/blob/master/src/test/java/junitparams/usage/Samples_of_Usage_Test.java)
+
 
 ## Latest News
 
