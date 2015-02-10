@@ -13,25 +13,16 @@ import org.junit.runners.model.Statement;
  *
  * @author Pawel Lipinski
  */
-public class ParameterisedTestMethodRunner {
+public class ParametrisedTestMethodRunner {
 
     public final TestMethod method;
-    private int count;
 
-    public ParameterisedTestMethodRunner(TestMethod testMethod) {
+    public ParametrisedTestMethodRunner(TestMethod testMethod) {
         this.method = testMethod;
     }
 
-    public int nextCount() {
-        return count++;
-    }
-
-    public int count() {
-        return count;
-    }
-
     Object currentParamsFromAnnotation() {
-        return method.parametersSets()[nextCount()];
+        return method.getParameters();
     }
 
     void runTestMethod(Statement methodInvoker, RunNotifier notifier) {

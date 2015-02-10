@@ -1,12 +1,12 @@
 package junitparams.naming;
 
-import junitparams.internal.TestMethod;
-import junitparams.internal.Utils;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.regex.Pattern;
+
+import junitparams.internal.TestMethod;
+import junitparams.internal.Utils;
 
 public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
     private static final String MACRO_PATTERN = "\\{[^\\}]{0,50}\\}";
@@ -22,14 +22,14 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
     }
 
     @Override
-    public String getTestCaseName(int parametersIndex, Object parameters) {
+    public String getTestCaseName(int parametersIndex) {
         TestCaseName testCaseName = method.getAnnotation(TestCaseName.class);
 
         String template = getTemplate(testCaseName);
-        String builtName = buildNameByTemplate(template, parametersIndex, parameters);
+        String builtName = buildNameByTemplate(template, parametersIndex, method.getParameters());
 
         if (builtName.trim().isEmpty()) {
-            return buildNameByTemplate(DEFAULT_TEMPLATE, parametersIndex, parameters);
+            return buildNameByTemplate(DEFAULT_TEMPLATE, parametersIndex, method.getParameters());
         } else {
             return builtName;
         }
@@ -70,7 +70,7 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
         switch (Macro.parse(macroKey)) {
             case INDEX: return String.valueOf(parametersIndex);
             case PARAMS: return Utils.stringify(parameters);
-            case METHOD: return method.name();
+            case METHOD: return method.getName();
             default: return substituteDynamicMacro(macro, macroKey, parameters);
         }
     }
