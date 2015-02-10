@@ -1,10 +1,7 @@
 package junitparams.internal;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.runner.Description;
@@ -29,7 +26,7 @@ public class TestMethod extends FrameworkMethod {
     private Class<?> testClass;
     private TestCaseNamingStrategy namingStrategy;
 
-    private static final Map<Method, Description> descriptions = new HashMap<Method, Description>();
+    private DescriptionCache descriptionCache = DescriptionCache.INSTANCE;
 
     public TestMethod(FrameworkMethod method, TestClass testClass, Object params, int index) {
         super(method.getMethod());
@@ -84,22 +81,13 @@ public class TestMethod extends FrameworkMethod {
 
     Description describe() {
         if (isNotIgnored() && !describeFlat()) {
-            Description parentDescription = createParentIfNotExists();
+            Description parentDescription = descriptionCache.putIfAbsent(getMethod(), Description.createSuiteDescription(getName()));
             addToParentIfNotExists(parentDescription);
 
             return parentDescription;
         } else {
             return Description.createTestDescription(testClass(), getName(), getAnnotations());
         }
-    }
-
-    private Description createParentIfNotExists() {
-        Description parentDescription = descriptions.get(getMethod());
-        if (parentDescription == null) {
-            parentDescription = Description.createSuiteDescription(getName());
-            descriptions.put(getMethod(), parentDescription);
-        }
-        return parentDescription;
     }
 
     private void addToParentIfNotExists(Description parentDescription) {
