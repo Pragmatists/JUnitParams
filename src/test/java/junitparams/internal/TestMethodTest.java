@@ -22,10 +22,10 @@ public class TestMethodTest {
     @Before
     public void setUp() throws Exception {
         plainTestMethod = new TestMethod(new FrameworkMethod(TestMethodTest.class.getMethod("for_others_to_work", new Class[]{String.class})),
-                new TestClass(this.getClass()));
+                new TestClass(this.getClass()), new Object[]{"a", "b"}, 0);
         arrayTestMethod = new TestMethod(new FrameworkMethod(TestMethodTest.class.getMethod("for_others_to_work_with_array",
                 new Class[]{(new String[]{}).getClass()})),
-                new TestClass(this.getClass()));
+                new TestClass(this.getClass()), new Object[]{"a,b", "b,a"}, 0);
     }
 
     @Test

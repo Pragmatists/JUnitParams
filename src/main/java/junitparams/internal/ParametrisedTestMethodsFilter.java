@@ -8,17 +8,17 @@ import org.junit.runners.model.FrameworkMethod;
 
 import junitparams.JUnitParamsRunner;
 
-public class ParametrizedTestMethodsFilter {
-    private final junitparams.JUnitParamsRunner jUnitParamsRunner;
+public class ParametrisedTestMethodsFilter {
+    private final JUnitParamsRunner jUnitParamsRunner;
 
     private final Filter filter;
 
-    public ParametrizedTestMethodsFilter(junitparams.JUnitParamsRunner jUnitParamsRunner, Filter filter) {
+    public ParametrisedTestMethodsFilter(JUnitParamsRunner jUnitParamsRunner, Filter filter) {
         this.jUnitParamsRunner = jUnitParamsRunner;
         this.filter = filter;
     }
 
-    public ParametrizedTestMethodsFilter(JUnitParamsRunner jUnitParamsRunner) {
+    public ParametrisedTestMethodsFilter(JUnitParamsRunner jUnitParamsRunner) {
         this.jUnitParamsRunner = jUnitParamsRunner;
         this.filter = Filter.ALL;
     }

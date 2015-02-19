@@ -1,16 +1,17 @@
 package junitparams.naming;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import junitparams.internal.TestMethod;
+import static org.junit.Assert.*;
+
+import java.lang.reflect.Method;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
-import java.lang.reflect.Method;
-
-import static org.junit.Assert.assertEquals;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
+import junitparams.internal.TestMethod;
 
 @RunWith(JUnitParamsRunner.class)
 public class MacroSubstitutionNamingStrategyTest {
@@ -24,7 +25,7 @@ public class MacroSubstitutionNamingStrategyTest {
     public void testNaming(String methodName, String expectedTestCaseName) throws NoSuchMethodException {
         TestCaseNamingStrategy strategy = createNamingStrategyForMethod(methodName, String.class);
 
-        String name = strategy.getTestCaseName(0, new Object[]{"value"});
+        String name = strategy.getTestCaseName(0);
 
         assertEquals(expectedTestCaseName, name);
     }
@@ -75,7 +76,6 @@ public class MacroSubstitutionNamingStrategyTest {
 
     private TestMethod getCurrentClassMethod(String name, Class... parameterTypes) throws NoSuchMethodException {
         final Method method = MacroSubstitutionNamingStrategyTest.class.getMethod(name, parameterTypes);
-        return new TestMethod(new FrameworkMethod(method),
-                new TestClass(this.getClass()));
+        return new TestMethod(new FrameworkMethod(method), new TestClass(this.getClass()), new Object[]{"value"}, 0);
     }
 }

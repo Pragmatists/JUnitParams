@@ -1,13 +1,14 @@
 package junitparams.internal.parameters;
 
-import junitparams.FileParameters;
-import junitparams.Parameters;
-import org.junit.runners.model.FrameworkMethod;
+import static java.lang.String.*;
+import static java.util.Arrays.*;
 
 import java.util.List;
 
-import static java.lang.String.format;
-import static java.util.Arrays.*;
+import org.junit.runners.model.FrameworkMethod;
+
+import junitparams.FileParameters;
+import junitparams.Parameters;
 
 public class ParametersReader {
     private final FrameworkMethod frameworkMethod;
@@ -25,19 +26,30 @@ public class ParametersReader {
     }
 
     public Object[] read() {
-        boolean strategyAlreadyFound = false;
-        Object[] parameters = new Object[]{};
+        ParametrizationStrategy strategy = findApplicableStrategy();
+        if (strategy != null) {
+            return strategy.getParameters();
+        }
+        return new Object[]{};
+    }
 
+    public boolean isParametrized() {
+        return findApplicableStrategy() != null;
+    }
+
+    private ParametrizationStrategy findApplicableStrategy() {
+        ParametrizationStrategy applicableStrategy = null;
+        boolean strategyAlreadyFound = false;
         for (ParametrizationStrategy strategy : strategies) {
             if (strategy.isApplicable()) {
                 if (strategyAlreadyFound) {
                     illegalState();
                 }
-                parameters = strategy.getParameters();
+                applicableStrategy = strategy;
                 strategyAlreadyFound = true;
             }
         }
-        return parameters;
+        return applicableStrategy;
     }
 
     private void illegalState() {
