@@ -465,23 +465,4 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
         return child;
     }
 
-    /**
-     * Shortcut for returning an array of objects. All parameters passed to this
-     * method are returned in an <code>Object[]</code> array.
-     *
-     * Should not be used to create var-args arrays, because of the way Java resolves
-     * var-args for objects and primitives.
-     *
-     * @deprecated This method is no longer supported. It might be removed in future
-     * as it does not support all cases (especially var-args). Create arrays using
-     * <code>new Object[]{}</code> instead.
-     *
-     * @param params
-     *            Values to be returned in an <code>Object[]</code> array.
-     * @return Values passed to this method.
-     */
-    @Deprecated
-    public static Object[] $(Object... params) {
-        return params;
-    }
 }
