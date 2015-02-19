@@ -123,8 +123,8 @@
                             <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
                             <Bundle-SymbolicName>pl.pragmatists.JUnitParams</Bundle-SymbolicName>
                             <Bundle-Version>${project.version}</Bundle-Version>
-                            <Export-Package>junitparams;version="${project.version}";uses:="org.junit,org.assertj"</Export-Package>
-                            <Import-Package>org.junit;bundle-version="4.11.0",org.assertj;bundle-version="1.6.1"</Import-Package>
+                            <Export-Package>junitparams;version="${project.version}";uses:="org.junit"</Export-Package>
+                            <Import-Package>org.junit;bundle-version="4.11.0"</Import-Package>
                         </manifestEntries>
                     </archive>
                 </configuration>
