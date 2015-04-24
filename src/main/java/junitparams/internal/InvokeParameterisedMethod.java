@@ -173,6 +173,12 @@ public class InvokeParameterisedMethod extends Statement {
             return (Enum.valueOf(clazz, (String) object));
         if (clazz.isAssignableFrom(String.class))
             return object.toString();
+        if (clazz.isAssignableFrom(Class.class))
+            try {
+                return Class.forName((String) object);
+            } catch (ClassNotFoundException e) {
+                throw new IllegalArgumentException("Parameter class (" + object + ") not found", e);
+            }
         if (clazz.isAssignableFrom(Integer.TYPE) || clazz.isAssignableFrom(Integer.class))
             return Integer.parseInt((String) object);
         if (clazz.isAssignableFrom(Short.TYPE) || clazz.isAssignableFrom(Short.class))
