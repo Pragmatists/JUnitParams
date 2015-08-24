@@ -2,6 +2,8 @@ package junitparams;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.text.*;
 import java.util.*;
 
@@ -39,6 +41,34 @@ public class ParamsConverterTest {
         assertCalendarDate(calendar);
     }
 
+    @Test
+    @Parameters({ "01.12.2012" })
+    public void convertParamsUsingStereotype(@DateParam Date date) {
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
+    }
+
+    @Test
+    @Parameters(method = "params")
+    public void convertParamsFromMethodUsingStereotype(@DateParam Date date) {
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
+    }
+
+    @Test
+    @Parameters({ "2012-12-01" })
+    public void convertParamsUsingStereotypeWithOptionOverride(@DateParam(options = "yyyy-MM-dd") Date date) {
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
+    }
+
+    @Test
+    @Parameters({ "2012-12-01" })
+    public void convertParamsUsingMultiLevelStereotype(@IsoDateParam Date date) {
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
+    }
+
     private List<String> params() {
         return Arrays.asList("01.12.2012");
     }
@@ -69,7 +99,17 @@ public class ParamsConverterTest {
                 throw new RuntimeException(e);
             }
         }
+    }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @ConvertParam(value = StringToDateConverter.class)
+    public @interface DateParam {
+        String options() default "dd.MM.yyyy";
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @ParamsConverterTest.DateParam(options = "yyyy-MM-dd")
+    public @interface IsoDateParam {
     }
 
 }
