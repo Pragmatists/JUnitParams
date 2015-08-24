@@ -1,8 +1,14 @@
 package junitparams.internal;
 
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
+import junitparams.converters.builtin.BigDecimalPropertyEditor;
+import junitparams.converters.builtin.BigIntegerPropertyEditor;
 import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -17,6 +23,10 @@ import junitparams.converters.ParamConverter;
  * @author Pawel Lipinski
  */
 public class InvokeParameterisedMethod extends Statement {
+
+    static {
+        registerPropertyEditors();
+    }
 
     private final Object[] params;
     private final FrameworkMethod testMethod;
@@ -196,6 +206,16 @@ public class InvokeParameterisedMethod extends Statement {
             return object.toString().charAt(0);
         if (clazz.isAssignableFrom(Byte.TYPE) || clazz.isAssignableFrom(Byte.class))
             return Byte.parseByte((String) object);
+        // Attempt to use an appropriate bean property editor, if one is found
+        final PropertyEditor propertyEditor = PropertyEditorManager.findEditor(clazz);
+        if (null != propertyEditor) {
+            try {
+                propertyEditor.setAsText((String) object);
+                return propertyEditor.getValue();
+            } catch (IllegalArgumentException e) {
+                // Ignore exception, perhaps property editor does not support setAsText()
+            }
+        }
         throw new IllegalArgumentException("Parameter type (" + clazz.getName() + ") cannot be handled! Only primitive types and Strings can be" +
                 " used" +
                 ".");
@@ -217,4 +237,18 @@ public class InvokeParameterisedMethod extends Statement {
     public void evaluate() throws Throwable {
         testMethod.invokeExplosively(testClass, params == null ? new Object[]{params} : params);
     }
+
+    private static void registerPropertyEditors() {
+        if (!Boolean.getBoolean("junitParams.disableBuiltinPropertyEditors")) {
+            registerPropertyEditor(BigDecimal.class, BigDecimalPropertyEditor.class);
+            registerPropertyEditor(BigInteger.class, BigIntegerPropertyEditor.class);
+        }
+    }
+
+    private static void registerPropertyEditor(Class<?> valueType, Class<? extends PropertyEditor> editorType) {
+        if (null == PropertyEditorManager.findEditor(valueType)) {
+            PropertyEditorManager.registerEditor(valueType, editorType);
+        }
+    }
+
 }
