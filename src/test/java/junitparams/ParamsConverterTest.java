@@ -26,18 +26,18 @@ import junitparams.converters.ParamConverter;
 public class ParamsConverterTest {
 
     @Test
-    @Parameters({ "01.12.2012" })
+    @Parameters({"01.12.2012"})
     public void convertSingleParam(
-        @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {
+            @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
     }
 
     @Test
-    @Parameters({ "01.12.2012,A" })
+    @Parameters({"01.12.2012,A"})
     public void convertMultipleParams(
-        @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date,
-        @ConvertParam(LetterToNumberConverter.class) int num) {
+            @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date,
+            @ConvertParam(LetterToNumberConverter.class) int num) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
         assertThat(num).isEqualTo(1);
@@ -52,14 +52,14 @@ public class ParamsConverterTest {
     }
 
     @Test
-    @Parameters({ "01.12.2012" })
+    @Parameters({"01.12.2012"})
     public void convertParamsUsingParamAnnotation(@Param(converter = SimpleDateConverter.class) Date date) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
     }
 
     @Test
-    @Parameters({ "01.12.2012" })
+    @Parameters({"01.12.2012"})
     public void convertParamsUsingCustomParamAnnotation(@DateParam Date date) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
@@ -73,7 +73,7 @@ public class ParamsConverterTest {
     }
 
     @Test
-    @Parameters({ "2012-12-01" })
+    @Parameters({"2012-12-01"})
     public void convertParamsUsingCustomParamAnnotationOverridingAttributes(@DateParam(format = "yyyy-MM-dd") Date date) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
@@ -129,10 +129,9 @@ public class ParamsConverterTest {
         }
 
         @Override
-        public Date convert(Object object) throws ConversionFailedException {
-            final String textParam = object.toString();
+        public Date convert(Object param) throws ConversionFailedException {
             try {
-                return new SimpleDateFormat(format).parse(textParam);
+                return new SimpleDateFormat(format).parse(param.toString());
             } catch (ParseException e) {
                 throw new ConversionFailedException("failed");
             }
@@ -145,9 +144,9 @@ public class ParamsConverterTest {
         }
 
         @Override
-        public Date convert(Object object) throws ConversionFailedException {
+        public Date convert(Object param) throws ConversionFailedException {
             try {
-                return new SimpleDateFormat("dd.MM.yyyy").parse(object.toString());
+                return new SimpleDateFormat("dd.MM.yyyy").parse(param.toString());
             } catch (ParseException e) {
                 throw new ConversionFailedException("failed");
             }
