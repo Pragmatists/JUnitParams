@@ -2,15 +2,25 @@ package junitparams;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.text.*;
-import java.util.*;
+import java.lang.annotation.Target;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import junitparams.converters.*;
+import junitparams.converters.ConversionFailedException;
+import junitparams.converters.ConvertParam;
+import junitparams.converters.Converter;
+import junitparams.converters.Param;
+import junitparams.converters.ParamConverter;
 
 @RunWith(JUnitParamsRunner.class)
 public class ParamsConverterTest {
@@ -43,28 +53,28 @@ public class ParamsConverterTest {
 
     @Test
     @Parameters({ "01.12.2012" })
-    public void convertParamsUsingStereotype(@DateParam Date date) {
+    public void convertParamsUsingParamAnnotation(@Param(converter = SimpleDateConverter.class) Date date) {
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
+    }
+
+    @Test
+    @Parameters({ "01.12.2012" })
+    public void convertParamsUsingCustomParamAnnotation(@DateParam Date date) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
     }
 
     @Test
     @Parameters(method = "params")
-    public void convertParamsFromMethodUsingStereotype(@DateParam Date date) {
+    public void convertParamsFromMethodUsingCustomParamAnnotation(@DateParam Date date) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
     }
 
     @Test
     @Parameters({ "2012-12-01" })
-    public void convertParamsUsingStereotypeWithOptionOverride(@DateParam(options = "yyyy-MM-dd") Date date) {
-        Calendar calendar = createCalendarWithDate(date);
-        assertCalendarDate(calendar);
-    }
-
-    @Test
-    @Parameters({ "2012-12-01" })
-    public void convertParamsUsingMultiLevelStereotype(@IsoDateParam Date date) {
+    public void convertParamsUsingCustomParamAnnotationOverridingAttributes(@DateParam(format = "yyyy-MM-dd") Date date) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
     }
@@ -102,14 +112,45 @@ public class ParamsConverterTest {
     }
 
     @Retention(RetentionPolicy.RUNTIME)
-    @ConvertParam(value = StringToDateConverter.class)
+    @Target(ElementType.PARAMETER)
+    @Param(converter = FormattedDateConverter.class)
     public @interface DateParam {
-        String options() default "dd.MM.yyyy";
+
+        String format() default "dd.MM.yyyy";
     }
 
-    @Retention(RetentionPolicy.RUNTIME)
-    @ParamsConverterTest.DateParam(options = "yyyy-MM-dd")
-    public @interface IsoDateParam {
+    public static class FormattedDateConverter implements Converter<DateParam, Date> {
+
+        private String format;
+
+        @Override
+        public void initialize(DateParam annotation) {
+            this.format = annotation.format();
+        }
+
+        @Override
+        public Date convert(Object object) throws ConversionFailedException {
+            final String textParam = object.toString();
+            try {
+                return new SimpleDateFormat(format).parse(textParam);
+            } catch (ParseException e) {
+                throw new ConversionFailedException("failed");
+            }
+        }
     }
 
+    public static class SimpleDateConverter implements Converter<Param, Date> {
+        @Override
+        public void initialize(Param annotation) {
+        }
+
+        @Override
+        public Date convert(Object object) throws ConversionFailedException {
+            try {
+                return new SimpleDateFormat("dd.MM.yyyy").parse(object.toString());
+            } catch (ParseException e) {
+                throw new ConversionFailedException("failed");
+            }
+        }
+    }
 }

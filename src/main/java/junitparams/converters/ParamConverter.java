@@ -9,6 +9,7 @@ package junitparams.converters;
  * 
  * @author Pawel Lipinski
  */
+@Deprecated
 public interface ParamConverter<T> {
     T convert(Object param, String options) throws ConversionFailedException;
 }

@@ -11,6 +11,7 @@ import org.junit.runners.model.Statement;
 
 import junitparams.converters.ConversionFailedException;
 import junitparams.converters.ConvertParam;
+import junitparams.converters.ParamAnnotation;
 import junitparams.converters.ParamConverter;
 
 /**
@@ -152,10 +153,12 @@ public class InvokeParameterisedMethod extends Statement {
 
     private Object castParameterUsingConverter(Object param, Annotation[] annotations) throws ConversionFailedException {
         for (Annotation annotation : annotations) {
-            if (Annotations.providesType(annotation, ConvertParam.class)) {
-                Class<? extends ParamConverter<?>> converterClass = (Class<? extends ParamConverter<?>>) Annotations.getParameterValue(
-                        annotation, ConvertParam.class, "value");
-                String options = (String) Annotations.getParameterValue(annotation, ConvertParam.class, "options");
+            if (ParamAnnotation.matches(annotation)) {
+                return ParamAnnotation.convert(annotation, param);
+            }
+            if (annotation.annotationType().isAssignableFrom(ConvertParam.class)) {
+                Class<? extends ParamConverter<?>> converterClass = ((ConvertParam) annotation).value();
+                String options = ((ConvertParam) annotation).options();
                 try {
                     return converterClass.newInstance().convert(param, options);
                 } catch (ConversionFailedException e) {

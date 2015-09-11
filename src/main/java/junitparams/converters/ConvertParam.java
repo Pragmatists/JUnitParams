@@ -11,6 +11,7 @@ import java.lang.annotation.*;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
 public @interface ConvertParam {
 
     Class<? extends ParamConverter<?>> value();
