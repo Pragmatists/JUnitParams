@@ -2,30 +2,42 @@ package junitparams;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.text.*;
-import java.util.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import junitparams.converters.*;
+import junitparams.converters.ConversionFailedException;
+import junitparams.converters.ConvertParam;
+import junitparams.converters.Converter;
+import junitparams.converters.Param;
+import junitparams.converters.ParamConverter;
 
 @RunWith(JUnitParamsRunner.class)
 public class ParamsConverterTest {
 
     @Test
-    @Parameters({ "01.12.2012" })
+    @Parameters({"01.12.2012"})
     public void convertSingleParam(
-        @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {
+            @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
     }
 
     @Test
-    @Parameters({ "01.12.2012,A" })
+    @Parameters({"01.12.2012,A"})
     public void convertMultipleParams(
-        @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date,
-        @ConvertParam(LetterToNumberConverter.class) int num) {
+            @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date,
+            @ConvertParam(LetterToNumberConverter.class) int num) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
         assertThat(num).isEqualTo(1);
@@ -35,6 +47,34 @@ public class ParamsConverterTest {
     @Parameters(method = "params")
     public void convertParamsFromMethod(
             @ConvertParam(value = StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
+    }
+
+    @Test
+    @Parameters({"01.12.2012"})
+    public void convertParamsUsingParamAnnotation(@Param(converter = SimpleDateConverter.class) Date date) {
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
+    }
+
+    @Test
+    @Parameters({"01.12.2012"})
+    public void convertParamsUsingCustomParamAnnotation(@DateParam Date date) {
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
+    }
+
+    @Test
+    @Parameters(method = "params")
+    public void convertParamsFromMethodUsingCustomParamAnnotation(@DateParam Date date) {
+        Calendar calendar = createCalendarWithDate(date);
+        assertCalendarDate(calendar);
+    }
+
+    @Test
+    @Parameters({"2012-12-01"})
+    public void convertParamsUsingCustomParamAnnotationOverridingAttributes(@DateParam(format = "yyyy-MM-dd") Date date) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
     }
@@ -69,7 +109,47 @@ public class ParamsConverterTest {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.PARAMETER)
+    @Param(converter = FormattedDateConverter.class)
+    public @interface DateParam {
+
+        String format() default "dd.MM.yyyy";
+    }
+
+    public static class FormattedDateConverter implements Converter<DateParam, Date> {
+
+        private String format;
+
+        @Override
+        public void initialize(DateParam annotation) {
+            this.format = annotation.format();
+        }
+
+        @Override
+        public Date convert(Object param) throws ConversionFailedException {
+            try {
+                return new SimpleDateFormat(format).parse(param.toString());
+            } catch (ParseException e) {
+                throw new ConversionFailedException("failed");
+            }
+        }
+    }
+
+    public static class SimpleDateConverter implements Converter<Param, Date> {
+        @Override
+        public void initialize(Param annotation) {
+        }
+
+        @Override
+        public Date convert(Object param) throws ConversionFailedException {
+            try {
+                return new SimpleDateFormat("dd.MM.yyyy").parse(param.toString());
+            } catch (ParseException e) {
+                throw new ConversionFailedException("failed");
+            }
+        }
+    }
 }

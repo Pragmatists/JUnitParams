@@ -108,7 +108,7 @@ public class Samples_of_Usage_Test {
 
     @Test
     @Parameters({ "01.12.2012" })
-    public void convert_params(@ConvertParam(value = ParamsConverterTest.StringToDateConverter.class, options = "dd.MM.yyyy") Date date) {}
+    public void convert_params(@Param(converter = ParamsConverterTest.SimpleDateConverter.class) Date date) {}
 
     @Test
     @Parameters("please\\, escape commas if you use it here and don't want your parameters to be splitted")

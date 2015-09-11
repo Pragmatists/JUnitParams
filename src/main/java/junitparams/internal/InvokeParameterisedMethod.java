@@ -1,5 +1,7 @@
 package junitparams.internal;
 
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 
@@ -9,6 +11,7 @@ import org.junit.runners.model.Statement;
 
 import junitparams.converters.ConversionFailedException;
 import junitparams.converters.ConvertParam;
+import junitparams.converters.ParamAnnotation;
 import junitparams.converters.ParamConverter;
 
 /**
@@ -150,6 +153,9 @@ public class InvokeParameterisedMethod extends Statement {
 
     private Object castParameterUsingConverter(Object param, Annotation[] annotations) throws ConversionFailedException {
         for (Annotation annotation : annotations) {
+            if (ParamAnnotation.matches(annotation)) {
+                return ParamAnnotation.convert(annotation, param);
+            }
             if (annotation.annotationType().isAssignableFrom(ConvertParam.class)) {
                 Class<? extends ParamConverter<?>> converterClass = ((ConvertParam) annotation).value();
                 String options = ((ConvertParam) annotation).options();
@@ -195,9 +201,13 @@ public class InvokeParameterisedMethod extends Statement {
             return object.toString().charAt(0);
         if (clazz.isAssignableFrom(Byte.TYPE) || clazz.isAssignableFrom(Byte.class))
             return Byte.parseByte((String) object);
-        throw new IllegalArgumentException("Parameter type (" + clazz.getName() + ") cannot be handled! Only primitive types and Strings can be" +
-                " used" +
-                ".");
+        PropertyEditor editor = PropertyEditorManager.findEditor(clazz);
+        if (editor != null) {
+            editor.setAsText((String) object);
+            return editor.getValue();
+        }
+        throw new IllegalArgumentException("Parameter type (" + clazz.getName() + ") cannot be handled!" +
+                " Only primitive types and Strings can be used.");
     }
 
     private void verifySameSizeOfArrays(Object[] columns, Class<?>[] parameterTypes) {
@@ -216,4 +226,5 @@ public class InvokeParameterisedMethod extends Statement {
     public void evaluate() throws Throwable {
         testMethod.invokeExplosively(testClass, params == null ? new Object[]{params} : params);
     }
+
 }

@@ -6,9 +6,11 @@ package junitparams.converters;
  * representation to the type expected by your test method's parameter.
  * 
  * &lt;T&gt; is the expected parameter type.
- * 
+ *
+ * @deprecated use {@link Converter}
  * @author Pawel Lipinski
  */
+@Deprecated
 public interface ParamConverter<T> {
     T convert(Object param, String options) throws ConversionFailedException;
 }
