@@ -26,11 +26,11 @@ public class IterableMethodTest {
 
     @Test
     @Parameters
-    public void shouldHandleSimplifedIterables(String a) {
+    public void shouldHandleSimplifiedIterables(String a) {
         assertThat(a).isEqualTo("a");
     }
 
-    public List<String> parametersForShouldHandleSimplifedIterables() {
+    public List<String> parametersForShouldHandleSimplifiedIterables() {
         return Arrays.asList("a");
     }
 }

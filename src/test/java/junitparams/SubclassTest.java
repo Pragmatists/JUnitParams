@@ -16,7 +16,7 @@ public class SubclassTest extends SuperclassTest {
     }
 
     @SuppressWarnings("unused")
-    private Object[] paramForSuperclassMethod() {
+    private Object[] paramsForSuperclassMethod() {
         return new Object[]{1};
     }
 }

@@ -21,23 +21,23 @@ public class TestMethodTest {
 
     @Before
     public void setUp() throws Exception {
-        plainTestMethod = new TestMethod(new FrameworkMethod(TestMethodTest.class.getMethod("for_others_to_work", new Class[]{String.class})),
+        plainTestMethod = new TestMethod(new FrameworkMethod(TestMethodTest.class.getMethod("forOthersToWork", new Class[]{String.class})),
                 new TestClass(this.getClass()));
-        arrayTestMethod = new TestMethod(new FrameworkMethod(TestMethodTest.class.getMethod("for_others_to_work_with_array",
+        arrayTestMethod = new TestMethod(new FrameworkMethod(TestMethodTest.class.getMethod("forOthersToWorkWithArray",
                 new Class[]{(new String[]{}).getClass()})),
                 new TestClass(this.getClass()));
     }
 
     @Test
     @Parameters({"a","b"})
-    public void for_others_to_work(String arg) throws Exception {
+    public void forOthersToWork(String arg) throws Exception {
         assertThat(arg).isIn("a","b");
     }
 
 
     @Test
     @Parameters({"a,b","b,a"})
-    public void for_others_to_work_with_array(String... arg) throws Exception {
+    public void forOthersToWorkWithArray(String... arg) throws Exception {
         assertThat(arg).containsOnlyOnce("a","b");
     }
 
@@ -59,9 +59,9 @@ public class TestMethodTest {
         System.clearProperty("JUnitParams.flat");
         Description description = plainTestMethod.describe();
 
-        assertEquals("for_others_to_work", description.getDisplayName());
-        assertEquals("[0] a (for_others_to_work)(junitparams.internal.TestMethodTest)", description.getChildren().get(0).getDisplayName());
-        assertEquals("[1] b (for_others_to_work)(junitparams.internal.TestMethodTest)", description.getChildren().get(1).getDisplayName());
+        assertEquals("forOthersToWork", description.getDisplayName());
+        assertEquals("[0] a (forOthersToWork)(junitparams.internal.TestMethodTest)", description.getChildren().get(0).getDisplayName());
+        assertEquals("[1] b (forOthersToWork)(junitparams.internal.TestMethodTest)", description.getChildren().get(1).getDisplayName());
     }
 
     @Test
@@ -69,17 +69,17 @@ public class TestMethodTest {
         System.clearProperty("JUnitParams.flat");
         Description description = arrayTestMethod.describe();
 
-        assertEquals("for_others_to_work_with_array", description.getDisplayName());
-        assertEquals("[0] a,b (for_others_to_work_with_array)(junitparams.internal.TestMethodTest)",
+        assertEquals("forOthersToWorkWithArray", description.getDisplayName());
+        assertEquals("[0] a,b (forOthersToWorkWithArray)(junitparams.internal.TestMethodTest)",
                 description.getChildren().get(0).getDisplayName());
-        assertEquals("[1] b,a (for_others_to_work_with_array)(junitparams.internal.TestMethodTest)",
+        assertEquals("[1] b,a (forOthersToWorkWithArray)(junitparams.internal.TestMethodTest)",
                 description.getChildren().get(1).getDisplayName());
     }
     
     @Test
     @Parameters
-    public void testVarargs(String... strs){
-    	assertArrayEquals("Hello world".split(" "), strs);
+    public void testVarargs(String... strings){
+    	assertArrayEquals("Hello world".split(" "), strings);
     }
     
     protected Object[] parametersForTestVarargs(){
@@ -122,12 +122,12 @@ public class TestMethodTest {
 
     @Test
     @Parameters
-    public void testVargsMoreArgsTheSameType(Pair sum, Pair... pairs) {
+    public void testVargsMoreArgsOfTheSameType(Pair sum, Pair... pairs) {
         assertEquals(sum.x, pairs[0].x + pairs[1].x);
         assertEquals(sum.y, pairs[0].y + pairs[1].y);
     }
 
-    protected Object parametersForTestVargsMoreArgsTheSameType(){
+    protected Object parametersForTestVargsMoreArgsOfTheSameType(){
         return new Object[]{new Object[]{new Pair(10, 30), new Pair(7, 17), new Pair(3, 13)}, new Object[]{new Pair(20, 40), new Pair(18,
                 21), new Pair(2, 19)}};
     }
