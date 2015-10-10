@@ -1,6 +1,3 @@
-/**
- * @copyright 2006-2015 Bronto Software, Inc.
- */
 package junitparams;
 
 import junit.framework.JUnit4TestAdapter;
