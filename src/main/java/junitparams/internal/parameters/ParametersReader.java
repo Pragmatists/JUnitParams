@@ -10,6 +10,13 @@ import static java.lang.String.format;
 import static java.util.Arrays.*;
 
 public class ParametersReader {
+
+    public static final String ILLEGAL_STATE_EXCEPTION_MESSAGE
+        = format("Illegal usage of JUnitParams in method %s. " +
+                 "Check that you have only used one supported parameters evaluation strategy. " +
+                 "Common case is to use both %s and %s annotations.",
+                 "%s", Parameters.class, FileParameters.class);
+
     private final FrameworkMethod frameworkMethod;
     private final List<ParametrizationStrategy> strategies;
 
@@ -41,9 +48,6 @@ public class ParametersReader {
     }
 
     private void illegalState() {
-        throw new IllegalStateException( format("Illegal usage of JUnitParams in method %s. " +
-                        "Check if you use only one supported parameters evaluation strategy. " +
-                        "Common case is to use both %s and %s annotations.",
-                        frameworkMethod.getName(), Parameters.class, FileParameters.class));
+        throw new IllegalStateException(format(ILLEGAL_STATE_EXCEPTION_MESSAGE, frameworkMethod.getName()));
     }
 }
