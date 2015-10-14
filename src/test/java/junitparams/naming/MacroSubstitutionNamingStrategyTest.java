@@ -16,7 +16,18 @@ import static org.junit.Assert.assertEquals;
 public class MacroSubstitutionNamingStrategyTest {
 
     public Object parametersForTestNaming() {
-        return new Object[]{new Object[]{"withoutTestCaseAnnotation", "[0] value (withoutTestCaseAnnotation)"}, new Object[]{"withAnnotationWithoutTemplate", "[0] value (withAnnotationWithoutTemplate)"}, new Object[]{"withEmptyTemplate", "[0] value (withEmptyTemplate)"}, new Object[]{"whenTemplateResultedToEmptyName", "[0] value (whenTemplateResultedToEmptyName)"}, new Object[]{"withoutMacro", "plain name"}, new Object[]{"withIndexMacro", "0"}, new Object[]{"withParamsMacro", "value"}, new Object[]{"withMethodNameMacro", "withMethodNameMacro"}, new Object[]{"withCombinationOfMacros", "0: withCombinationOfMacros(value)"}, new Object[]{"withMacroNameWrittenInDifferentCase", "value value value"}, new Object[]{"withMethodParameterIndexInsideArgumentsArray", "value"}, new Object[]{"withMethodParameterIndexOutsideArgumentsArray", "Here is 100 argument:"}, new Object[]{"whenGivenMacroNotExists", "{not_existing_macro}"}};
+        return new Object[]{new Object[]{"withoutTestCaseAnnotation", "[0] value (withoutTestCaseAnnotation)"},
+                            new Object[]{"withAnnotationWithoutTemplate", "[0] value (withAnnotationWithoutTemplate)"},
+                            new Object[]{"withEmptyTemplate", "[0] value (withEmptyTemplate)"},
+                            new Object[]{"whenTemplateResultedToEmptyName", "[0] value (whenTemplateResultedToEmptyName)"},
+                            new Object[]{"withoutMacro", "plain name"}, new Object[]{"withIndexMacro", "0"},
+                            new Object[]{"withParamsMacro", "value"},
+                            new Object[]{"withMethodNameMacro", "withMethodNameMacro"},
+                            new Object[]{"withCombinationOfMacros", "0: withCombinationOfMacros(value)"},
+                            new Object[]{"withMacroNameWrittenInDifferentCase", "value value value"},
+                            new Object[]{"withMethodParameterIndexInsideArgumentsArray", "value"},
+                            new Object[]{"withMethodParameterIndexOutsideArgumentsArray", "Here is 100 argument:"},
+                            new Object[]{"whenGivenMacroDoesntExist", "{not_existing_macro}"}};
     }
 
     @Test
@@ -65,7 +76,7 @@ public class MacroSubstitutionNamingStrategyTest {
     public void whenTemplateResultedToEmptyName(String param1) { }
 
     @TestCaseName("{not_existing_macro}")
-    public void whenGivenMacroNotExists(String param1) { }
+    public void whenGivenMacroDoesntExist(String param1) { }
 
     private TestCaseNamingStrategy createNamingStrategyForMethod(String name, Class... parameterTypes) throws NoSuchMethodException {
         TestMethod method = getCurrentClassMethod(name, parameterTypes);

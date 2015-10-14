@@ -19,7 +19,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void shouldSaflyCastIntegerArrayParamSetToArray() {
+    public void shouldSafelyCastIntegerArrayParamSetToArray() {
         // given
         Object paramSet = new Integer[] {1, 2, 3, 4};
 
@@ -31,7 +31,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void shouldSaflyCastArrayParamSetToArray() {
+    public void shouldSafelyCastArrayParamSetToArray() {
         // given
         Object paramSet = new Object[] {1, "2", 30D};
 

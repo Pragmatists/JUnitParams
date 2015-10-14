@@ -9,8 +9,8 @@ import org.junit.runner.RunWith;
 public abstract class SuperclassTest {
 	
 	@Test
-	@Parameters(method = "paramForSuperclassMethod")
-	public void testWorky(int val) throws Exception {
+	@Parameters(method = "paramsForSuperclassMethod")
+	public void testWork(int val) throws Exception {
 		assertThat(val).isGreaterThan(0);
 	}	
 

@@ -8,7 +8,7 @@ public class WrongArgumentsNumberTest {
 
     @Test(expected = IllegalArgumentException.class)
     @Parameters({"one"})
-    public void trows_exception_for_wrong_number_of_parameters(String value, String notProvided) {
+    public void throwsExceptionForWrongNumberOfParameters(String value, String notProvided) {
     }
 
 }
