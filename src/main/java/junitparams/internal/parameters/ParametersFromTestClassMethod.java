@@ -25,7 +25,6 @@ class ParametersFromTestClassMethod implements ParametrizationStrategy {
     public boolean isApplicable() {
         return annotation != null
                && annotation.source().isAssignableFrom(NullType.class)
-               && !annotation.method().isEmpty();
-
+               && (!annotation.method().isEmpty() || paramsFromMethodCommon.containsDefaultMethodName(testClass));
     }
 }
