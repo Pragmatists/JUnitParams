@@ -1,9 +1,10 @@
 package junitparams.internal.parameters;
 
-import junitparams.Parameters;
+import javax.lang.model.type.NullType;
+
 import org.junit.runners.model.FrameworkMethod;
 
-import javax.lang.model.type.NullType;
+import junitparams.Parameters;
 
 class ParametersFromTestClassMethod implements ParametrizationStrategy {
     private ParamsFromMethodCommon paramsFromMethodCommon;
@@ -25,7 +26,6 @@ class ParametersFromTestClassMethod implements ParametrizationStrategy {
     public boolean isApplicable() {
         return annotation != null
                && annotation.source().isAssignableFrom(NullType.class)
-               && !annotation.method().isEmpty();
-
+               && (!annotation.method().isEmpty() || paramsFromMethodCommon.containsDefaultParametersProvidingMethod(testClass));
     }
 }

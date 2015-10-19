@@ -1,19 +1,17 @@
 package junitparams;
 
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.TestFailure;
-import junit.framework.TestResult;
 import junitparams.internal.parameters.ParametersReader;
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.Failure;
 
 import static org.junit.Assert.assertEquals;
 
 import static java.lang.String.format;
 
 public class MultipleParameterProvidersTest {
-
-    private JUnit4TestAdapter adapter;
 
     @RunWith(JUnitParamsRunner.class)
     private class CantInitializeWithValueAndMethodProvider {
@@ -32,15 +30,12 @@ public class MultipleParameterProvidersTest {
 
     @Test
     public void testWithValueAndMethodProvidersThrowsIllegalStateException() {
-        adapter = new JUnit4TestAdapter(CantInitializeWithValueAndMethodProvider.class);
-        TestResult testResult = new TestResult();
-        adapter.run(testResult);
+        Result testResult = JUnitCore.runClasses(CantInitializeWithValueAndMethodProvider.class);
+        assertEquals(1, testResult.getFailureCount());
 
-        TestFailure error = testResult.errors().nextElement();
-
-        assertEquals(1, testResult.errorCount());
-        assertEquals(IllegalStateException.class, error.thrownException().getClass());
+        Failure testFailure = testResult.getFailures().iterator().next();
+        assertEquals(IllegalStateException.class, testFailure.getException().getClass());
         assertEquals(format(ParametersReader.ILLEGAL_STATE_EXCEPTION_MESSAGE, "testWithValueAndMethodProviders"),
-                     error.exceptionMessage());
+                     testFailure.getMessage());
     }
 }
