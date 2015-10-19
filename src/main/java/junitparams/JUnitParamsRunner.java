@@ -1,5 +1,6 @@
 package junitparams;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.runner.Description;
@@ -410,10 +411,21 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
             return;
 
         TestMethod testMethod = parameterisedRunner.testMethodFor(method);
-        if (parameterisedRunner.shouldRun(testMethod))
+        if (parameterisedRunner.shouldRun(testMethod)){
             parameterisedRunner.runParameterisedTest(testMethod, methodBlock(method), notifier);
-        else
+        }
+        else{
+            verifyMethodCanBeRunByStandardRunner(testMethod);
             super.runChild(method, notifier);
+        }
+    }
+
+    private void verifyMethodCanBeRunByStandardRunner(TestMethod testMethod) {
+        List<Throwable> errors = new ArrayList<Throwable>();
+        testMethod.frameworkMethod().validatePublicVoidNoArg(false, errors);
+        if (!errors.isEmpty()) {
+            throw new RuntimeException(errors.get(0));
+        }
     }
 
     private boolean handleIgnored(FrameworkMethod method, RunNotifier notifier) {
