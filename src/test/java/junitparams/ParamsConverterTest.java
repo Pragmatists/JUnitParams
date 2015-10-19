@@ -1,7 +1,5 @@
 package junitparams;
 
-import static org.assertj.core.api.Assertions.*;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,6 +19,8 @@ import junitparams.converters.ConvertParam;
 import junitparams.converters.Converter;
 import junitparams.converters.Param;
 import junitparams.converters.ParamConverter;
+
+import static org.assertj.core.api.Assertions.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class ParamsConverterTest {
@@ -72,6 +72,10 @@ public class ParamsConverterTest {
         assertCalendarDate(calendar);
     }
 
+    private List<String> params() {
+        return Arrays.asList("01.12.2012");
+    }
+
     @Test
     @Parameters({"2012-12-01"})
     public void convertParamsUsingCustomParamAnnotationOverridingAttributes(@DateParam(format = "yyyy-MM-dd") Date date) {
@@ -79,8 +83,12 @@ public class ParamsConverterTest {
         assertCalendarDate(calendar);
     }
 
-    private List<String> params() {
-        return Arrays.asList("01.12.2012");
+    @Test
+    @Parameters({"2012-12-01"})
+    public void passesParametersWithOtherAnnotations(@Other String parameter) {
+        assertThat(parameter)
+                .isExactlyInstanceOf(String.class)
+                .isEqualTo("2012-12-01");
     }
 
     private void assertCalendarDate(Calendar calendar) {
@@ -117,6 +125,11 @@ public class ParamsConverterTest {
     public @interface DateParam {
 
         String format() default "dd.MM.yyyy";
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.PARAMETER)
+    public @interface Other {
     }
 
     public static class FormattedDateConverter implements Converter<DateParam, Date> {

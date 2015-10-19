@@ -168,7 +168,7 @@ public class InvokeParameterisedMethod extends Statement {
                 }
             }
         }
-        throw new RuntimeException("Only @ConvertParam annotation is allowed on parameters!");
+        return param;
     }
 
     @SuppressWarnings("unchecked")
