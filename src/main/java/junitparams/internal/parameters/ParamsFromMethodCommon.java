@@ -1,13 +1,14 @@
 package junitparams.internal.parameters;
 
-import junitparams.Parameters;
-import org.junit.runners.model.FrameworkMethod;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.junit.runners.model.FrameworkMethod;
+
+import junitparams.Parameters;
 
 class ParamsFromMethodCommon {
     private FrameworkMethod frameworkMethod;
@@ -36,13 +37,8 @@ class ParamsFromMethodCommon {
         return encapsulateParamsIntoArrayIfSingleParamsetPassed((Object[]) providerMethod.invoke(null));
     }
 
-    /**
-     * Returns boolean indicating whether the test class contains a method by the default name (i.e. parametersFor...)
-     */
-    boolean containsDefaultMethodName(Class<?> sourceClass) {
-        Method providerMethod = findParamsProvidingMethodInTestClassHierarchy(defaultMethodName(), sourceClass);
-
-        return (providerMethod != null);
+    boolean containsDefaultParametersProvidingMethod(Class<?> sourceClass) {
+        return findMethodInTestClassHierarchy(defaultMethodName(), sourceClass) != null;
     }
 
     private String defaultMethodName() {
@@ -51,7 +47,10 @@ class ParamsFromMethodCommon {
     }
 
     private Object[] invokeMethodWithParams(String methodName, Class<?> sourceClass) {
-        Method providerMethod = getParamsProvidingMethodInTestClassHierarchy(methodName, sourceClass);
+        Method providerMethod = findMethodInTestClassHierarchy(methodName, sourceClass);
+        if (providerMethod == null) {
+            throw new RuntimeException("Could not find method: " + methodName + " so no params were used.");
+        }
 
         return invokeParamsProvidingMethod(providerMethod, sourceClass);
     }
@@ -119,22 +118,12 @@ class ParamsFromMethodCommon {
         }
     }
 
-    private Method getParamsProvidingMethodInTestClassHierarchy(String methodName, Class<?> sourceClass) {
-        Method providerMethod = findParamsProvidingMethodInTestClassHierarchy(methodName, sourceClass);
-        if (providerMethod == null) {
-            throw new RuntimeException("Could not find method: " + methodName + " so no params were used.");
-        }
-        return providerMethod;
-    }
-
-    private Method findParamsProvidingMethodInTestClassHierarchy(String methodName, Class<?> sourceClass) {
-        Method providerMethod = null;
+    private Method findMethodInTestClassHierarchy(String methodName, Class<?> sourceClass) {
         Class<?> declaringClass = sourceClass;
         while (declaringClass.getSuperclass() != null) {
             try {
-                providerMethod = declaringClass.getDeclaredMethod(methodName);
-                return providerMethod;
-            } catch (Exception e) {
+                return declaringClass.getDeclaredMethod(methodName);
+            } catch (Exception ignore) {
             }
             declaringClass = declaringClass.getSuperclass();
         }
