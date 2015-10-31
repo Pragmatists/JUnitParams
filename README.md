@@ -19,7 +19,7 @@ public class PersonTest {
   
 }
 ```
-See more [examples](https://github.com/Pragmatists/JUnitParams/blob/master/src/test/java/junitparams/usage/Samples_of_Usage_Test.java)
+See more [examples](https://github.com/Pragmatists/JUnitParams/blob/master/src/test/java/junitparams/usage/SamplesOfUsageTest.java)
 
 
 ## Latest News
