@@ -1,11 +1,13 @@
 package junitparams;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import junitparams.mappers.CsvWithHeaderMapper;
 import junitparams.usage.person_example.PersonMapper;
 import junitparams.usage.person_example.PersonTest.Person;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import static org.assertj.core.api.Assertions.assertThat;
+
+import static org.assertj.core.api.Assertions.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class FileParamsTest {
