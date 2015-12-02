@@ -1,13 +1,13 @@
 package junitparams;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import org.junit.*;
-import org.junit.runner.*;
+import junitparams.mappers.CsvWithHeaderMapper;
+import junitparams.usage.person_example.PersonMapper;
+import junitparams.usage.person_example.PersonTest.Person;
 
-import junitparams.mappers.*;
-import junitparams.usage.person_example.*;
-import junitparams.usage.person_example.PersonTest.*;
+import static org.assertj.core.api.Assertions.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class FileParamsTest {
@@ -40,5 +40,17 @@ public class FileParamsTest {
     @FileParameters(value = "classpath:with_header.csv", mapper = CsvWithHeaderMapper.class)
     public void csvWithHeader(int id, String name) {
         assertThat(id).isGreaterThan(0);
+    }
+
+    @Test
+    @FileParameters(value = "classpath:with_special_chars.csv", encoding = "UTF-8")
+    public void loadParamWithCorrectEncoding(String value) {
+        assertThat(value).isEqualTo("åäöÅÄÖ");
+    }
+
+    @Test
+    @FileParameters(value = "classpath:with_special_chars.csv", encoding = "ISO-8859-1")
+    public void loadParamWithWrongEncoding(String value) {
+        assertThat(value).isNotEqualTo("åäöÅÄÖ");
     }
 }
