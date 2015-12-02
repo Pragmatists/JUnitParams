@@ -1,8 +1,9 @@
 package junitparams;
 
-import java.lang.annotation.*;
-
-import junitparams.mappers.*;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import junitparams.mappers.DataMapper;
+import junitparams.mappers.IdentityMapper;
 
 /**
  * 
@@ -27,5 +28,10 @@ public @interface FileParameters {
      * &#064;Parameters annotation value (when passed as String), being CSV.
      */
     Class<? extends DataMapper> mapper() default IdentityMapper.class;
+
+    /**
+     * Encoding to use when reading file contents.
+     */
+    String encoding() default "UTF-8";
 
 }
