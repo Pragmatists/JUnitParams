@@ -28,6 +28,19 @@ public class TestMethodTest {
                 new TestClass(this.getClass()));
     }
 
+    private Object nullArray() {
+        return new Object[] {/*is null*/  /* array */
+          new Object[] { false, new String[] { "1", "2" } },
+          new Object[] { true, null },
+        };
+    }
+
+    @Test
+    @Parameters(method = "nullArray")
+    public void testNullArraysArePassedIn(boolean isNullArray, String[] array) throws Exception {
+        assertEquals(isNullArray, array == null);
+    }
+
     @Test
     @Parameters({"a","b"})
     public void forOthersToWork(String arg) throws Exception {

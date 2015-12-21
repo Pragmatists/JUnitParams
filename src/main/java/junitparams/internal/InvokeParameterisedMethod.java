@@ -133,6 +133,7 @@ public class InvokeParameterisedMethod extends Statement {
 
     private boolean testMethodParamsHasVarargs(Object[] columns, Class<?>[] expectedParameterTypes) {
     	int paramLen = expectedParameterTypes.length;
+      if(expectedParameterTypes[paramLen-1] == null || columns[paramLen - 1] == null) return false;
         return expectedParameterTypes.length <= columns.length && expectedParameterTypes[paramLen-1].isArray()
         		&& expectedParameterTypes[paramLen-1].getComponentType().equals(columns[paramLen-1].getClass());
     }
