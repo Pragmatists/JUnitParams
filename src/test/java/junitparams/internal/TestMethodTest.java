@@ -1,8 +1,5 @@
 package junitparams.internal;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -13,6 +10,9 @@ import org.junit.runners.model.TestClass;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class TestMethodTest {
@@ -26,19 +26,6 @@ public class TestMethodTest {
         arrayTestMethod = new TestMethod(new FrameworkMethod(TestMethodTest.class.getMethod("forOthersToWorkWithArray",
                 new Class[]{(new String[]{}).getClass()})),
                 new TestClass(this.getClass()));
-    }
-
-    private Object nullArray() {
-        return new Object[] {/*is null*/  /* array */
-          new Object[] { false, new String[] { "1", "2" } },
-          new Object[] { true, null },
-        };
-    }
-
-    @Test
-    @Parameters(method = "nullArray")
-    public void testNullArraysArePassedIn(boolean isNullArray, String[] array) throws Exception {
-        assertEquals(isNullArray, array == null);
     }
 
     @Test
@@ -145,7 +132,19 @@ public class TestMethodTest {
                 21), new Pair(2, 19)}};
     }
 
-    
+    @Test
+    @Parameters(method = "nullArray")
+    public void varargsCheckPassesWithNullArray(boolean isNull, String... array) throws Exception {
+        assertEquals(isNull, array == null);
+    }
+
+    private Object nullArray() {
+        return new Object[] {
+                new Object[] { false, new String[] { "1", "2" } },
+                new Object[] { true, null },
+        };
+    }
+
     private class Pair{
     	int x,y;
     	public Pair(int x, int y){
