@@ -1,8 +1,5 @@
 package junitparams.internal;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -13,6 +10,9 @@ import org.junit.runners.model.TestClass;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class TestMethodTest {
@@ -132,7 +132,19 @@ public class TestMethodTest {
                 21), new Pair(2, 19)}};
     }
 
-    
+    @Test
+    @Parameters(method = "nullArray")
+    public void varargsCheckPassesWithNullArray(boolean isNull, String... array) throws Exception {
+        assertEquals(isNull, array == null);
+    }
+
+    private Object nullArray() {
+        return new Object[] {
+                new Object[] { false, new String[] { "1", "2" } },
+                new Object[] { true, null },
+        };
+    }
+
     private class Pair{
     	int x,y;
     	public Pair(int x, int y){
