@@ -18,7 +18,8 @@ Thanks to [adammichalik](https://github.com/adammichalik) for contribution
 
 ### Support custom annotations for parameter conversion
  
-You can create your own annotations for parameter conversion. Just annotate it with `@Param` and pass it a reference to `Converter` implementation
+You can create your own annotations for parameter conversion. Just annotate it with `@Param` and pass it a reference to `Converter` implementation.
+
 Example:
 
 
