@@ -1,15 +1,17 @@
 package junitparams;
 
+import junitparams.internal.ParameterisedTestMethodRunner;
+import junitparams.internal.TestMethod;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.TestClass;
+
+import java.lang.reflect.Method;
+
 import static org.assertj.core.api.Assertions.assertThat;
-
-import java.lang.reflect.*;
-
-import org.junit.*;
-import org.junit.rules.*;
-import org.junit.runner.*;
-import org.junit.runners.model.*;
-
-import junitparams.internal.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class ParametersReaderProvidersTest {
@@ -67,22 +69,22 @@ public class ParametersReaderProvidersTest {
         }
 
         public static Object[] provideOneNumber() {
-            return new Object[] {new Object[]{3}};
+            return new Object[]{new Object[]{3}};
         }
     }
 
     @Test
     @Parameters(source = DomainObjectProvider.class)
     public void providedDomainParams(DomainClass object1, DomainClass object2) {
-        assertThat(object1.toString()).isEqualTo("dupa1");
-        assertThat(object2.toString()).isEqualTo("dupa2");
+        assertThat(object1.toString()).isEqualTo("testNameOne");
+        assertThat(object2.toString()).isEqualTo("testNameTwo");
     }
 
     public static class DomainObjectProvider {
         public static Object[] provideDomainObject() {
-            return new Object[] { new Object[] {
-                    new DomainClass("dupa1"),
-                    new DomainClass("dupa2") } };
+            return new Object[]{new Object[]{
+                    new DomainClass("testNameOne"),
+                    new DomainClass("testNameTwo")}};
         }
     }
 

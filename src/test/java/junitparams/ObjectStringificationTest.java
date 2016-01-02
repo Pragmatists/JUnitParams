@@ -1,29 +1,26 @@
 package junitparams;
 
-import static junitparams.internal.Utils.*;
+import junitparams.internal.Utils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static junitparams.internal.Utils.stringify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-
-import org.junit.*;
-import org.junit.runner.*;
-
-import junitparams.internal.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class ObjectStringificationTest {
 
     @Test
     public void stringifyString() throws Exception {
-        String obj = "test";
-
-        assertThat(stringify(obj, 0)).isEqualTo("[0] test");
+        assertThat(stringify("exampleName", 0)).isEqualTo("[0] exampleName");
     }
 
     @Test
     public void stringifyClassWithToStringAndOneParam() throws Exception {
-        ClassWithToString obj = new ClassWithToString("test");
+        ClassWithToString obj = new ClassWithToString("exampleName");
 
-        assertThat(stringify(obj, 0)).isEqualTo("[0] test");
+        assertThat(stringify(obj, 0)).isEqualTo("[0] exampleName");
     }
 
     @Test
@@ -31,15 +28,14 @@ public class ObjectStringificationTest {
         ClassWithToString obj1 = new ClassWithToString("one");
         ClassWithToString obj2 = new ClassWithToString("two");
 
-        assertThat(stringify(new Object[] { obj1, obj2 }, 0)).isEqualTo("[0] one, two");
+        assertThat(stringify(new Object[]{obj1, obj2}, 0)).isEqualTo("[0] one, two");
     }
 
     @Test
     public void stringifyClassWithToStringInSuperclass() throws Exception {
-        ClassWithToString obj = new ClassWithToString("dupa") {
-        };
+        ClassWithToString obj = new ClassWithToString("exampleName");
 
-        assertThat(Utils.stringify(obj, 0)).isEqualTo("[0] dupa");
+        assertThat(Utils.stringify(obj, 0)).isEqualTo("[0] exampleName");
     }
 
     private class ClassWithToString {
@@ -62,7 +58,7 @@ public class ObjectStringificationTest {
     }
 
     public Object[] parametersForShouldCreateParameterObjectsOnce() {
-        return new Object[] { new A() };
+        return new Object[]{new A()};
     }
 
     static class A {
@@ -77,7 +73,7 @@ public class ObjectStringificationTest {
 
         @Override
         public String toString() {
-            return test + super.toString();
+            return "[0] exampleName" + super.toString();
         }
     }
 }
