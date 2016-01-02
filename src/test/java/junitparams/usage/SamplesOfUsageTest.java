@@ -1,17 +1,22 @@
 package junitparams.usage;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.*;
-
-import org.junit.*;
-import org.junit.runner.*;
-
 import junitparams.*;
-import junitparams.converters.*;
-import junitparams.mappers.*;
-import junitparams.usage.person_example.*;
-import junitparams.naming.*;
+import junitparams.converters.Param;
+import junitparams.mappers.CsvWithHeaderMapper;
+import junitparams.naming.TestCaseName;
+import junitparams.usage.person_example.PersonMapper;
+import junitparams.usage.person_example.PersonTest;
+import junitparams.usage.person_example.PersonType;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import static junitparams.JUnitParamsRunner.$;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnitParamsRunner.class)
 public class SamplesOfUsageTest {
@@ -123,4 +128,21 @@ public class SamplesOfUsageTest {
     @Parameters({ "value1, value2", "value3, value4" })
     @TestCaseName("[{index}] {method}: {params}")
     public void predefinedMacroForTestCaseNames(String param1, String param2) { }
+
+    public Object mixedParameters() {
+        boolean booleanValue = true;
+        int[] primitiveArray = {1, 2, 3};
+        String stringValue = "Test";
+        String[] stringArray = {"one", "two", null};
+        return $(
+                $(booleanValue, primitiveArray, stringValue, stringArray)
+        );
+    }
+
+    @Test
+    @Parameters(method = "mixedParameters")
+    @TestCaseName("{0}, {1}, {2}, {3}")
+    public void usageOfMultipleTypesOfParameters(
+            boolean booleanValue, int[] primitiveArray, String stringValue, String[] stringArray) {
+    }
 }

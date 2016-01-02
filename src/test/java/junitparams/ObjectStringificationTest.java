@@ -1,13 +1,14 @@
 package junitparams;
 
-import static junitparams.internal.Utils.*;
+import junitparams.internal.Utils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static junitparams.JUnitParamsRunner.$;
+import static junitparams.internal.Utils.stringify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
-import org.junit.*;
-import org.junit.runner.*;
-
-import junitparams.internal.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class ObjectStringificationTest {
@@ -53,6 +54,18 @@ public class ObjectStringificationTest {
         public String toString() {
             return description;
         }
+    }
+
+    @Test
+    public void stringifyArray() {
+        Double[] nullArray = null;
+        int[] primitiveArray = {1, 2, 3};
+        String[] array = {"one", "two", null};
+        Object[] mixed = $(
+                $(nullArray, "stringOne", primitiveArray, "stringTwo", array)
+        );
+
+        assertThat(Utils.stringify(mixed)).isEqualTo("null, stringOne, [1, 2, 3], stringTwo, [one, two, null]");
     }
 
     @Test
