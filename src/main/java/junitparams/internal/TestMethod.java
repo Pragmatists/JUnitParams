@@ -2,6 +2,7 @@ package junitparams.internal;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Ignore;
@@ -61,7 +62,9 @@ public class TestMethod {
         if (!frameworkMethod.getName().equals(((TestMethod) obj).frameworkMethod.getName()))
             return false;
 
-        if (!frameworkMethod.getMethod().getParameterTypes().equals(((TestMethod) obj).frameworkMethod.getMethod().getParameterTypes()))
+        if (!Arrays.equals(
+                frameworkMethod.getMethod().getParameterTypes(),
+                ((TestMethod) obj).frameworkMethod.getMethod().getParameterTypes()))
             return false;
 
         return true;
