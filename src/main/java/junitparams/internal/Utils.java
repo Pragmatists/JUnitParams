@@ -2,6 +2,7 @@ package junitparams.internal;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Some String utils to handle parameterised tests' results.
@@ -82,7 +83,7 @@ public class Utils {
         }
         return params;
     }
-    
+
     private static String asCsvString(Object[] params) {
         if (params == null)
             return "null";
@@ -104,27 +105,60 @@ public class Utils {
     private static String addParamToResult(String result, Object param) {
         if (param == null)
             result += "null";
-        else {
-            try {
-                tryFindingOverridenToString(param);
-                result += param.toString();
-            } catch (Exception e) {
-                result += param.getClass().getSimpleName();
-            }
-        }
+        else if (param.getClass().isArray())
+            result += convertAnyArrayToString(param);
+        else if (hasOverridenToStringMethod(param))
+            result += param.toString();
+        else
+            result += param.getClass().getSimpleName();
+
         return result;
     }
 
-    private static void tryFindingOverridenToString(Object param)
-            throws NoSuchMethodException {
-        final Method toString = param.getClass().getMethod("toString");
-
-        if (toString.getDeclaringClass().equals(Object.class)) {
-            throw new NoSuchMethodException();
+    private static boolean hasOverridenToStringMethod(Object param) {
+        Method[] methods = param.getClass().getMethods();
+        for (Method method : methods) {
+            if (method.getName().equals("toString") && overridesMethod(method)) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    private static boolean overridesMethod(Method method) {
+        return !method.getDeclaringClass().equals(Object.class);
     }
 
     static String uniqueMethodId(int index, Object paramSet, String methodName) {
         return stringify(paramSet, index) + " (" + methodName + ")";
+    }
+
+    private static String convertAnyArrayToString(Object arrayAsObject) {
+        if (arrayAsObject.getClass().getComponentType().isPrimitive()) {
+            return convertFromArrayOfPrimitives(arrayAsObject);
+        } else {
+            return Arrays.toString((Object[]) arrayAsObject);
+        }
+    }
+
+    private static final String convertFromArrayOfPrimitives(Object arrayOfPrimitives) {
+        String componentType = arrayOfPrimitives.getClass().getComponentType().getName();
+        if ("byte".equals(componentType)) {
+            return Arrays.toString((byte[]) arrayOfPrimitives);
+        } else if ("short".equals(componentType)) {
+            return Arrays.toString((short[]) arrayOfPrimitives);
+        } else if ("int".equals(componentType)) {
+            return Arrays.toString((int[]) arrayOfPrimitives);
+        } else if ("long".equals(componentType)) {
+            return Arrays.toString((long[]) arrayOfPrimitives);
+        } else if ("float".equals(componentType)) {
+            return Arrays.toString((float[]) arrayOfPrimitives);
+        } else if ("double".equals(componentType)) {
+            return Arrays.toString((double[]) arrayOfPrimitives);
+        } else if ("boolean".equals(componentType)) {
+            return Arrays.toString((boolean[]) arrayOfPrimitives);
+        } else {
+            return Arrays.toString((char[]) arrayOfPrimitives);
+        }
     }
 }
