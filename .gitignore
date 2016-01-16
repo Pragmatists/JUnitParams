@@ -2,3 +2,21 @@
 .idea
 target
 build
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+.settings/
+.loadpath
+
+# Eclipse Core
+.project
+
+# External tool builders
+.externalToolBuilders/
+
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+
