@@ -3,6 +3,10 @@ package junitparams;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.internal.runners.model.ReflectiveCallable;
+import org.junit.internal.runners.statements.Fail;
+import org.junit.rules.RunRules;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
@@ -475,6 +479,64 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
             child = describeChild(method);
 
         return child;
+    }
+
+    @Override
+    protected Statement methodBlock(FrameworkMethod method) {
+        Object test;
+        try {
+            test = new ReflectiveCallable() {
+                @Override
+                protected Object runReflectiveCall() throws Throwable {
+                    return createTest();
+                }
+            }.run();
+        } catch (Throwable e) {
+            return new Fail(e);
+        }
+
+        Statement statement = methodInvoker(method, test);
+        statement = possiblyExpectingExceptions(method, test, statement);
+        statement = withPotentialTimeout(method, test, statement);
+        statement = withBefores(method, test, statement);
+        statement = withAfters(method, test, statement);
+        statement = withRules(method, test, statement);
+        return statement;
+    }
+
+    private Statement withRules(FrameworkMethod method, Object target,
+            Statement statement) {
+        List<TestRule> testRules = getTestRules(target);
+        Statement result = statement;
+        result = withMethodRules(method, testRules, target, result);
+        result = withTestRules(method, testRules, result);
+
+        return result;
+    }
+
+    private Statement withMethodRules(FrameworkMethod method, List<TestRule> testRules,
+        Object target, Statement result) {
+        for (org.junit.rules.MethodRule each : getMethodRules(target)) {
+            if (!testRules.contains(each)) {
+                result = each.apply(result, method, target);
+            }
+        }
+        return result;
+    }
+
+    private List<org.junit.rules.MethodRule> getMethodRules(Object target) {
+        return rules(target);
+    }
+
+    private Statement withTestRules(FrameworkMethod method, List<TestRule> testRules,
+            Statement statement) {
+        return testRules.isEmpty() ? statement :
+            new RunRules(statement, testRules, describeParameterizedChild(method, statement));
+    }
+
+    private Description describeParameterizedChild(FrameworkMethod method,
+        Statement methodInvoker) {
+        return parameterisedRunner.getParameterisedTestDescription(method, methodInvoker);
     }
 
     /**
