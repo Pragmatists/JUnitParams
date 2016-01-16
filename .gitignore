@@ -3,7 +3,7 @@
 target
 build
 .metadata
-bin/
+bin
 tmp/
 *.tmp
 *.bak
