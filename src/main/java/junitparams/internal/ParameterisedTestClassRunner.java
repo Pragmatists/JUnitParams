@@ -156,6 +156,11 @@ public class ParameterisedTestClassRunner {
      */
     public Description getParameterisedTestDescription(
         FrameworkMethod method, Statement methodInvoker) {
+        TestMethod testMethod = testMethods.get(method);
+
+        if (!testMethod.isParameterised())
+            return null;
+
         return parameterisedMethods.get(testMethods.get(method))
             .getParameterisedTestDescription(methodInvoker);
     }

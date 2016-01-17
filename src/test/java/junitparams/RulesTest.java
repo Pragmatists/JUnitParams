@@ -30,6 +30,11 @@ public class RulesTest {
 
 
     @Test
+    public void nonParameterisedMethod() {
+        assertThat(testName.getMethodName()).isEqualTo("nonParameterisedMethod");
+    }
+
+    @Test
     @Parameters("")
     public void shouldHandleRulesProperly(String n) {
         assertThat(testName.getMethodName()).isEqualTo("[0]  (shouldHandleRulesProperly)");

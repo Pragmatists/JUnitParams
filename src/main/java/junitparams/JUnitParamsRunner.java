@@ -531,12 +531,18 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     private Statement withTestRules(FrameworkMethod method, List<TestRule> testRules,
             Statement statement) {
         return testRules.isEmpty() ? statement :
-            new RunRules(statement, testRules, describeParameterizedChild(method, statement));
+            new RunRules(statement, testRules, internalDescribeChild(method, statement));
     }
 
-    private Description describeParameterizedChild(FrameworkMethod method,
+    private Description internalDescribeChild(FrameworkMethod method,
         Statement methodInvoker) {
-        return parameterisedRunner.getParameterisedTestDescription(method, methodInvoker);
+        Description description =
+            parameterisedRunner.getParameterisedTestDescription(method, methodInvoker);
+        if (description == null) {
+            return describeChild(method);
+        }
+
+        return description;
     }
 
     /**
