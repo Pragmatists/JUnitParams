@@ -1,5 +1,6 @@
 package junitparams.converters;
 
+
 public class NullableConverter implements Converter<Nullable, String>{
     
     private String nullIdentifier;
@@ -9,7 +10,7 @@ public class NullableConverter implements Converter<Nullable, String>{
     }
 
     public String convert(Object param) throws ConversionFailedException {
-        if(param instanceof String && ((String)param).trim().equals(nullIdentifier)){
+        if(param instanceof String && ((String)param).trim().equalsIgnoreCase(nullIdentifier)){
                 return null;
         }
         return (String)param;
