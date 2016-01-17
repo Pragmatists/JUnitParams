@@ -1,10 +1,13 @@
 package junitparams;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.Fail;
+import org.junit.rules.MethodRule;
 import org.junit.rules.RunRules;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -392,6 +395,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     private ParametrizedTestMethodsFilter parametrizedTestMethodsFilter = new ParametrizedTestMethodsFilter(this);
     private ParameterisedTestClassRunner parameterisedRunner;
     private Description description;
+    private Statement currentMethodInvoker;
 
     public JUnitParamsRunner(Class<?> klass) throws InitializationError {
         super(klass);
@@ -451,6 +455,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
         if (methodInvoker == null)
             methodInvoker = super.methodInvoker(method, test);
 
+        currentMethodInvoker = methodInvoker;
         return methodInvoker;
     }
 
@@ -482,67 +487,27 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     }
 
     @Override
-    protected Statement methodBlock(FrameworkMethod method) {
-        Object test;
+    protected synchronized Statement methodBlock(FrameworkMethod method) {
         try {
-            test = new ReflectiveCallable() {
-                @Override
-                protected Object runReflectiveCall() throws Throwable {
-                    return createTest();
-                }
-            }.run();
-        } catch (Throwable e) {
-            return new Fail(e);
+            return super.methodBlock(method);
+        } finally {
+            currentMethodInvoker = null;
         }
-
-        Statement statement = methodInvoker(method, test);
-        statement = possiblyExpectingExceptions(method, test, statement);
-        statement = withPotentialTimeout(method, test, statement);
-        statement = withBefores(method, test, statement);
-        statement = withAfters(method, test, statement);
-        statement = withRules(method, test, statement);
-        return statement;
     }
 
-    private Statement withRules(FrameworkMethod method, Object target,
-            Statement statement) {
-        List<TestRule> testRules = getTestRules(target);
-        Statement result = statement;
-        result = withMethodRules(method, testRules, target, result);
-        result = withTestRules(method, testRules, result);
+    @Override
+    protected Description describeChild(FrameworkMethod method) {
+      if (currentMethodInvoker == null) {
+          return super.describeChild(method);
+      }
 
-        return result;
-    }
+      Description description =
+          parameterisedRunner.getParameterisedTestDescription(method, currentMethodInvoker);
+      if (description == null) {
+          return super.describeChild(method);
+      }
 
-    private Statement withMethodRules(FrameworkMethod method, List<TestRule> testRules,
-        Object target, Statement result) {
-        for (org.junit.rules.MethodRule each : getMethodRules(target)) {
-            if (!testRules.contains(each)) {
-                result = each.apply(result, method, target);
-            }
-        }
-        return result;
-    }
-
-    private List<org.junit.rules.MethodRule> getMethodRules(Object target) {
-        return rules(target);
-    }
-
-    private Statement withTestRules(FrameworkMethod method, List<TestRule> testRules,
-            Statement statement) {
-        return testRules.isEmpty() ? statement :
-            new RunRules(statement, testRules, internalDescribeChild(method, statement));
-    }
-
-    private Description internalDescribeChild(FrameworkMethod method,
-        Statement methodInvoker) {
-        Description description =
-            parameterisedRunner.getParameterisedTestDescription(method, methodInvoker);
-        if (description == null) {
-            return describeChild(method);
-        }
-
-        return description;
+      return description;
     }
 
     /**
