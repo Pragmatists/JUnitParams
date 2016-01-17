@@ -35,9 +35,13 @@ public class ParameterisedTestMethodRunner {
     }
 
     void runTestMethod(Statement methodInvoker, RunNotifier notifier) {
-        Description methodWithParams = findChildForParams(methodInvoker, method.describe());
+        Description methodWithParams = getParameterisedTestDescription(methodInvoker);
 
         runMethodInvoker(notifier, methodInvoker, methodWithParams);
+    }
+
+    Description getParameterisedTestDescription(Statement methodInvoker) {
+        return findChildForParams(methodInvoker, method.describe());
     }
 
     private void runMethodInvoker(RunNotifier notifier, Statement methodInvoker, Description methodWithParams) {

@@ -148,6 +148,24 @@ public class ParameterisedTestClassRunner {
     }
 
     /**
+     * Returns description of a single parameterised method.
+     *
+     * @param method
+     * @param methodInvoker
+     * @return Description of a single parameterised method.
+     */
+    public Description getParameterisedTestDescription(
+        FrameworkMethod method, Statement methodInvoker) {
+        TestMethod testMethod = testMethods.get(method);
+
+        if (!testMethod.isParameterised())
+            return null;
+
+        return parameterisedMethods.get(testMethods.get(method))
+            .getParameterisedTestDescription(methodInvoker);
+    }
+
+    /**
      * Returns description of a parameterised method.
      *
      * @param method TODO

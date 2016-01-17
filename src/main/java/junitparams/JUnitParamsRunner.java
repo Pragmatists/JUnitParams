@@ -1,8 +1,15 @@
 package junitparams;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.internal.runners.model.ReflectiveCallable;
+import org.junit.internal.runners.statements.Fail;
+import org.junit.rules.MethodRule;
+import org.junit.rules.RunRules;
+import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
@@ -388,6 +395,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     private ParametrizedTestMethodsFilter parametrizedTestMethodsFilter = new ParametrizedTestMethodsFilter(this);
     private ParameterisedTestClassRunner parameterisedRunner;
     private Description description;
+    private Statement currentMethodInvoker;
 
     public JUnitParamsRunner(Class<?> klass) throws InitializationError {
         super(klass);
@@ -447,6 +455,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
         if (methodInvoker == null)
             methodInvoker = super.methodInvoker(method, test);
 
+        currentMethodInvoker = methodInvoker;
         return methodInvoker;
     }
 
@@ -475,6 +484,30 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
             child = describeChild(method);
 
         return child;
+    }
+
+    @Override
+    protected synchronized Statement methodBlock(FrameworkMethod method) {
+        try {
+            return super.methodBlock(method);
+        } finally {
+            currentMethodInvoker = null;
+        }
+    }
+
+    @Override
+    protected Description describeChild(FrameworkMethod method) {
+      if (currentMethodInvoker == null) {
+          return super.describeChild(method);
+      }
+
+      Description description =
+          parameterisedRunner.getParameterisedTestDescription(method, currentMethodInvoker);
+      if (description == null) {
+          return super.describeChild(method);
+      }
+
+      return description;
     }
 
     /**
