@@ -2,6 +2,8 @@ package junitparams;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -104,5 +106,18 @@ public class ParamsInAnnotationTest {
     public void shouldNotApplyConversionToNull(@Nullable String firstParam, @Nullable String secondParam) {
         assertThat(firstParam).isEqualTo("A");
         assertThat(secondParam).isEqualTo("B");
+    }
+    
+    @Test
+    @Parameters({"1.00, 1.25"})
+    public void shouldConvertToBigDecimalType(BigDecimal first, BigDecimal second) {
+        assertThat(first).isEqualTo( new BigDecimal("1.00") );
+        assertThat(second).isEqualTo( new BigDecimal("1.25"));
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    @Parameters({" invalidNumber "})
+    public void shouldFialWhenNotANumber(BigDecimal number) {
+        assertThat(number).isEqualTo( new BigDecimal("1.25"));
     }
 }

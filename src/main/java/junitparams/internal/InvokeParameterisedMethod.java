@@ -4,6 +4,7 @@ import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 
 import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
@@ -205,13 +206,15 @@ public class InvokeParameterisedMethod extends Statement {
             return object.toString().charAt(0);
         if (clazz.isAssignableFrom(Byte.TYPE) || clazz.isAssignableFrom(Byte.class))
             return Byte.parseByte((String) object);
+        if (clazz.isAssignableFrom(BigDecimal.class))
+            return new BigDecimal((String) object);
         PropertyEditor editor = PropertyEditorManager.findEditor(clazz);
         if (editor != null) {
             editor.setAsText((String) object);
             return editor.getValue();
         }
         throw new IllegalArgumentException("Parameter type (" + clazz.getName() + ") cannot be handled!" +
-                " Only primitive types and Strings can be used.");
+                " Only primitive types, BigDecimals and Strings can be used.");
     }
 
     private void verifySameSizeOfArrays(Object[] columns, Class<?>[] parameterTypes) {
