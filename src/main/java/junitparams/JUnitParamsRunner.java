@@ -400,7 +400,9 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
         this.parametrizedTestMethodsFilter = new ParametrizedTestMethodsFilter(this,filter);
     }
 
+    @Override
     protected void collectInitializationErrors(List<Throwable> errors) {
+        super.validateFields(errors);
         for (Throwable throwable : errors)
             throwable.printStackTrace();
     }
