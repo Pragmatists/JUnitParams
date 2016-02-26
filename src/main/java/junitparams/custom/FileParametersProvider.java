@@ -1,4 +1,4 @@
-package junitparams.internal.parameters;
+package junitparams.custom;
 
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -6,28 +6,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.junit.runners.model.FrameworkMethod;
-
 import junitparams.FileParameters;
-import junitparams.Parameters;
 import junitparams.mappers.DataMapper;
 
-class ParametersFromFile implements ParametrizationStrategy {
-    private FrameworkMethod frameworkMethod;
+public class FileParametersProvider implements ParametersProvider<FileParameters> {
 
-    ParametersFromFile(FrameworkMethod frameworkMethod) {
-        this.frameworkMethod = frameworkMethod;
+    private FileParameters fileParameters;
+
+    @Override
+    public void initialize(FileParameters fileParameters) {
+        this.fileParameters = fileParameters;
     }
 
     @Override
-    public Object[] getParameters() {
-        return paramsFromFile(frameworkMethod.getAnnotation(FileParameters.class));
-    }
-
-    @Override
-    public boolean isApplicable() {
-        return frameworkMethod.getAnnotation(Parameters.class) == null &&
-                frameworkMethod.getAnnotation(FileParameters.class) != null;
+    public Object[] provideParameters() {
+        return paramsFromFile(fileParameters);
     }
 
     private Object[] paramsFromFile(FileParameters fileParametersAnnotation) {
@@ -65,4 +58,5 @@ class ParametersFromFile implements ParametrizationStrategy {
 
         throw new IllegalArgumentException("Unknown file access protocol. Only 'file' and 'classpath' are supported!");
     }
+
 }

@@ -4,7 +4,6 @@ import java.lang.annotation.Annotation;
 
 import org.junit.runners.model.FrameworkMethod;
 
-import junitparams.FileParameters;
 import junitparams.Parameters;
 import junitparams.custom.CustomParameters;
 
@@ -18,7 +17,6 @@ public class FrameworkMethodAnnotations {
 
     public boolean isParametrised() {
         return hasAnnotation(Parameters.class)
-                || hasAnnotation(FileParameters.class)
                 || hasCustomParameters();
     }
 

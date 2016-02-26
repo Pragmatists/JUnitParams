@@ -3,6 +3,8 @@ package junitparams;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import junitparams.custom.CustomParameters;
+import junitparams.custom.FileParametersProvider;
 import junitparams.mappers.DataMapper;
 import junitparams.mappers.IdentityMapper;
 
@@ -13,6 +15,7 @@ import junitparams.mappers.IdentityMapper;
  * @author Pawel Lipinski
  */
 @Retention(RetentionPolicy.RUNTIME)
+@CustomParameters(provider = FileParametersProvider.class)
 public @interface FileParameters {
 
     /**

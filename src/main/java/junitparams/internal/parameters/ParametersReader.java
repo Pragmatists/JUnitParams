@@ -29,8 +29,8 @@ public class ParametersReader {
                 new ParametersFromValue(frameworkMethod),
                 new ParametersFromExternalClassProvideMethod(frameworkMethod),
                 new ParametersFromExternalClassMethod(frameworkMethod),
-                new ParametersFromTestClassMethod(frameworkMethod, testClass),
-                new ParametersFromFile(frameworkMethod));
+                new ParametersFromTestClassMethod(frameworkMethod, testClass)
+        );
     }
 
     public Object[] read() {
