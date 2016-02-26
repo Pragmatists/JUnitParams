@@ -19,14 +19,14 @@ public class FileParametersProvider implements ParametersProvider<FileParameters
     }
 
     @Override
-    public Object[] provideParameters() {
-        return paramsFromFile(fileParameters);
+    public Object[] getParameters() {
+        return paramsFromFile();
     }
 
-    private Object[] paramsFromFile(FileParameters fileParametersAnnotation) {
+    private Object[] paramsFromFile() {
         try {
-            Reader reader = createProperReader(fileParametersAnnotation);
-            DataMapper mapper = fileParametersAnnotation.mapper().newInstance();
+            Reader reader = createProperReader();
+            DataMapper mapper = fileParameters.mapper().newInstance();
             try {
                 return mapper.map(reader);
             } finally {
@@ -35,13 +35,13 @@ public class FileParametersProvider implements ParametersProvider<FileParameters
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(
-                    "Could not successfully read parameters from file: " + fileParametersAnnotation.value(), e);
+                    "Could not successfully read parameters from file: " + fileParameters.value(), e);
         }
     }
 
-    private Reader createProperReader(FileParameters fileParametersAnnotation) throws IOException {
-        String filepath = fileParametersAnnotation.value();
-        String encoding = fileParametersAnnotation.encoding();
+    private Reader createProperReader() throws IOException {
+        String filepath = fileParameters.value();
+        String encoding = fileParameters.encoding();
 
         if (filepath.indexOf(':') < 0) {
             return new FileReader(filepath);

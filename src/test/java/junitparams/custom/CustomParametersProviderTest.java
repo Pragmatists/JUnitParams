@@ -38,8 +38,8 @@ public class CustomParametersProviderTest {
         }
 
         @Override
-        public Object[] provideParameters() {
-            return new Object[]{"hello"};
+        public Object[] getParameters() {
+            return new Object[]{"hello", "hello"};
         }
     }
 
@@ -53,8 +53,8 @@ public class CustomParametersProviderTest {
         }
 
         @Override
-        public Object[] provideParameters() {
-            return new Object[]{hello};
+        public Object[] getParameters() {
+            return new Object[]{hello, hello};
         }
     }
 }

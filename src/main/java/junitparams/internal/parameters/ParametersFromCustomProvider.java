@@ -7,6 +7,7 @@ import junitparams.internal.annotation.CustomParametersDescriptor;
 import junitparams.internal.annotation.FrameworkMethodAnnotations;
 
 public class ParametersFromCustomProvider implements ParametrizationStrategy {
+
     private final FrameworkMethodAnnotations frameworkMethodAnnotations;
 
     public ParametersFromCustomProvider(FrameworkMethod frameworkMethod) {
@@ -21,12 +22,12 @@ public class ParametersFromCustomProvider implements ParametrizationStrategy {
     @Override
     public Object[] getParameters() {
         CustomParametersDescriptor parameters = frameworkMethodAnnotations.getCustomParameters();
-        ParametersProvider provider = instantiateParametersProvider(parameters.providerClass());
+        ParametersProvider provider = instantiate(parameters.provider());
         provider.initialize(parameters.annotation());
-        return provider.provideParameters();
+        return provider.getParameters();
     }
 
-    private ParametersProvider instantiateParametersProvider(Class<? extends ParametersProvider> providerClass) {
+    private ParametersProvider instantiate(Class<? extends ParametersProvider> providerClass) {
         try {
             return providerClass.newInstance();
         } catch (Exception e) {

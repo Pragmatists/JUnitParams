@@ -6,20 +6,22 @@ import junitparams.custom.CustomParameters;
 import junitparams.custom.ParametersProvider;
 
 public class CustomParametersDescriptor {
-    private final CustomParameters customParameters;
+
     private final Annotation customAnnotation;
+
+    private final Class<? extends ParametersProvider> provider;
 
     public CustomParametersDescriptor(CustomParameters customParameters) {
         this(customParameters, customParameters);
     }
 
     public CustomParametersDescriptor(CustomParameters customParameters, Annotation customAnnotation) {
-        this.customParameters = customParameters;
+        this.provider = customParameters.provider();
         this.customAnnotation = customAnnotation;
     }
 
-    public Class<? extends ParametersProvider> providerClass() {
-        return customParameters.provider();
+    public Class<? extends ParametersProvider> provider() {
+        return provider;
     }
 
     public Annotation annotation() {

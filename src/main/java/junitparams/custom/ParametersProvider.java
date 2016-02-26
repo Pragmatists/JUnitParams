@@ -6,5 +6,5 @@ public interface ParametersProvider<A extends Annotation> {
 
     void initialize(A parametersAnnotation);
 
-    Object[] provideParameters();
+    Object[] getParameters();
 }
