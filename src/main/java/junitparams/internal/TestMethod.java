@@ -10,19 +10,19 @@ import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
-import junitparams.FileParameters;
-import junitparams.Parameters;
+import junitparams.internal.annotation.FrameworkMethodAnnotations;
 import junitparams.internal.parameters.ParametersReader;
 import junitparams.naming.MacroSubstitutionNamingStrategy;
 import junitparams.naming.TestCaseNamingStrategy;
 
 /**
  * A wrapper for a test method
- * 
+ *
  * @author Pawel Lipinski
  */
 public class TestMethod {
     private FrameworkMethod frameworkMethod;
+    FrameworkMethodAnnotations frameworkMethodAnnotations;
     private Class<?> testClass;
     private ParametersReader parametersReader;
     private Object[] cachedParameters;
@@ -31,9 +31,10 @@ public class TestMethod {
     public TestMethod(FrameworkMethod method, TestClass testClass) {
         this.frameworkMethod = method;
         this.testClass = testClass.getJavaClass();
+        frameworkMethodAnnotations = new FrameworkMethodAnnotations(method);
         parametersReader = new ParametersReader(testClass(), frameworkMethod);
 
-		namingStrategy = new MacroSubstitutionNamingStrategy(this);
+        namingStrategy = new MacroSubstitutionNamingStrategy(this);
     }
 
     public String name() {
@@ -64,8 +65,9 @@ public class TestMethod {
 
         if (!Arrays.equals(
                 frameworkMethod.getMethod().getParameterTypes(),
-                ((TestMethod) obj).frameworkMethod.getMethod().getParameterTypes()))
+                ((TestMethod) obj).frameworkMethod.getMethod().getParameterTypes())) {
             return false;
+        }
 
         return true;
     }
@@ -75,11 +77,13 @@ public class TestMethod {
     }
 
     public boolean isIgnored() {
-        if (frameworkMethod.getAnnotation(Ignore.class) != null)
+        if (frameworkMethodAnnotations.hasAnnotation(Ignore.class)) {
             return true;
+        }
 
-        if (isParameterised() && parametersSets().length == 0)
+        if (frameworkMethodAnnotations.isParametrised() && parametersSets().length == 0) {
             return true;
+        }
 
         return false;
     }
@@ -88,12 +92,8 @@ public class TestMethod {
         return !isIgnored();
     }
 
-    public Annotation[] annotations() {
-        return frameworkMethod.getAnnotations();
-    }
-
-    public <T extends java.lang.annotation.Annotation> T getAnnotation(Class<? extends Annotation> annotationType) {
-        return (T) frameworkMethod.getAnnotation(annotationType);
+    public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
+        return frameworkMethodAnnotations.getAnnotation(annotationType);
     }
 
     Description describe() {
@@ -106,12 +106,12 @@ public class TestMethod {
                 String uniqueMethodId = Utils.uniqueMethodId(i, paramSet, name());
 
                 parametrised.addChild(
-                    Description.createTestDescription(testClass().getName(), name, uniqueMethodId)
+                        Description.createTestDescription(testClass().getName(), name, uniqueMethodId)
                 );
             }
             return parametrised;
         } else {
-            return Description.createTestDescription(testClass(), name(), annotations());
+            return Description.createTestDescription(testClass(), name(), frameworkMethodAnnotations.allAnnotations());
         }
     }
 
@@ -126,13 +126,8 @@ public class TestMethod {
         return cachedParameters;
     }
 
-    public boolean isParameterised() {
-        return frameworkMethod.getMethod().isAnnotationPresent(Parameters.class)
-            || frameworkMethod.getMethod().isAnnotationPresent(FileParameters.class);
-    }
-
     void warnIfNoParamsGiven() {
-        if (isNotIgnored() && isParameterised() && parametersSets().length == 0)
+        if (isNotIgnored() && frameworkMethodAnnotations.isParametrised() && parametersSets().length == 0)
             System.err.println("Method " + name() + " gets empty list of parameters, so it's being ignored!");
     }
 

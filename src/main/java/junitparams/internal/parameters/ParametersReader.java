@@ -1,12 +1,13 @@
 package junitparams.internal.parameters;
 
-import junitparams.FileParameters;
-import junitparams.Parameters;
-import org.junit.runners.model.FrameworkMethod;
-
 import java.util.List;
 
-import static java.lang.String.format;
+import org.junit.runners.model.FrameworkMethod;
+
+import junitparams.FileParameters;
+import junitparams.Parameters;
+
+import static java.lang.String.*;
 import static java.util.Arrays.*;
 
 public class ParametersReader {
@@ -24,6 +25,7 @@ public class ParametersReader {
         this.frameworkMethod = frameworkMethod;
 
         strategies = asList(
+                new ParametersFromCustomProvider(frameworkMethod),
                 new ParametersFromValue(frameworkMethod),
                 new ParametersFromExternalClassProvideMethod(frameworkMethod),
                 new ParametersFromExternalClassMethod(frameworkMethod),

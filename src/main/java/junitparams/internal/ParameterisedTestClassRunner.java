@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.Description;
-import org.junit.runner.manipulation.Filter;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -57,7 +56,7 @@ public class ParameterisedTestClassRunner {
         List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
 
         for (TestMethod testMethod : testMethodsList) {
-            if (testMethod.isParameterised())
+            if (testMethod.frameworkMethodAnnotations.isParametrised())
                 addTestMethodForEachParamSet(resultMethods, testMethod);
             else
                 addTestMethodOnce(resultMethods, testMethod);
@@ -113,7 +112,7 @@ public class ParameterisedTestClassRunner {
     public Statement parameterisedMethodInvoker(FrameworkMethod method, Object testClass) {
         TestMethod testMethod = testMethods.get(method);
 
-        if (!testMethod.isParameterised())
+        if (!testMethod.frameworkMethodAnnotations.isParametrised())
             return null;
 
         return buildMethodInvoker(method, testClass, testMethod);
@@ -133,7 +132,7 @@ public class ParameterisedTestClassRunner {
      * @return true, iff testMethod should be run by this runner.
      */
     public boolean shouldRun(TestMethod testMethod) {
-        return testMethod.isParameterised();
+        return testMethod.frameworkMethodAnnotations.isParametrised();
     }
 
     /**
@@ -156,7 +155,7 @@ public class ParameterisedTestClassRunner {
     public Description describeParameterisedMethod(FrameworkMethod method) {
         TestMethod testMethod = testMethods.get(method);
 
-        if (!testMethod.isParameterised())
+        if (!testMethod.frameworkMethodAnnotations.isParametrised())
             return null;
 
         return testMethod.describe();
