@@ -1,10 +1,19 @@
 package junitparams;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ErrorCollector;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
+import org.junit.rules.TestName;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.rules.Timeout;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.RunWith;
 
-import org.junit.*;
-import org.junit.rules.*;
-import org.junit.runner.*;
+import static org.assertj.core.api.Assertions.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class RulesTest {
@@ -32,10 +41,10 @@ public class RulesTest {
     @Test
     public void shouldProvideHelpfulExceptionMessageWhenRuleIsUsedImproperly() {
         Result result = JUnitCore.runClasses(ProtectedRuleTest.class);
-        assertThat(result.getFailureCount()).isEqualTo(1);
 
-        String exceptionMessage = result.getFailures().get(0).getException().getMessage();
-        assertThat(exceptionMessage).isEqualTo("The @Rule 'testRule' must be public.");
+        assertThat(result.getFailureCount()).isEqualTo(1);
+        assertThat(result.getFailures().get(0).getException())
+                .hasMessage("The @Rule 'testRule' must be public.");
     }
 
     public class ProtectedRuleTest {
