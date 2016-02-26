@@ -66,6 +66,42 @@ Usage example:
 
 Thanks to [bbobcik](https://github.com/bbobcik) for inspiration
 
+### CustomParameters
+
+You can create custom annotations for parameter providers. `@FileParameters` have been refactored to use this mechanism and should serve as a perfect usage example.
+
+```java
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    @CustomParameters(provider = FileParametersProvider.class)
+    public @interface FileParameters {
+
+        String fileLocation();
+    
+    }
+
+    public class FileParametersProvider implements ParametersProvider<FileParameters> {
+
+        private String fileLocation;
+    
+        @Override
+        public void initialize(FileParameters fileParameters) {
+            this.fileLocation = fileParameters.fileLocation();
+        }
+    
+        @Override
+        public Object[] getParameters() {
+            return paramsFromFile(fileLocation);
+        }
+        
+        ...
+    }
+
+
+```
+
+
 ### Bug fixes and improvements
 
 Thanks to the rest of contributors for lots of bug fixes and improvements:
