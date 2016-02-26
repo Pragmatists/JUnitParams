@@ -81,7 +81,7 @@ public class TestMethod {
             return true;
         }
 
-        if (frameworkMethodAnnotations.isParametrised() && parametersSets().length == 0) {
+        if (isParametrised() && parametersSets().length == 0) {
             return true;
         }
 
@@ -127,7 +127,7 @@ public class TestMethod {
     }
 
     void warnIfNoParamsGiven() {
-        if (isNotIgnored() && frameworkMethodAnnotations.isParametrised() && parametersSets().length == 0)
+        if (isNotIgnored() && isParametrised() && parametersSets().length == 0)
             System.err.println("Method " + name() + " gets empty list of parameters, so it's being ignored!");
     }
 
@@ -135,4 +135,7 @@ public class TestMethod {
         return frameworkMethod;
     }
 
+    boolean isParametrised() {
+        return frameworkMethodAnnotations.isParametrised();
+    }
 }
