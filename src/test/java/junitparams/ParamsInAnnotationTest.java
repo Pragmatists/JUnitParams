@@ -2,8 +2,12 @@ package junitparams;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.*;
-import org.junit.runner.*;
+import java.math.BigDecimal;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import junitparams.converters.Nullable;
 
 @RunWith(JUnitParamsRunner.class)
 public class ParamsInAnnotationTest {
@@ -65,5 +69,55 @@ public class ParamsInAnnotationTest {
     public void allParamsEmpty(String empty1, String empty2) {
         assertThat(empty1).isEmpty();
         assertThat(empty2).isEmpty();
+    }
+    
+    @Test
+    @Parameters({"null"})
+    public void shouldConvertToNull(@Nullable String value) {
+        assertThat(value).isNull();
+    }
+    
+    @Test
+    @Parameters({" null"})
+    public void shouldConvertToNullIgnoringWhitespaces(@Nullable String value) {
+        assertThat(value).isNull();
+    }
+    
+    @Test
+    @Parameters({"A", "B"})
+    public void shouldNotApplyConversionToNull(@Nullable String value) {
+        assertThat(value).isNotNull();
+    }
+    
+    @Test
+    @Parameters({" #null "})
+    public void shouldUseCustomNullIdentifier(@Nullable(nullIdentifier = "#null") String value) {
+        assertThat(value).isNull();
+    }
+    
+    @Test
+    @Parameters({" null "})
+    public void shouldIgnoreDefaultNulllIdentifierWhenIsSpecifiedCustomOne(@Nullable(nullIdentifier = "#null") String value) {
+        assertThat(value).isNotNull();
+    }
+    
+    @Test
+    @Parameters({"A, B"})
+    public void shouldNotApplyConversionToNull(@Nullable String firstParam, @Nullable String secondParam) {
+        assertThat(firstParam).isEqualTo("A");
+        assertThat(secondParam).isEqualTo("B");
+    }
+    
+    @Test
+    @Parameters({"1.00, 1.25"})
+    public void shouldConvertToBigDecimalType(BigDecimal first, BigDecimal second) {
+        assertThat(first).isEqualTo( new BigDecimal("1.00") );
+        assertThat(second).isEqualTo( new BigDecimal("1.25"));
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    @Parameters({" invalidNumber "})
+    public void shouldFialWhenNotANumber(BigDecimal number) {
+        assertThat(number).isEqualTo( new BigDecimal("1.25"));
     }
 }
