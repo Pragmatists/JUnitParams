@@ -1,8 +1,8 @@
 package junitparams;
 
-import java.lang.annotation.*;
-
-import javax.lang.model.type.*;
+import javax.lang.model.type.NullType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * THE annotation for the test parameters. Use it to say that a method takes
