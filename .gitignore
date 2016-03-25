@@ -2,3 +2,12 @@
 .idea
 target
 build
+.metadata
+bin
+tmp/
+.settings/
+.loadpath
+.project
+.externalToolBuilders/
+.classpath
+
