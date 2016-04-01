@@ -57,19 +57,19 @@ public class TestMethod {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TestMethod))
-            return false;
+        return (obj instanceof TestMethod)
+                && hasTheSameNameAsFrameworkMethod((TestMethod) obj)
+                && hasTheSameParameterTypesAsFrameworkMethod((TestMethod) obj);
+    }
 
-        if (!frameworkMethod.getName().equals(((TestMethod) obj).frameworkMethod.getName()))
-            return false;
+    private boolean hasTheSameNameAsFrameworkMethod(TestMethod testMethod) {
+        return frameworkMethod.getName().equals(testMethod.frameworkMethod.getName());
+    }
 
-        if (!Arrays.equals(
-                frameworkMethod.getMethod().getParameterTypes(),
-                ((TestMethod) obj).frameworkMethod.getMethod().getParameterTypes())) {
-            return false;
-        }
-
-        return true;
+    private boolean hasTheSameParameterTypesAsFrameworkMethod(TestMethod testMethod) {
+        Class<?>[] frameworkMethodParameterTypes = frameworkMethod.getMethod().getParameterTypes();
+        Class<?>[] testMethodParameterTypes = testMethod.frameworkMethod.getMethod().getParameterTypes();
+        return Arrays.equals(frameworkMethodParameterTypes, testMethodParameterTypes);
     }
 
     Class<?> testClass() {
@@ -77,15 +77,15 @@ public class TestMethod {
     }
 
     public boolean isIgnored() {
-        if (frameworkMethodAnnotations.hasAnnotation(Ignore.class)) {
-            return true;
-        }
+        return hasIgnoredAnnotation() || hasNoParameters();
+    }
 
-        if (isParametrised() && parametersSets().length == 0) {
-            return true;
-        }
+    private boolean hasIgnoredAnnotation() {
+        return frameworkMethodAnnotations.hasAnnotation(Ignore.class);
+    }
 
-        return false;
+    private boolean hasNoParameters() {
+       return isParameterised() && parametersSets().length == 0;
     }
 
     public boolean isNotIgnored() {
@@ -127,7 +127,7 @@ public class TestMethod {
     }
 
     void warnIfNoParamsGiven() {
-        if (isNotIgnored() && isParametrised() && parametersSets().length == 0)
+        if (isNotIgnored() && isParameterised() && parametersSets().length == 0)
             System.err.println("Method " + name() + " gets empty list of parameters, so it's being ignored!");
     }
 
@@ -135,7 +135,7 @@ public class TestMethod {
         return frameworkMethod;
     }
 
-    boolean isParametrised() {
+    boolean isParameterised() {
         return frameworkMethodAnnotations.isParametrised();
     }
 }
