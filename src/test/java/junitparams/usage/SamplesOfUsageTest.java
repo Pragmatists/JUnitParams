@@ -2,6 +2,7 @@ package junitparams.usage;
 
 import junitparams.*;
 import junitparams.converters.Param;
+import junitparams.custom.CombinedParameters;
 import junitparams.mappers.CsvWithHeaderMapper;
 import junitparams.naming.TestCaseName;
 import junitparams.usage.person_example.PersonMapper;
@@ -28,6 +29,10 @@ public class SamplesOfUsageTest {
     @Test
     @Parameters({"AAA|1", "BBB|2"})
     public void paramsInAnnotationPipeSeparated(String p1, Integer p2) { }
+
+    @Test
+    @CombinedParameters({"AAA,BBB", "1|2"})
+    public void combineParamsInAnnotation(String p1, Integer p2) {}
 
     @Test
     @Parameters
