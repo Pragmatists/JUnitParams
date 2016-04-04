@@ -98,8 +98,32 @@ You can create custom annotations for parameter providers. `@FileParameters` hav
         ...
     }
 
-
 ```
+
+### @CombinedParameters
+
+Thanks to [piekarskim](https://github.com/piekarskim) The issue #1 is fixed. 
+Using this annotation will result in creating a n-fold cartesian product of parameter values effectively testing each possible combination.
+Since an example is worth a thousand words:
+
+Such annotated test method:
+
+```java
+
+    @Test
+    @CombinedParameters({"a,b", "1,2"})
+    public void calledWithCartesianProduct(String character, Integer number) {
+    ...
+    }
+```
+
+Will be called 4 times with parameters:
+
+| a | 1 |
+| a | 2 |
+| b | 1 |
+| b | 2 |
+
 
 
 ### Bug fixes and improvements

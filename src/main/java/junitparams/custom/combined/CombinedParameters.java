@@ -14,7 +14,6 @@ public @interface CombinedParameters {
      * Using this annotation will result in creating a n-fold cartesian product of parameter values effectively testing
      * each possible combination.
      * Values in the array must match the test method's parameters in order and type.
-     * Whitespace characters are trimmed (use source class or method if You need to provide such parameters)
      * <p>
      * Example:<br>
      * <code>@CombinedParameters({"han,chewie","33,204"})<br>
