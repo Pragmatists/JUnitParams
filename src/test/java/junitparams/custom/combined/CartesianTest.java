@@ -1,13 +1,12 @@
-package junitparams.internal.util;
+package junitparams.custom.combined;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
+import static java.util.Collections.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class CartesianTest {
 

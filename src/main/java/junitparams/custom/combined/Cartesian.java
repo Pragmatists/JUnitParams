@@ -1,11 +1,11 @@
-package junitparams.internal.util;
+package junitparams.custom.combined;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class Cartesian {
+class Cartesian {
 
-    public static Object[] getCartesianProductOf(List<Object[]> array) {
+    static Object[] getCartesianProductOf(List<Object[]> array) {
         if (array == null || array.size() == 0) {
             return new Object[]{};
         }

@@ -1,7 +1,9 @@
-package junitparams.custom;
+package junitparams.custom.combined;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import junitparams.custom.CustomParameters;
 
 @Retention(RetentionPolicy.RUNTIME)
 @CustomParameters(provider = CombinedParametersProvider.class)
@@ -14,10 +16,10 @@ public @interface CombinedParameters {
      * Values in the array must match the test method's parameters in order and type.
      * Whitespace characters are trimmed (use source class or method if You need to provide such parameters)
      * <p>
-     * Example:<code>@CombinedParameters({"han,chewie","33,204"})
-     *     public void shouldTestAllNameAgeCombinations(String name, Integer age)
+     * Example:<br>
+     * <code>@CombinedParameters({"han,chewie","33,204"})<br>
+     * public void shouldTestAllNameAgeCombinations(String name, Integer age)
      * </code>
-     *
      */
     String[] value() default {};
 }

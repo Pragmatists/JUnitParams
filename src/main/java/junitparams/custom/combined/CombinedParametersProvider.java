@@ -1,12 +1,12 @@
-package junitparams.custom;
-
-import junitparams.internal.Utils;
-import junitparams.internal.util.Cartesian;
+package junitparams.custom.combined;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CombinedParametersProvider implements ParametersProvider<CombinedParameters>{
+import junitparams.custom.ParametersProvider;
+import junitparams.internal.Utils;
+
+public class CombinedParametersProvider implements ParametersProvider<CombinedParameters> {
 
     private CombinedParameters combinedParameters;
 
@@ -22,7 +22,6 @@ public class CombinedParametersProvider implements ParametersProvider<CombinedPa
             list.add(Utils.splitAtCommaOrPipe(parameterArray));
         }
 
-        Object[] resultOne = Cartesian.getCartesianProductOf(list);
-        return resultOne;
+        return Cartesian.getCartesianProductOf(list);
     }
 }

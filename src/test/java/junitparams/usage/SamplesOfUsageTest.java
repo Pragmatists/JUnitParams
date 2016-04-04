@@ -1,23 +1,28 @@
 package junitparams.usage;
 
-import junitparams.*;
-import junitparams.converters.Param;
-import junitparams.custom.CombinedParameters;
-import junitparams.mappers.CsvWithHeaderMapper;
-import junitparams.naming.TestCaseName;
-import junitparams.usage.person_example.PersonMapper;
-import junitparams.usage.person_example.PersonTest;
-import junitparams.usage.person_example.PersonType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import static junitparams.JUnitParamsRunner.$;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import junitparams.FileParameters;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
+import junitparams.ParametersReaderProvidersTest;
+import junitparams.ParamsConverterTest;
+import junitparams.converters.Param;
+import junitparams.custom.combined.CombinedParameters;
+import junitparams.mappers.CsvWithHeaderMapper;
+import junitparams.naming.TestCaseName;
+import junitparams.usage.person_example.PersonMapper;
+import junitparams.usage.person_example.PersonTest;
+import junitparams.usage.person_example.PersonType;
+
+import static junitparams.JUnitParamsRunner.*;
+import static org.assertj.core.api.Assertions.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class SamplesOfUsageTest {
@@ -29,10 +34,6 @@ public class SamplesOfUsageTest {
     @Test
     @Parameters({"AAA|1", "BBB|2"})
     public void paramsInAnnotationPipeSeparated(String p1, Integer p2) { }
-
-    @Test
-    @CombinedParameters({"AAA,BBB", "1|2"})
-    public void combineParamsInAnnotation(String p1, Integer p2) {}
 
     @Test
     @Parameters
@@ -150,4 +151,9 @@ public class SamplesOfUsageTest {
     public void usageOfMultipleTypesOfParameters(
             boolean booleanValue, int[] primitiveArray, String stringValue, String[] stringArray) {
     }
+
+    @Test
+    @CombinedParameters({"AAA,BBB", "1|2"})
+    public void combineParamsInAnnotation(String p1, Integer p2) {}
+
 }
