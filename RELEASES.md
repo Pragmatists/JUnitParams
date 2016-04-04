@@ -119,11 +119,12 @@ Such annotated test method:
 
 Will be called 4 times with parameters:
 
-| a | 1 |
-| a | 2 |
-| b | 1 |
-| b | 2 |
-
+```
+ a  1 
+ a  2 
+ b  1 
+ b  2 
+```
 
 
 ### Bug fixes and improvements
