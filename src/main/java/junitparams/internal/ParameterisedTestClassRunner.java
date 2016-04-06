@@ -56,7 +56,7 @@ public class ParameterisedTestClassRunner {
         List<FrameworkMethod> resultMethods = new ArrayList<FrameworkMethod>();
 
         for (TestMethod testMethod : testMethodsList) {
-            if (testMethod.isParametrised())
+            if (testMethod.isParameterised())
                 addTestMethodForEachParamSet(resultMethods, testMethod);
             else
                 addTestMethodOnce(resultMethods, testMethod);
@@ -112,7 +112,7 @@ public class ParameterisedTestClassRunner {
     public Statement parameterisedMethodInvoker(FrameworkMethod method, Object testClass) {
         TestMethod testMethod = testMethods.get(method);
 
-        if (!testMethod.isParametrised())
+        if (!testMethod.isParameterised())
             return null;
 
         return buildMethodInvoker(method, testClass, testMethod);
@@ -132,7 +132,7 @@ public class ParameterisedTestClassRunner {
      * @return true, iff testMethod should be run by this runner.
      */
     public boolean shouldRun(TestMethod testMethod) {
-        return testMethod.isParametrised();
+        return testMethod.isParameterised();
     }
 
     /**
@@ -155,7 +155,7 @@ public class ParameterisedTestClassRunner {
     public Description describeParameterisedMethod(FrameworkMethod method) {
         TestMethod testMethod = testMethods.get(method);
 
-        if (!testMethod.isParametrised())
+        if (!testMethod.isParameterised())
             return null;
 
         return testMethod.describe();
