@@ -1,4 +1,4 @@
-## JUnitParams 1.0.5 release. Release date : ?
+## JUnitParams 1.0.5 release. Release date : 2016-04-14
 
 ### Deprecated $ method
 Utility method `$` was deprecated. It was causing too much problems and we decided not to support it any more. If you wish to keep using it, implement it in your own codebase.
