@@ -24,8 +24,9 @@ See more [examples](https://github.com/Pragmatists/JUnitParams/blob/master/src/t
 
 ## Latest News
 
-* 2015-01-23 JUnitParams 1.0.4 released. Check [release info.](RELEASES.md)
-[more here](https://github.com/Pragmatists/JUnitParams/wiki)
+* 2016-04-14 JUnitParams 1.0.5 released. Check [release info](RELEASES.md).
+
+[more news here](https://github.com/Pragmatists/JUnitParams/wiki)
 
 ## About
 JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit >=4.6.
@@ -47,7 +48,7 @@ JUnitParams is available as Maven artifact:
 <dependency>
   <groupId>pl.pragmatists</groupId>
   <artifactId>JUnitParams</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <scope>test</scope>
 </dependency>
 ```
