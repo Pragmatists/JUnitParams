@@ -11,7 +11,7 @@ import org.junit.runners.model.FrameworkMethod;
 import junitparams.Parameters;
 
 class ParamsFromMethodCommon {
-    private FrameworkMethod frameworkMethod;
+    private final FrameworkMethod frameworkMethod;
 
     ParamsFromMethodCommon(FrameworkMethod frameworkMethod) {
         this.frameworkMethod = frameworkMethod;

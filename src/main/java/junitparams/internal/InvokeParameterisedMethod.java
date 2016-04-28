@@ -20,14 +20,14 @@ import junitparams.converters.ParamConverter;
  *
  * @author Pawel Lipinski
  */
-public class InvokeParameterisedMethod extends Statement {
+class InvokeParameterisedMethod extends Statement {
 
     private final Object[] params;
     private final FrameworkMethod testMethod;
     private final Object testClass;
     private final String uniqueMethodId;
 
-    public InvokeParameterisedMethod(FrameworkMethod testMethod, Object testClass, Object params, int paramSetIdx) {
+    InvokeParameterisedMethod(FrameworkMethod testMethod, Object testClass, Object params, int paramSetIdx) {
         this.testMethod = testMethod;
         this.testClass = testClass;
         this.uniqueMethodId = Utils.uniqueMethodId(paramSetIdx - 1, params, testMethod.getName());

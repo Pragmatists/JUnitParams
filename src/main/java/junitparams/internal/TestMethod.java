@@ -22,7 +22,7 @@ import junitparams.naming.TestCaseNamingStrategy;
  */
 public class TestMethod {
     private FrameworkMethod frameworkMethod;
-    FrameworkMethodAnnotations frameworkMethodAnnotations;
+    private FrameworkMethodAnnotations frameworkMethodAnnotations;
     private Class<?> testClass;
     private ParametersReader parametersReader;
     private Object[] cachedParameters;
@@ -41,7 +41,7 @@ public class TestMethod {
         return frameworkMethod.getName();
     }
 
-    public static List<TestMethod> listFrom(List<FrameworkMethod> annotatedMethods, TestClass testClass) {
+    static List<TestMethod> listFrom(List<FrameworkMethod> annotatedMethods, TestClass testClass) {
         List<TestMethod> methods = new ArrayList<TestMethod>();
 
         for (FrameworkMethod frameworkMethod : annotatedMethods)
@@ -72,7 +72,7 @@ public class TestMethod {
         return Arrays.equals(frameworkMethodParameterTypes, testMethodParameterTypes);
     }
 
-    Class<?> testClass() {
+    private Class<?> testClass() {
         return testClass;
     }
 

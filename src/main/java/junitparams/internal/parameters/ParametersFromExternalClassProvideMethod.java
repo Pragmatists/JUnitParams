@@ -1,8 +1,5 @@
 package junitparams.internal.parameters;
 
-import junitparams.Parameters;
-import org.junit.runners.model.FrameworkMethod;
-
 import javax.lang.model.type.NullType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -10,12 +7,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.runners.model.FrameworkMethod;
+
+import junitparams.Parameters;
+
 class ParametersFromExternalClassProvideMethod implements ParametrizationStrategy {
     private final ParamsFromMethodCommon paramsFromMethodCommon;
-    private Parameters annotation;
+    private final  Parameters annotation;
 
     ParametersFromExternalClassProvideMethod(FrameworkMethod frameworkMethod) {
-        this.paramsFromMethodCommon = new ParamsFromMethodCommon(frameworkMethod);
+        paramsFromMethodCommon = new ParamsFromMethodCommon(frameworkMethod);
         annotation = frameworkMethod.getAnnotation(Parameters.class);
     }
 

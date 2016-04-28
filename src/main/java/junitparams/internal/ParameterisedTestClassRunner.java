@@ -20,9 +20,9 @@ import org.junit.runners.model.TestClass;
  */
 public class ParameterisedTestClassRunner {
 
-    protected Map<TestMethod, ParameterisedTestMethodRunner> parameterisedMethods = new HashMap<TestMethod, ParameterisedTestMethodRunner>();
-    protected Map<FrameworkMethod, TestMethod> testMethods = new HashMap<FrameworkMethod, TestMethod>();
-    protected List<TestMethod> testMethodsList;
+    private Map<TestMethod, ParameterisedTestMethodRunner> parameterisedMethods = new HashMap<TestMethod, ParameterisedTestMethodRunner>();
+    private Map<FrameworkMethod, TestMethod> testMethods = new HashMap<FrameworkMethod, TestMethod>();
+    private List<TestMethod> testMethodsList;
 
     /**
      * Creates a runner for a given test class. Computes all the test methods
@@ -36,7 +36,7 @@ public class ParameterisedTestClassRunner {
         computeFrameworkMethods();
     }
 
-    protected void computeTestMethods(TestClass testClass) {
+    private void computeTestMethods(TestClass testClass) {
         testMethodsList = TestMethod.listFrom(testClass.getAnnotatedMethods(Test.class), testClass);
     }
 

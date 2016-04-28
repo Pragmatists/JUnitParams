@@ -7,13 +7,13 @@ import org.junit.runners.model.FrameworkMethod;
 import junitparams.Parameters;
 
 class ParametersFromTestClassMethod implements ParametrizationStrategy {
-    private ParamsFromMethodCommon paramsFromMethodCommon;
-    private Class<?> testClass;
-    private Parameters annotation;
+    private final ParamsFromMethodCommon paramsFromMethodCommon;
+    private final Class<?> testClass;
+    private final Parameters annotation;
 
     ParametersFromTestClassMethod(FrameworkMethod frameworkMethod, Class<?> testClass) {
-        paramsFromMethodCommon = new ParamsFromMethodCommon(frameworkMethod);
         this.testClass = testClass;
+        paramsFromMethodCommon = new ParamsFromMethodCommon(frameworkMethod);
         annotation = frameworkMethod.getAnnotation(Parameters.class);
     }
 

@@ -10,7 +10,7 @@ import java.util.Arrays;
  * @author Pawel Lipinski
  */
 public class Utils {
-    public static final String REGEX_ALL_NEWLINES = "(\\r\\n|\\n|\\r)";
+    private static final String REGEX_ALL_NEWLINES = "(\\r\\n|\\n|\\r)";
 
     public static String stringify(Object paramSet, int paramIdx) {
         String result = "[" + paramIdx + "] ";
@@ -141,7 +141,7 @@ public class Utils {
         }
     }
 
-    private static final String convertFromArrayOfPrimitives(Object arrayOfPrimitives) {
+    private static String convertFromArrayOfPrimitives(Object arrayOfPrimitives) {
         String componentType = arrayOfPrimitives.getClass().getComponentType().getName();
         if ("byte".equals(componentType)) {
             return Arrays.toString((byte[]) arrayOfPrimitives);
