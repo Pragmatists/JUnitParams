@@ -33,4 +33,20 @@ public class IterableMethodTest {
     public List<String> parametersForShouldHandleSimplifiedIterables() {
         return Arrays.asList("a");
     }
+
+    @Test
+    @Parameters
+    public void shouldHandleIterableOfIterables(String a) {
+        assertThat(a).isEqualTo("a");
+    }
+
+    public List<List<Object>> parametersForShouldHandleIterableOfIterables() {
+        List<List<Object>> params = new ArrayList<List<Object>>();
+        List<Object> nestedParams = new ArrayList<Object>();
+
+        nestedParams.add("a");
+        params.add(nestedParams);
+
+        return params;
+    }
 }

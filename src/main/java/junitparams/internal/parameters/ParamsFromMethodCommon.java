@@ -69,13 +69,28 @@ class ParamsFromMethodCommon {
 
             if (Iterable.class.isAssignableFrom(result.getClass())) {
                 try {
-                    ArrayList<Object[]> res = new ArrayList<Object[]>();
+                    // Attempt to handle Iterable<Iterable<Object>> case
+                    List<Object[]> res = new ArrayList<Object[]>();
+                    for (Iterable<Object> paramSetIterable : (Iterable<Iterable<Object>>) result) {
+                        List<Object> paramSet = new ArrayList<Object>();
+                        for (Object param : paramSetIterable) {
+                            paramSet.add(param);
+                        }
+                        res.add(paramSet.toArray());
+                    }
+                    return res.toArray();
+                } catch (ClassCastException e1) {
+                    // Eat the exception and keep trying
+                }
+
+                try {
+                    List<Object[]> res = new ArrayList<Object[]>();
                     for (Object[] paramSet : (Iterable<Object[]>) result)
                         res.add(paramSet);
                     return res.toArray();
                 } catch (ClassCastException e1) {
                     // Iterable with consecutive paramsets, each of one param
-                    ArrayList<Object> res = new ArrayList<Object>();
+                    List<Object> res = new ArrayList<Object>();
                     for (Object param : (Iterable<?>) result)
                         res.add(new Object[]{param});
                     return res.toArray();
@@ -85,7 +100,7 @@ class ParamsFromMethodCommon {
             if (Iterator.class.isAssignableFrom(result.getClass())) {
                 Object iteratedElement = null;
                 try {
-                    ArrayList<Object[]> res = new ArrayList<Object[]>();
+                    List<Object[]> res = new ArrayList<Object[]>();
                     Iterator<Object[]> iterator = (Iterator<Object[]>) result;
                     while (iterator.hasNext()) {
                         iteratedElement = iterator.next();
@@ -96,7 +111,7 @@ class ParamsFromMethodCommon {
                     return res.toArray();
                 } catch (ClassCastException e1) {
                     // Iterator with consecutive paramsets, each of one param
-                    ArrayList<Object> res = new ArrayList<Object>();
+                    List<Object> res = new ArrayList<Object>();
                     Iterator<?> iterator = (Iterator<?>) result;
                     // The first element is already stored in iteratedElement
                     res.add(iteratedElement);
@@ -110,8 +125,10 @@ class ParamsFromMethodCommon {
             throw new ClassCastException();
 
         } catch (ClassCastException e) {
-            throw new RuntimeException("The return type of: " + provideMethod.getName() + " defined in class " +
-                    sourceClass + " is not Object[][] nor Iterable<Object[]>. Fix it!", e);
+            throw new RuntimeException(
+                "The return type of: " + provideMethod.getName() + " defined in class " + sourceClass +
+                " should be one of the following:\nObject[][], Iterable<Object[]>, Iterable<Iterable<Object>>," +
+                " Iterator<Object[]>.\nFix it!", e);
         } catch (Exception e) {
             throw new RuntimeException("Could not invoke method: " + provideMethod.getName() + " defined in class " +
                     sourceClass + " so no params were used.", e);
