@@ -1,6 +1,7 @@
 package junitparams.internal.parameters;
 
 import javax.lang.model.type.NullType;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -10,13 +11,14 @@ import java.util.List;
 import org.junit.runners.model.FrameworkMethod;
 
 import junitparams.Parameters;
+import junitparams.internal.parameters.toarray.ParamsToArrayConverter;
 
 class ParametersFromExternalClassProvideMethod implements ParametrizationStrategy {
-    private final ParamsFromMethodCommon paramsFromMethodCommon;
-    private final  Parameters annotation;
+    private final FrameworkMethod frameworkMethod;
+    private final Parameters annotation;
 
     ParametersFromExternalClassProvideMethod(FrameworkMethod frameworkMethod) {
-        paramsFromMethodCommon = new ParamsFromMethodCommon(frameworkMethod);
+        this.frameworkMethod = frameworkMethod;
         annotation = frameworkMethod.getAnnotation(Parameters.class);
     }
 
@@ -68,8 +70,7 @@ class ParametersFromExternalClassProvideMethod implements ParametrizationStrateg
                             " is not declared as static. Change it to a static method.");
                 }
                 try {
-                    result.addAll(
-                            Arrays.asList(paramsFromMethodCommon.getDataFromMethod(prividerMethod)));
+                    result.addAll(getDataFromMethod(prividerMethod));
                 } catch (Exception e) {
                     throw new RuntimeException("Cannot invoke parameters source method: " + prividerMethod.getName(),
                             e);
@@ -77,5 +78,11 @@ class ParametersFromExternalClassProvideMethod implements ParametrizationStrateg
             }
         }
         return result;
+    }
+
+    private List<Object> getDataFromMethod(Method prividerMethod) throws IllegalAccessException, InvocationTargetException {
+        Object result = prividerMethod.invoke(null);
+        Object[] resultsArray = new ParamsToArrayConverter(frameworkMethod).convert(result);
+        return Arrays.asList(resultsArray);
     }
 }
