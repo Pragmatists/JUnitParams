@@ -81,6 +81,16 @@ public class SamplesOfUsageTest {
     private Iterator<String> parametersForParamsInIterator() { return Arrays.asList("a").iterator(); }
 
     @Test
+    @Parameters
+    public void paramsInIterableOfIterables(String p1, String p2) { }
+    private List<List<String>> parametersForParamsInIterableOfIterables() {
+        return Arrays.asList(
+                    Arrays.asList("s01e01", "s01e02"),
+                    Arrays.asList("s02e01", "s02e02")
+                );
+    }
+
+    @Test
     @Parameters({"SOME_VALUE", "OTHER_VALUE"})
     public void enumsAsParamInAnnotation(PersonType person) { }
 

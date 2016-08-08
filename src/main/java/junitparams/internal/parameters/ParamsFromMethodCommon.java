@@ -1,14 +1,13 @@
 package junitparams.internal.parameters;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.runners.model.FrameworkMethod;
 
 import junitparams.Parameters;
+import junitparams.internal.parameters.toarray.ParamsToArrayConverter;
 
 class ParamsFromMethodCommon {
     private final FrameworkMethod frameworkMethod;
@@ -31,10 +30,6 @@ class ParamsFromMethodCommon {
         }
 
         return result.toArray();
-    }
-
-    Object[] getDataFromMethod(Method providerMethod) throws IllegalAccessException, InvocationTargetException {
-        return encapsulateParamsIntoArrayIfSingleParamsetPassed((Object[]) providerMethod.invoke(null));
     }
 
     boolean containsDefaultParametersProvidingMethod(Class<?> sourceClass) {
@@ -62,56 +57,13 @@ class ParamsFromMethodCommon {
             provideMethod.setAccessible(true);
             Object result = provideMethod.invoke(testObject);
 
-            if (Object[].class.isAssignableFrom(result.getClass())) {
-                Object[] params = (Object[]) result;
-                return encapsulateParamsIntoArrayIfSingleParamsetPassed(params);
-            }
-
-            if (Iterable.class.isAssignableFrom(result.getClass())) {
-                try {
-                    ArrayList<Object[]> res = new ArrayList<Object[]>();
-                    for (Object[] paramSet : (Iterable<Object[]>) result)
-                        res.add(paramSet);
-                    return res.toArray();
-                } catch (ClassCastException e1) {
-                    // Iterable with consecutive paramsets, each of one param
-                    ArrayList<Object> res = new ArrayList<Object>();
-                    for (Object param : (Iterable<?>) result)
-                        res.add(new Object[]{param});
-                    return res.toArray();
-                }
-            }
-
-            if (Iterator.class.isAssignableFrom(result.getClass())) {
-                Object iteratedElement = null;
-                try {
-                    ArrayList<Object[]> res = new ArrayList<Object[]>();
-                    Iterator<Object[]> iterator = (Iterator<Object[]>) result;
-                    while (iterator.hasNext()) {
-                        iteratedElement = iterator.next();
-                        // ClassCastException will occur in the following line
-                        // if the iterator is actually Iterator<Object> in Java 7
-                        res.add((Object[]) iteratedElement);
-                    }
-                    return res.toArray();
-                } catch (ClassCastException e1) {
-                    // Iterator with consecutive paramsets, each of one param
-                    ArrayList<Object> res = new ArrayList<Object>();
-                    Iterator<?> iterator = (Iterator<?>) result;
-                    // The first element is already stored in iteratedElement
-                    res.add(iteratedElement);
-                    while (iterator.hasNext()) {
-                        res.add(new Object[]{iterator.next()});
-                    }
-                    return res.toArray();
-                }
-            }
-
-            throw new ClassCastException();
+            return new ParamsToArrayConverter(frameworkMethod).convert(result);
 
         } catch (ClassCastException e) {
-            throw new RuntimeException("The return type of: " + provideMethod.getName() + " defined in class " +
-                    sourceClass + " is not Object[][] nor Iterable<Object[]>. Fix it!", e);
+            throw new RuntimeException(
+                "The return type of: " + provideMethod.getName() + " defined in class " + sourceClass +
+                " should be one of the following:\nObject[][], Iterable<Object[]>, Iterable<Iterable<Object>>," +
+                " Iterator<Object[]>.\nFix it!", e);
         } catch (Exception e) {
             throw new RuntimeException("Could not invoke method: " + provideMethod.getName() + " defined in class " +
                     sourceClass + " so no params were used.", e);
@@ -130,21 +82,5 @@ class ParamsFromMethodCommon {
         return null;
     }
 
-    private Object[] encapsulateParamsIntoArrayIfSingleParamsetPassed(Object[] params) {
-        if (frameworkMethod.getMethod().getParameterTypes().length != params.length) {
-            return params;
-        }
-
-        if (params.length == 0) {
-            return params;
-        }
-
-        Object param = params[0];
-        if (param == null || !param.getClass().isArray()) {
-            return new Object[]{params};
-        }
-
-        return params;
-    }
 
 }
