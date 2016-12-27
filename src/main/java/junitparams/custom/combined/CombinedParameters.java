@@ -21,4 +21,10 @@ public @interface CombinedParameters {
      * </code>
      */
     String[] value() default {};
+
+    /**
+     * By default all string parameters will be trimmed.
+     * You can change this behavior by changing option below to false.
+     */
+    boolean trimStringParams() default true;
 }

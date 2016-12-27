@@ -122,7 +122,7 @@ public class ParameterisedTestClassRunner {
         ParameterisedTestMethodRunner parameterisedMethod = parameterisedMethods.get(testMethod);
 
         return new InvokeParameterisedMethod(
-                method, testClass, parameterisedMethod.currentParamsFromAnnotation(), parameterisedMethod.count());
+                method, testClass, parameterisedMethod.currentParamsFromAnnotation(), parameterisedMethod.count(), testMethod.trimStringParameters());
     }
 
     /**

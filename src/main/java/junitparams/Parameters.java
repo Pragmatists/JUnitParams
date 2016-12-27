@@ -24,6 +24,12 @@ public @interface Parameters {
      */
     String[] value() default {};
 
+	/**
+     * By default all string parameters will be trimmed.
+     * You can change this behavior by changing option below to false.
+     */
+    boolean trimStringParams() default true;
+
     /**
      * Parameter values defined externally. The specified class must have at
      * least one public static method starting with <code>provide</code>

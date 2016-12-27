@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import junitparams.internal.options.OptionsReader;
 import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
@@ -25,6 +26,7 @@ public class TestMethod {
     private FrameworkMethodAnnotations frameworkMethodAnnotations;
     private Class<?> testClass;
     private ParametersReader parametersReader;
+    private OptionsReader optionsReader;
     private Object[] cachedParameters;
     private TestCaseNamingStrategy namingStrategy;
 
@@ -33,7 +35,7 @@ public class TestMethod {
         this.testClass = testClass.getJavaClass();
         frameworkMethodAnnotations = new FrameworkMethodAnnotations(method);
         parametersReader = new ParametersReader(testClass(), frameworkMethod);
-
+        optionsReader = new OptionsReader(frameworkMethod);
         namingStrategy = new MacroSubstitutionNamingStrategy(this);
     }
 
@@ -124,6 +126,10 @@ public class TestMethod {
             cachedParameters = parametersReader.read();
         }
         return cachedParameters;
+    }
+
+    public boolean trimStringParameters() {
+        return optionsReader.getTrimStringParams();
     }
 
     void warnIfNoParamsGiven() {
