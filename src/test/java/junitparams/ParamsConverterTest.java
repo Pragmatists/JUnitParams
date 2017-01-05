@@ -1,5 +1,8 @@
 package junitparams;
 
+import static org.assertj.core.api.Assertions.*;
+
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,8 +22,6 @@ import junitparams.converters.ConvertParam;
 import junitparams.converters.Converter;
 import junitparams.converters.Param;
 import junitparams.converters.ParamConverter;
-
-import static org.assertj.core.api.Assertions.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class ParamsConverterTest {
@@ -63,6 +64,48 @@ public class ParamsConverterTest {
     public void convertParamsUsingCustomParamAnnotation(@DateParam Date date) {
         Calendar calendar = createCalendarWithDate(date);
         assertCalendarDate(calendar);
+    }
+
+    @Test
+    @Parameters("2")
+    public void useMultipleConvertersFromLeftToRight(@TimesTwo @PlusTwo Integer param) throws Exception {
+        assertThat(param).isEqualTo(2 * 2 + 2);
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.PARAMETER)
+    @Param(converter = TimesTwo.Convert.class)
+    public @interface TimesTwo {
+        class Convert implements Converter {
+
+            @Override
+            public void initialize(Annotation annotation) {
+            }
+
+            @Override
+            public Object convert(Object param) throws ConversionFailedException {
+                return Integer.valueOf((String) param) * 2;
+            }
+        }
+
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.PARAMETER)
+    @Param(converter = PlusTwo.Convert.class)
+    public @interface PlusTwo {
+        class Convert implements Converter {
+
+            @Override
+            public void initialize(Annotation annotation) {
+            }
+
+            @Override
+            public Object convert(Object param) throws ConversionFailedException {
+                return (Integer) param + 2;
+            }
+        }
+
     }
 
     @Test

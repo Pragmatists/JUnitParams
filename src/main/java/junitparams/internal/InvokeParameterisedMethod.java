@@ -159,13 +159,13 @@ class InvokeParameterisedMethod extends Statement {
     private Object castParameterUsingConverter(Object param, Annotation[] annotations) throws ConversionFailedException {
         for (Annotation annotation : annotations) {
             if (ParamAnnotation.matches(annotation)) {
-                return ParamAnnotation.convert(annotation, param);
+                param = ParamAnnotation.convert(annotation, param);
             }
             if (annotation.annotationType().isAssignableFrom(ConvertParam.class)) {
                 Class<? extends ParamConverter<?>> converterClass = ((ConvertParam) annotation).value();
                 String options = ((ConvertParam) annotation).options();
                 try {
-                    return converterClass.newInstance().convert(param, options);
+                    param = converterClass.newInstance().convert(param, options);
                 } catch (ConversionFailedException e) {
                     throw e;
                 } catch (Exception e) {
