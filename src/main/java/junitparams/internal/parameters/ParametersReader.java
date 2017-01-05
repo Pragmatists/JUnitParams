@@ -1,14 +1,15 @@
 package junitparams.internal.parameters;
 
+import static java.lang.String.*;
+import static java.util.Arrays.*;
+
+import java.lang.String;
 import java.util.List;
 
 import org.junit.runners.model.FrameworkMethod;
 
 import junitparams.FileParameters;
 import junitparams.Parameters;
-
-import static java.lang.String.*;
-import static java.util.Arrays.*;
 
 public class ParametersReader {
 
@@ -46,7 +47,15 @@ public class ParametersReader {
                 strategyAlreadyFound = true;
             }
         }
+        if (!strategyAlreadyFound) {
+            noStrategyFound();
+        }
         return parameters;
+    }
+
+    private void noStrategyFound() {
+        throw new IllegalStateException(format("Method %s#%s is annotated with @Parameters but there were no parameters provided.",
+                frameworkMethod.getDeclaringClass().getName(), frameworkMethod.getName()));
     }
 
     private void illegalState() {
