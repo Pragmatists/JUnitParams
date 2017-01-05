@@ -16,10 +16,10 @@ import static org.junit.Assert.assertEquals;
 public class MacroSubstitutionNamingStrategyTest {
 
     public Object parametersForTestNaming() {
-        return new Object[]{new Object[]{"withoutTestCaseAnnotation", "[0] value (withoutTestCaseAnnotation)"},
-                            new Object[]{"withAnnotationWithoutTemplate", "[0] value (withAnnotationWithoutTemplate)"},
-                            new Object[]{"withEmptyTemplate", "[0] value (withEmptyTemplate)"},
-                            new Object[]{"whenTemplateResultedToEmptyName", "[0] value (whenTemplateResultedToEmptyName)"},
+        return new Object[]{new Object[]{"withoutTestCaseAnnotation", "withoutTestCaseAnnotation(value) [0]"},
+                            new Object[]{"withAnnotationWithoutTemplate", "withAnnotationWithoutTemplate(value) [0]"},
+                            new Object[]{"withEmptyTemplate", "withEmptyTemplate(value) [0]"},
+                            new Object[]{"whenTemplateResultedToEmptyName", "whenTemplateResultedToEmptyName(value) [0]"},
                             new Object[]{"withoutMacro", "plain name"}, new Object[]{"withIndexMacro", "0"},
                             new Object[]{"withParamsMacro", "value"},
                             new Object[]{"withMethodNameMacro", "withMethodNameMacro"},

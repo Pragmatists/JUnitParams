@@ -14,7 +14,7 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
     private static final Pattern MACRO_SPLIT_PATTERN = Pattern.compile(String.format("(?=%s)|(?<=%s)", MACRO_PATTERN, MACRO_PATTERN));
     private static final String MACRO_START = "{";
     private static final String MACRO_END = "}";
-    static final String DEFAULT_TEMPLATE = "[{index}] {params} ({method})";
+    static final String DEFAULT_TEMPLATE = "{method}({params}) [{index}]";
     private TestMethod method;
 
     public MacroSubstitutionNamingStrategy(TestMethod testMethod) {

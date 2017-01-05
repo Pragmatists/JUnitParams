@@ -60,8 +60,8 @@ public class TestMethodTest {
         Description description = plainTestMethod.describe();
 
         assertEquals("forOthersToWork", description.getDisplayName());
-        assertEquals("[0] a (forOthersToWork)(junitparams.internal.TestMethodTest)", description.getChildren().get(0).getDisplayName());
-        assertEquals("[1] b (forOthersToWork)(junitparams.internal.TestMethodTest)", description.getChildren().get(1).getDisplayName());
+        assertEquals("forOthersToWork(a) [0](junitparams.internal.TestMethodTest)", description.getChildren().get(0).getDisplayName());
+        assertEquals("forOthersToWork(b) [1](junitparams.internal.TestMethodTest)", description.getChildren().get(1).getDisplayName());
     }
 
     @Test
@@ -70,9 +70,9 @@ public class TestMethodTest {
         Description description = arrayTestMethod.describe();
 
         assertEquals("forOthersToWorkWithArray", description.getDisplayName());
-        assertEquals("[0] a,b (forOthersToWorkWithArray)(junitparams.internal.TestMethodTest)",
+        assertEquals("forOthersToWorkWithArray(a,b) [0](junitparams.internal.TestMethodTest)",
                 description.getChildren().get(0).getDisplayName());
-        assertEquals("[1] b,a (forOthersToWorkWithArray)(junitparams.internal.TestMethodTest)",
+        assertEquals("forOthersToWorkWithArray(b,a) [1](junitparams.internal.TestMethodTest)",
                 description.getChildren().get(1).getDisplayName());
     }
     
