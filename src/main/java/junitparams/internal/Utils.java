@@ -10,7 +10,6 @@ import java.util.Arrays;
  * @author Pawel Lipinski
  */
 public class Utils {
-    private static final String REGEX_ALL_NEWLINES = "(\\r\\n|\\n|\\r)";
 
     public static String stringify(Object paramSet, int paramIdx) {
         String result = "[" + paramIdx + "] ";
@@ -71,7 +70,28 @@ public class Utils {
     }
 
     private static String trimSpecialChars(String result) {
-        return result.replace('(', '[').replace(')', ']').replaceAll(REGEX_ALL_NEWLINES, " ");
+        StringBuilder sb = new StringBuilder(result.length());
+        int i = 0;
+        while (i < result.length()) {
+            char c = result.charAt(i);
+            if (c == '(') {
+                sb.append('[');
+            } else if (c == ')') {
+                sb.append(']');
+            } else if (c == '\n') {
+                sb.append(' ');
+            } else if (c == '\r') {
+                sb.append(' ');
+                int j = i + 1;
+                if (j < result.length() && result.charAt(j) == '\n') {
+                    i++;
+                }
+            } else {
+                sb.append(c);
+            }
+            i++;
+        }
+        return sb.toString();
     }
 
     static Object[] safelyCastParamsToArray(Object paramSet) {

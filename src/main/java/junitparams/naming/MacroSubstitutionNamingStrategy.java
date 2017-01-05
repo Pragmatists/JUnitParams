@@ -15,21 +15,23 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
     private static final String MACRO_START = "{";
     private static final String MACRO_END = "}";
     static final String DEFAULT_TEMPLATE = "{method}({params}) [{index}]";
+    private static final String[] DEFAULT_TEMPLATE_PARTS = MACRO_SPLIT_PATTERN.split(DEFAULT_TEMPLATE);
     private TestMethod method;
+    private String[] templateParts;
 
     public MacroSubstitutionNamingStrategy(TestMethod testMethod) {
         this.method = testMethod;
+        TestCaseName testCaseName = method.getAnnotation(TestCaseName.class);
+        String template = getTemplate(testCaseName);
+        this.templateParts = MACRO_SPLIT_PATTERN.split(template);
     }
 
     @Override
     public String getTestCaseName(int parametersIndex, Object parameters) {
-        TestCaseName testCaseName = method.getAnnotation(TestCaseName.class);
-
-        String template = getTemplate(testCaseName);
-        String builtName = buildNameByTemplate(template, parametersIndex, parameters);
+        String builtName = buildNameByTemplate(templateParts, parametersIndex, parameters);
 
         if (builtName.trim().isEmpty()) {
-            return buildNameByTemplate(DEFAULT_TEMPLATE, parametersIndex, parameters);
+            return buildNameByTemplate(DEFAULT_TEMPLATE_PARTS, parametersIndex, parameters);
         } else {
             return builtName;
         }
@@ -43,10 +45,8 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
         return DEFAULT_TEMPLATE;
     }
 
-    private String buildNameByTemplate(String template, int parametersIndex, Object parameters) {
+    private String buildNameByTemplate(String[] parts, int parametersIndex, Object parameters) {
         StringBuilder nameBuilder = new StringBuilder();
-
-        String[] parts = MACRO_SPLIT_PATTERN.split(template);
 
         for (String part : parts) {
             String transformedPart = transformPart(part, parametersIndex, parameters);
