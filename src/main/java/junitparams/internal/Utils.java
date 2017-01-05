@@ -3,6 +3,8 @@ package junitparams.internal;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Some String utils to handle parameterised tests' results.
@@ -10,7 +12,8 @@ import java.util.Arrays;
  * @author Pawel Lipinski
  */
 public class Utils {
-    private static final String REGEX_ALL_NEWLINES = "(\\r\\n|\\n|\\r)";
+
+    private static Map<Character, Character> SPECIAL_CHARACTERS_REPLACEMENTS = replacements();
 
     public static String stringify(Object paramSet, int paramIdx) {
         String result = "[" + paramIdx + "] ";
@@ -71,7 +74,26 @@ public class Utils {
     }
 
     private static String trimSpecialChars(String result) {
-        return result.replace('(', '[').replace(')', ']').replaceAll(REGEX_ALL_NEWLINES, " ");
+        StringBuilder sb = new StringBuilder(result.length());
+
+        for (int i = 0; i < result.length(); i++) {
+            char c = result.charAt(i);
+            if (SPECIAL_CHARACTERS_REPLACEMENTS.containsKey(c)) {
+                sb.append(SPECIAL_CHARACTERS_REPLACEMENTS.get(c));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static Map<Character, Character> replacements() {
+        Map<Character, Character> replacements = new HashMap<Character, Character>();
+        replacements.put('(', '[');
+        replacements.put(')', ']');
+        replacements.put('\n', ' ');
+        replacements.put('\r', ' ');
+        return replacements;
     }
 
     static Object[] safelyCastParamsToArray(Object paramSet) {

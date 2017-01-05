@@ -1,6 +1,6 @@
 package junitparams.internal;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
 
@@ -52,5 +52,41 @@ public class UtilsTest {
 
         // then
         assertThat(result).containsExactly("test");
+    }
+
+    @Test
+    public void shouldReplaceUnixNewLineWithSpace() {
+        // given
+        Object paramSet = "\n";
+
+        // when
+        String result = Utils.stringify(paramSet);
+
+        // then
+        assertThat(result).isEqualTo(" ");
+    }
+
+    @Test
+    public void shouldReplaceMacNewLineWithSpace() {
+        // given
+        Object paramSet = "\r";
+
+        // when
+        String result = Utils.stringify(paramSet);
+
+        // then
+        assertThat(result).isEqualTo(" ");
+    }
+
+    @Test
+    public void shouldReplaceParenthesisWithBrackets() {
+        // given
+        Object paramSet = "()";
+
+        // when
+        String result = Utils.stringify(paramSet);
+
+        // then
+        assertThat(result).isEqualTo("[]");
     }
 }
