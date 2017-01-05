@@ -1,9 +1,9 @@
 package junitparams.internal.parameters;
 
-import javax.lang.model.type.NullType;
 
 import org.junit.runners.model.FrameworkMethod;
 
+import junitparams.NullType;
 import junitparams.Parameters;
 
 class ParametersFromTestClassMethod implements ParametrizationStrategy {

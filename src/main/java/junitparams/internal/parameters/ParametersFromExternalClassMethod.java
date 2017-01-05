@@ -1,9 +1,9 @@
 package junitparams.internal.parameters;
 
-import junitparams.Parameters;
 import org.junit.runners.model.FrameworkMethod;
 
-import javax.lang.model.type.NullType;
+import junitparams.NullType;
+import junitparams.Parameters;
 
 class ParametersFromExternalClassMethod implements ParametrizationStrategy {
     private ParamsFromMethodCommon paramsFromMethodCommon;

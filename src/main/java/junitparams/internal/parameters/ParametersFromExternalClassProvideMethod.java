@@ -1,6 +1,5 @@
 package junitparams.internal.parameters;
 
-import javax.lang.model.type.NullType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -10,6 +9,7 @@ import java.util.List;
 
 import org.junit.runners.model.FrameworkMethod;
 
+import junitparams.NullType;
 import junitparams.Parameters;
 import junitparams.internal.parameters.toarray.ParamsToArrayConverter;
 
