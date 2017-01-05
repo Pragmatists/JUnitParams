@@ -1,6 +1,6 @@
 package junitparams.internal;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
 
@@ -70,18 +70,6 @@ public class UtilsTest {
     public void shouldReplaceMacNewLineWithSpace() {
         // given
         Object paramSet = "\r";
-
-        // when
-        String result = Utils.stringify(paramSet);
-
-        // then
-        assertThat(result).isEqualTo(" ");
-    }
-
-    @Test
-    public void shouldReplaceWindowsNewLineWithSpace() {
-        // given
-        Object paramSet = "\r\n";
 
         // when
         String result = Utils.stringify(paramSet);

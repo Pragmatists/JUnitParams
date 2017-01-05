@@ -3,6 +3,8 @@ package junitparams.internal;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Some String utils to handle parameterised tests' results.
@@ -10,6 +12,8 @@ import java.util.Arrays;
  * @author Pawel Lipinski
  */
 public class Utils {
+
+    private static Map<Character, Character> SPECIAL_CHARACTERS_REPLACEMENTS = replacements();
 
     public static String stringify(Object paramSet, int paramIdx) {
         String result = "[" + paramIdx + "] ";
@@ -71,27 +75,25 @@ public class Utils {
 
     private static String trimSpecialChars(String result) {
         StringBuilder sb = new StringBuilder(result.length());
-        int i = 0;
-        while (i < result.length()) {
+
+        for (int i = 0; i < result.length(); i++) {
             char c = result.charAt(i);
-            if (c == '(') {
-                sb.append('[');
-            } else if (c == ')') {
-                sb.append(']');
-            } else if (c == '\n') {
-                sb.append(' ');
-            } else if (c == '\r') {
-                sb.append(' ');
-                int j = i + 1;
-                if (j < result.length() && result.charAt(j) == '\n') {
-                    i++;
-                }
+            if (SPECIAL_CHARACTERS_REPLACEMENTS.containsKey(c)) {
+                sb.append(SPECIAL_CHARACTERS_REPLACEMENTS.get(c));
             } else {
                 sb.append(c);
             }
-            i++;
         }
         return sb.toString();
+    }
+
+    private static Map<Character, Character> replacements() {
+        Map<Character, Character> replacements = new HashMap<Character, Character>();
+        replacements.put('(', '[');
+        replacements.put(')', ']');
+        replacements.put('\n', ' ');
+        replacements.put('\r', ' ');
+        return replacements;
     }
 
     static Object[] safelyCastParamsToArray(Object paramSet) {
