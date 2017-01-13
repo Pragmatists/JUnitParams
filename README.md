@@ -58,4 +58,6 @@ https://github.com/Pragmatists/junitparams/tree/master/src/test/java/junitparams
 
 You can also have a look at [Wiki:Quickstart](https://github.com/Pragmatists/junitparams/wiki/Quickstart)
 
-**Note**: We are currently moving the project from Google Code to Github. Some information may still be accessible only at https://code.google.com/p/junitparams/
+## Integration with Spring framework
+
+Since **spring version 4.2** it is possible to integrate JUnitParams and spring. More about this [here.](https://github.com/Pragmatists/junitparams-spring-integration-example) 
