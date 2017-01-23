@@ -1,3 +1,43 @@
+## JUnitParams 1.0.6 release. Release date : 2017-01-23
+
+### Change default testcase naming template
+Due to problems with test results presentation e.g. in Jenkins where test cases
+will be not ordered by execution but by naming, default test case naming template was changed to:
+```
+{method}({params}) [{index}]
+```
+from
+```
+[{index}] {params} ({method})
+```
+Thanks to [ealgell](https://github.com/ealgell) for contribution.
+
+## Support multiple custom annotations for parameter conversion.
+Now you can apply multiple your own annotations for parameter conversion.
+```java
+    @Test
+    @Parameters("2")
+    public void useMultipleConvertersFromLeftToRight(@TimesTwo @PlusTwo Integer param) {
+        assertThat(param).isEqualTo(2 * 2 + 2);
+    }
+```
+
+Thanks to [bbobcik](https://github.com/bbobcik) for inspiration.
+
+## Test will fail if provided parameters cannot be resolved
+
+As [matthopkins](https://github.com/matthopkins) suggested it was a problem that tests were ignored
+when could not resolve provided parameters. Now tests will fail in such a situation.
+
+```java
+java.lang.IllegalStateException: Method package.className#methodName is annotated with @Parameters but there were no parameters provided.
+```
+
+
+## Improvements
+* [bencampion](https://github.com/bencampion) thanks for efficiency improvements in tests with parameters from .csv files
+
+
 ## JUnitParams 1.0.5 release. Release date : 2016-04-14
 
 ### Deprecated $ method

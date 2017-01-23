@@ -24,7 +24,7 @@ See more [examples](https://github.com/Pragmatists/JUnitParams/blob/master/src/t
 
 ## Latest News
 
-* 2016-04-14 JUnitParams 1.0.5 released. Check [release info](RELEASES.md).
+* 2017-01-23 JUnitParams 1.0.6 released. Check [release info](RELEASES.md).
 
 [more news here](https://github.com/Pragmatists/JUnitParams/wiki)
 
@@ -48,7 +48,7 @@ JUnitParams is available as Maven artifact:
 <dependency>
   <groupId>pl.pragmatists</groupId>
   <artifactId>JUnitParams</artifactId>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
   <scope>test</scope>
 </dependency>
 ```
