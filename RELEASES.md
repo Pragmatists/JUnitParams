@@ -35,8 +35,9 @@ java.lang.IllegalStateException: Method package.className#methodName is annotate
 
 
 ## Improvements
-* [bencampion](https://github.com/bencampion) thanks for efficiency improvements in tests with parameters from .csv files
-
+Thanks to the rest of contributors for lots of improvements: 
+* [bencampion](https://github.com/bencampion)
+* [jtbeckha](https://github.com/jtbeckha)
 
 ## JUnitParams 1.0.5 release. Release date : 2016-04-14
 
