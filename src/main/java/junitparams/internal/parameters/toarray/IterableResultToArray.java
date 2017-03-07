@@ -3,10 +3,12 @@ package junitparams.internal.parameters.toarray;
 import java.util.ArrayList;
 import java.util.List;
 
-class IterableResultToArray implements ResultToArray {
+class IterableResultToArray extends SimpleIterableResultToArray {
     private Object result;
 
     IterableResultToArray(Object result) {
+        super(result);
+
         this.result = result;
     }
 
@@ -32,17 +34,6 @@ class IterableResultToArray implements ResultToArray {
             // Eat the exception and keep trying
         }
 
-        try {
-            List<Object[]> res = new ArrayList<Object[]>();
-            for (Object[] paramSet : (Iterable<Object[]>) result)
-                res.add(paramSet);
-            return res.toArray();
-        } catch (ClassCastException e1) {
-            // Iterable with consecutive paramsets, each of one param
-            List<Object> res = new ArrayList<Object>();
-            for (Object param : (Iterable<?>) result)
-                res.add(new Object[]{param});
-            return res.toArray();
-        }
+        return super.convert();
     }
 }
