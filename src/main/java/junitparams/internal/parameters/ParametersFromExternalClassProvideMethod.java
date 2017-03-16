@@ -13,13 +13,16 @@ import junitparams.NullType;
 import junitparams.Parameters;
 import junitparams.internal.parameters.toarray.ParamsToArrayConverter;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 class ParametersFromExternalClassProvideMethod implements ParametrizationStrategy {
+
     private final FrameworkMethod frameworkMethod;
     private final Parameters annotation;
 
-    ParametersFromExternalClassProvideMethod(FrameworkMethod frameworkMethod) {
-        this.frameworkMethod = frameworkMethod;
-        annotation = frameworkMethod.getAnnotation(Parameters.class);
+    ParametersFromExternalClassProvideMethod(FrameworkMethod frameworkMethod, Parameters annotation) {
+        this.frameworkMethod = checkNotNull(frameworkMethod, "frameworkMethod must not be null");
+        this.annotation = annotation;
     }
 
     @Override
@@ -82,7 +85,9 @@ class ParametersFromExternalClassProvideMethod implements ParametrizationStrateg
 
     private List<Object> getDataFromMethod(Method prividerMethod) throws IllegalAccessException, InvocationTargetException {
         Object result = prividerMethod.invoke(null);
-        Object[] resultsArray = new ParamsToArrayConverter(frameworkMethod).convert(result);
+        ImmutableParameterTypeSupplier parameterTypeSupplier =
+                ImmutableParameterTypeSupplier.of(frameworkMethod.getMethod().getParameterTypes());
+        Object[] resultsArray = new ParamsToArrayConverter(parameterTypeSupplier).convert(result);
         return Arrays.asList(resultsArray);
     }
 }

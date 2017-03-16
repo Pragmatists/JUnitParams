@@ -1,23 +1,19 @@
 package junitparams.internal.parameters;
 
-import org.junit.runners.model.FrameworkMethod;
-
 import junitparams.NullType;
 import junitparams.Parameters;
+import org.junit.runners.model.FrameworkMethod;
 
-class ParametersFromExternalClassMethod implements ParametrizationStrategy {
-    private ParamsFromMethodCommon paramsFromMethodCommon;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+class ParametersFromExternalClassMethod extends ParamsFromMethodCommon {
+
     private Parameters annotation;
 
-    ParametersFromExternalClassMethod(FrameworkMethod frameworkMethod) {
-        this.paramsFromMethodCommon = new ParamsFromMethodCommon(frameworkMethod);
-        annotation = frameworkMethod.getAnnotation(Parameters.class);
-    }
-
-    @Override
-    public Object[] getParameters() {
-        Class<?> sourceClass = annotation.source();
-        return paramsFromMethodCommon.paramsFromMethod(sourceClass);
+    ParametersFromExternalClassMethod(FrameworkMethod frameworkMethod, Parameters annotation,
+                                      ResultAdapter resultAdapter) {
+        super(frameworkMethod, annotation.source(), annotation, resultAdapter);
+        this.annotation = annotation;
     }
 
     @Override

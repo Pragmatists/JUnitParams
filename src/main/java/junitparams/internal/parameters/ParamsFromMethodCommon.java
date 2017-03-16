@@ -1,23 +1,42 @@
 package junitparams.internal.parameters;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.runners.model.FrameworkMethod;
 
 import junitparams.Parameters;
-import junitparams.internal.parameters.toarray.ParamsToArrayConverter;
 
-class ParamsFromMethodCommon {
+import static com.google.common.base.Preconditions.checkNotNull;
+import static junitparams.internal.parameters.ResultAdapters.adaptParametersFor;
+
+/**
+ * Common base class for obtaining parameters from a source class.
+ */
+abstract class ParamsFromMethodCommon implements ParametrizationStrategy {
+    private final Parameters annotation;
     private final FrameworkMethod frameworkMethod;
+    private final ResultAdapter resultAdapter;
+    private final Class<?> sourceClass;
 
-    ParamsFromMethodCommon(FrameworkMethod frameworkMethod) {
-        this.frameworkMethod = frameworkMethod;
+    ParamsFromMethodCommon(final FrameworkMethod frameworkMethod, Class<?> sourceClass, Parameters annotation) {
+        this(frameworkMethod, sourceClass, annotation, adaptParametersFor(frameworkMethod));
     }
 
-    Object[] paramsFromMethod(Class<?> sourceClass) {
-        String methodAnnotation = frameworkMethod.getAnnotation(Parameters.class).method();
+    ParamsFromMethodCommon(FrameworkMethod frameworkMethod, Class<?> sourceClass, Parameters annotation,
+                           ResultAdapter resultAdapter) {
+        this.frameworkMethod = checkNotNull(frameworkMethod, "frameworkMethod must not be null");
+        this.sourceClass = checkNotNull(sourceClass, "sourceClass must not be null");
+        this.annotation = checkNotNull(annotation, "annotation must not be null");
+        this.resultAdapter = checkNotNull(resultAdapter, "resultAdapter must not be null");
+    }
+
+    @Override
+    public Object[] getParameters() {
+        String methodAnnotation = annotation.method();
 
         if (methodAnnotation.isEmpty()) {
             return invokeMethodWithParams(defaultMethodName(), sourceClass);
@@ -25,8 +44,7 @@ class ParamsFromMethodCommon {
 
         List<Object> result = new ArrayList<Object>();
         for (String methodName : methodAnnotation.split(",")) {
-            for (Object param : invokeMethodWithParams(methodName.trim(), sourceClass))
-                result.add(param);
+            Collections.addAll(result, invokeMethodWithParams(methodName.trim(), sourceClass));
         }
 
         return result.toArray();
@@ -37,7 +55,8 @@ class ParamsFromMethodCommon {
     }
 
     private String defaultMethodName() {
-        return "parametersFor" + frameworkMethod.getName().substring(0, 1).toUpperCase()
+        return "parametersFor"
+                + frameworkMethod.getName().substring(0, 1).toUpperCase()
                 + this.frameworkMethod.getName().substring(1);
     }
 
@@ -53,12 +72,13 @@ class ParamsFromMethodCommon {
     @SuppressWarnings("unchecked")
     private Object[] invokeParamsProvidingMethod(Method provideMethod, Class<?> sourceClass) {
         try {
-            Object testObject = sourceClass.newInstance();
+            Constructor<?> constructor = sourceClass.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            Object testObject = constructor.newInstance();
             provideMethod.setAccessible(true);
             Object result = provideMethod.invoke(testObject);
 
-            return new ParamsToArrayConverter(frameworkMethod).convert(result);
-
+            return resultAdapter.adapt(result);
         } catch (ClassCastException e) {
             throw new RuntimeException(
                 "The return type of: " + provideMethod.getName() + " defined in class " + sourceClass +
@@ -81,6 +101,5 @@ class ParamsFromMethodCommon {
         }
         return null;
     }
-
 
 }

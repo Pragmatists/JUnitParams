@@ -1,15 +1,17 @@
 package junitparams.internal.parameters;
 
-import static java.lang.String.*;
-import static java.util.Arrays.*;
-
-import java.lang.String;
-import java.util.List;
-
-import org.junit.runners.model.FrameworkMethod;
-
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 import junitparams.FileParameters;
 import junitparams.Parameters;
+import org.junit.runners.model.FrameworkMethod;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
+
+import static java.lang.String.format;
 
 public class ParametersReader {
 
@@ -22,16 +24,20 @@ public class ParametersReader {
     private final FrameworkMethod frameworkMethod;
     private final List<ParametrizationStrategy> strategies;
 
-    public ParametersReader(Class<?> testClass, FrameworkMethod frameworkMethod) {
+    public ParametersReader(final Class<?> testClass, final FrameworkMethod frameworkMethod) {
         this.frameworkMethod = frameworkMethod;
 
-        strategies = asList(
-                new ParametersFromCustomProvider(frameworkMethod),
-                new ParametersFromValue(frameworkMethod),
-                new ParametersFromExternalClassProvideMethod(frameworkMethod),
-                new ParametersFromExternalClassMethod(frameworkMethod),
-                new ParametersFromTestClassMethod(frameworkMethod, testClass)
-        );
+        ServiceLoader<ParametrizationStrategyFactory> parametrizationStrategyServiceLoader =
+                ServiceLoader.load(ParametrizationStrategyFactory.class);
+
+        strategies = FluentIterable.from(parametrizationStrategyServiceLoader)
+                .transformAndConcat(new Function<ParametrizationStrategyFactory, Iterable<ParametrizationStrategy>>() {
+                    @Override
+                    public Iterable<ParametrizationStrategy> apply(ParametrizationStrategyFactory factory) {
+                        return factory.createStrategies(testClass, frameworkMethod);
+                    }
+                })
+                .toList();
     }
 
     public Object[] read() {

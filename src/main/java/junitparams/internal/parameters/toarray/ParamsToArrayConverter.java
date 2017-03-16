@@ -1,22 +1,26 @@
 package junitparams.internal.parameters.toarray;
 
-import org.junit.runners.model.FrameworkMethod;
+import com.google.common.collect.Iterables;
+import junitparams.internal.parameters.ParameterTypeSupplier;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class ParamsToArrayConverter {
-    private FrameworkMethod frameworkMethod;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-    public ParamsToArrayConverter(FrameworkMethod frameworkMethod) {
-        this.frameworkMethod = frameworkMethod;
+public class ParamsToArrayConverter {
+    private ParameterTypeSupplier parameterTypeSupplier;
+
+    public ParamsToArrayConverter(ParameterTypeSupplier parameterTypeSupplier) {
+        this.parameterTypeSupplier = checkNotNull(parameterTypeSupplier, "parameterTypeSupplier must not be null");
     }
 
     public Object[] convert(Object result) {
         // handle single iterable parameter result case where result is
         // assignable to the test method parameter
-        if (frameworkMethod.getMethod().getParameterTypes().length == 1) {
-            Class<?> type = frameworkMethod.getMethod().getParameterTypes()[0];
+        List<Class<?>> parameterTypes = parameterTypeSupplier.getParameterTypes();
+        if (parameterTypes.size() == 1) {
+            Class<?> type = Iterables.getOnlyElement(parameterTypes);
             if (type.isAssignableFrom(result.getClass())) {
                 SimpleIterableResultToArray converter = new SimpleIterableResultToArray(result);
                 if (converter.isApplicable()) {
@@ -26,7 +30,7 @@ public class ParamsToArrayConverter {
         }
 
         List<? extends ResultToArray> converters = Arrays.asList(
-                new ObjectArrayResultToArray(result, frameworkMethod),
+                new ObjectArrayResultToArray(result, parameterTypeSupplier),
                 new IterableResultToArray(result),
                 new IteratorResultToArray(result)
         );
