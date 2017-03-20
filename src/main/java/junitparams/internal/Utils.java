@@ -127,7 +127,7 @@ public class Utils {
     
     private static String determineNullIdentifier( Nullable annotation){
     	String nullIdentifier = annotation.value();
-    	if( ! Nullable.DEFAULT_NULL_IDENTIFIER.endsWith(nullIdentifier)){
+    	if( ! Nullable.DEFAULT_NULL_IDENTIFIER.equals(nullIdentifier)){
     		return nullIdentifier;
     	}
     	return annotation.nullIdentifier();
