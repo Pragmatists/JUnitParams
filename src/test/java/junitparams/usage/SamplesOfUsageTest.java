@@ -13,6 +13,7 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import junitparams.ParametersReaderProvidersTest;
 import junitparams.ParamsConverterTest;
+import junitparams.converters.Nullable;
 import junitparams.converters.Param;
 import junitparams.custom.combined.CombinedParameters;
 import junitparams.mappers.CsvWithHeaderMapper;
@@ -23,6 +24,7 @@ import junitparams.usage.person_example.PersonType;
 
 import static junitparams.JUnitParamsRunner.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.Assert.assertNull;
 
 @RunWith(JUnitParamsRunner.class)
 public class SamplesOfUsageTest {
@@ -34,6 +36,20 @@ public class SamplesOfUsageTest {
     @Test
     @Parameters({"AAA|1", "BBB|2"})
     public void paramsInAnnotationPipeSeparated(String p1, Integer p2) { }
+    
+    @Test
+    @Parameters({"null", "ANY_VALUE"})
+    public void nullableParams(@Nullable String p1) {}
+    
+    @Test
+    @Parameters({"25", "null"})
+    public void nullableNumericParams(@Nullable Integer p1) {}
+    
+    @Test
+    @Parameters({"#null"})
+    public void customNullIdentifier(@Nullable("#null") Integer p1) {
+    	assertThat(p1).isNull();
+    }
 
     @Test
     @Parameters

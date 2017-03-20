@@ -12,6 +12,7 @@ import org.junit.runners.model.Statement;
 
 import junitparams.converters.ConversionFailedException;
 import junitparams.converters.ConvertParam;
+import junitparams.converters.Nullable;
 import junitparams.converters.ParamAnnotation;
 import junitparams.converters.ParamConverter;
 
@@ -147,8 +148,8 @@ class InvokeParameterisedMethod extends Statement {
         Object[] result = new Object[columns.length];
 
         for (int i = 0; i < columns.length; i++) {
-            if (parameterAnnotations[i].length == 0)
-                result[i] = castParameterDirectly(columns[i], expectedParameterTypes[i]);
+            if (canCastParameterDirectly(parameterAnnotations[i]))
+                result[i] = castParameterDirectly(columns[i], expectedParameterTypes[i], parameterAnnotations[i]);
             else
                 result[i] = castParameterUsingConverter(columns[i], parameterAnnotations[i]);
         }
@@ -175,46 +176,22 @@ class InvokeParameterisedMethod extends Statement {
         }
         return param;
     }
+    
+    private boolean canCastParameterDirectly(Annotation[] parameterAnnotations){
+    	return parameterAnnotations.length == 0 || isNullable(parameterAnnotations);
+    }
+    
+    private boolean isNullable(Annotation[] parameterAnnotations){
+    	return parameterAnnotations.length == 1 &&
+    			parameterAnnotations[0] instanceof Nullable;
+    }
 
-    @SuppressWarnings("unchecked")
-    private Object castParameterDirectly(Object object, Class clazz) {
-        if (object == null || clazz.isInstance(object) || (!(object instanceof String) && clazz.isPrimitive()))
-            return object;
-        if (clazz.isEnum())
-            return (Enum.valueOf(clazz, (String) object));
-        if (clazz.isAssignableFrom(String.class))
-            return object.toString();
-        if (clazz.isAssignableFrom(Class.class))
-            try {
-                return Class.forName((String) object);
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("Parameter class (" + object + ") not found", e);
-            }
-        if (clazz.isAssignableFrom(Integer.TYPE) || clazz.isAssignableFrom(Integer.class))
-            return Integer.parseInt((String) object);
-        if (clazz.isAssignableFrom(Short.TYPE) || clazz.isAssignableFrom(Short.class))
-            return Short.parseShort((String) object);
-        if (clazz.isAssignableFrom(Long.TYPE) || clazz.isAssignableFrom(Long.class))
-            return Long.parseLong((String) object);
-        if (clazz.isAssignableFrom(Float.TYPE) || clazz.isAssignableFrom(Float.class))
-            return Float.parseFloat((String) object);
-        if (clazz.isAssignableFrom(Double.TYPE) || clazz.isAssignableFrom(Double.class))
-            return Double.parseDouble((String) object);
-        if (clazz.isAssignableFrom(Boolean.TYPE) || clazz.isAssignableFrom(Boolean.class))
-            return Boolean.parseBoolean((String) object);
-        if (clazz.isAssignableFrom(Character.TYPE) || clazz.isAssignableFrom(Character.class))
-            return object.toString().charAt(0);
-        if (clazz.isAssignableFrom(Byte.TYPE) || clazz.isAssignableFrom(Byte.class))
-            return Byte.parseByte((String) object);
-        if (clazz.isAssignableFrom(BigDecimal.class))
-            return new BigDecimal((String) object);
-        PropertyEditor editor = PropertyEditorManager.findEditor(clazz);
-        if (editor != null) {
-            editor.setAsText((String) object);
-            return editor.getValue();
-        }
-        throw new IllegalArgumentException("Parameter type (" + clazz.getName() + ") cannot be handled!" +
-                " Only primitive types, BigDecimals and Strings can be used.");
+    @SuppressWarnings("rawtypes") 
+    private Object castParameterDirectly(Object object, Class clazz, Annotation[] parameterAnnotations) {
+    	if(isNullable(parameterAnnotations)){
+    		object = Utils.makeNullable(object, (Nullable) parameterAnnotations[0]);
+    	}
+        return Utils.doCast(object, clazz);
     }
 
     private void verifySameSizeOfArrays(Object[] columns, Class<?>[] parameterTypes) {

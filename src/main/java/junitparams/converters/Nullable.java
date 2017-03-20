@@ -22,15 +22,39 @@ import junitparams.Parameters;
  *     assertThat(value).isNull();
  * }
  * </pre>
+ * </br>
+ * You can also customize null "identifier". See following example
+ * </br>
+ * <pre><code>
+ * {@literal @}Test
+ * {@literal @}Parameters({" myNull "})
+ * public void shouldBeNull({@literal @}Nullable("myNull") String value) {
+ *     assertThat(value).isNull();
+ *     // passes
+ * }
+ * </code></pre>
  * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Param(converter = NullableConverter.class)
 @Target({ElementType.ANNOTATION_TYPE, ElementType.PARAMETER})
 public @interface Nullable {
     
-    /**
+	static String DEFAULT_NULL_IDENTIFIER = "null"; 
+	
+	/**
      * Defines parameter value which will be replaced by Java null
      */
-    String nullIdentifier() default "null";
+	String value() default DEFAULT_NULL_IDENTIFIER;
+	
+    /**
+     * Defines parameter value which will be replaced by Java null
+     * <br><br>
+     * Use {@code  @Nullable("customNull")} instead
+     */
+	@Deprecated
+    String nullIdentifier() default DEFAULT_NULL_IDENTIFIER;
+	
+	
 }
+
+

@@ -1,8 +1,13 @@
 package junitparams.internal;
 
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import junitparams.converters.Nullable;
 
 /**
  * Some String utils to handle parameterised tests' results.
@@ -69,7 +74,65 @@ public class Utils {
 
         return result.toArray(new String[]{});
     }
-
+    
+    
+    @SuppressWarnings("unchecked")
+    public static Object doCast(Object object, Class clazz){
+    	 if (object == null || clazz.isInstance(object) || (!(object instanceof String) && clazz.isPrimitive()))
+             return object;
+         if (clazz.isEnum())
+             return (Enum.valueOf(clazz, (String) object));
+         if (clazz.isAssignableFrom(String.class))
+             return object.toString();
+         if (clazz.isAssignableFrom(Class.class))
+             try {
+                 return Class.forName((String) object);
+             } catch (ClassNotFoundException e) {
+                 throw new IllegalArgumentException("Parameter class (" + object + ") not found", e);
+             }
+         if (clazz.isAssignableFrom(Integer.TYPE) || clazz.isAssignableFrom(Integer.class))
+             return Integer.parseInt((String) object);
+         if (clazz.isAssignableFrom(Short.TYPE) || clazz.isAssignableFrom(Short.class))
+             return Short.parseShort((String) object);
+         if (clazz.isAssignableFrom(Long.TYPE) || clazz.isAssignableFrom(Long.class))
+             return Long.parseLong((String) object);
+         if (clazz.isAssignableFrom(Float.TYPE) || clazz.isAssignableFrom(Float.class))
+             return Float.parseFloat((String) object);
+         if (clazz.isAssignableFrom(Double.TYPE) || clazz.isAssignableFrom(Double.class))
+             return Double.parseDouble((String) object);
+         if (clazz.isAssignableFrom(Boolean.TYPE) || clazz.isAssignableFrom(Boolean.class))
+             return Boolean.parseBoolean((String) object);
+         if (clazz.isAssignableFrom(Character.TYPE) || clazz.isAssignableFrom(Character.class))
+             return object.toString().charAt(0);
+         if (clazz.isAssignableFrom(Byte.TYPE) || clazz.isAssignableFrom(Byte.class))
+             return Byte.parseByte((String) object);
+         if (clazz.isAssignableFrom(BigDecimal.class))
+             return new BigDecimal((String) object);
+         PropertyEditor editor = PropertyEditorManager.findEditor(clazz);
+         if (editor != null) {
+             editor.setAsText((String) object);
+             return editor.getValue();
+         }
+         throw new IllegalArgumentException("Parameter type (" + clazz.getName() + ") cannot be handled!" +
+                 " Only primitive types, BigDecimals and Strings can be used.");
+    }
+    
+    public static Object makeNullable(Object value, Nullable annotation){
+    	String nullIdentifier = determineNullIdentifier(annotation);
+    	if(value instanceof String && ((String)value).trim().equalsIgnoreCase(nullIdentifier)){
+    		return null;
+    	}
+    	return value;
+    }
+    
+    private static String determineNullIdentifier( Nullable annotation){
+    	String nullIdentifier = annotation.value();
+    	if( ! Nullable.DEFAULT_NULL_IDENTIFIER.endsWith(nullIdentifier)){
+    		return nullIdentifier;
+    	}
+    	return annotation.nullIdentifier();
+    }
+    
     private static String trimSpecialChars(String result) {
         return result.replace('(', '[').replace(')', ']').replaceAll(REGEX_ALL_NEWLINES, " ");
     }
