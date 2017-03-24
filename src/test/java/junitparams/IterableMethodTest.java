@@ -49,4 +49,40 @@ public class IterableMethodTest {
 
         return params;
     }
+
+    @Test
+    @Parameters
+    public void shouldHandleIterableParameters(Iterable<String> a) {
+        assertThat(a)
+                .hasSize(1)
+                .containsOnly("a");
+    }
+
+    public List<List<String>> parametersForShouldHandleIterableParameters() {
+        List<List<String>> params = new ArrayList<List<String>>();
+        List<String> nestedParams = new ArrayList<String>();
+
+        nestedParams.add("a");
+        params.add(nestedParams);
+
+        return params;
+    }
+
+    @Test
+    @Parameters
+    public void shouldHandleIterableParametersArr(Iterable<String> a) {
+        assertThat(a)
+                .hasSize(1)
+                .containsOnly("a");
+    }
+
+    public Object[] parametersForShouldHandleIterableParametersArr() {
+        List<List<String>> params = new ArrayList<List<String>>();
+        List<String> nestedParams = new ArrayList<String>();
+
+        nestedParams.add("a");
+        params.add(nestedParams);
+
+        return params.toArray();
+    }
 }

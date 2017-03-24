@@ -1,9 +1,9 @@
 package junitparams.internal.parameters.toarray;
 
+import org.junit.runners.model.FrameworkMethod;
+
 import java.util.Arrays;
 import java.util.List;
-
-import org.junit.runners.model.FrameworkMethod;
 
 public class ParamsToArrayConverter {
     private FrameworkMethod frameworkMethod;
@@ -13,6 +13,18 @@ public class ParamsToArrayConverter {
     }
 
     public Object[] convert(Object result) {
+        // handle single iterable parameter result case where result is
+        // assignable to the test method parameter
+        if (frameworkMethod.getMethod().getParameterTypes().length == 1) {
+            Class<?> type = frameworkMethod.getMethod().getParameterTypes()[0];
+            if (type.isAssignableFrom(result.getClass())) {
+                SimpleIterableResultToArray converter = new SimpleIterableResultToArray(result);
+                if (converter.isApplicable()) {
+                    return converter.convert();
+                }
+            }
+        }
+
         List<? extends ResultToArray> converters = Arrays.asList(
                 new ObjectArrayResultToArray(result, frameworkMethod),
                 new IterableResultToArray(result),
