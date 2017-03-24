@@ -28,6 +28,8 @@ public class TestMethod {
     private Object[] cachedParameters;
     private TestCaseNamingStrategy namingStrategy;
 
+    private final Memoizer<Description> description;
+
     public TestMethod(FrameworkMethod method, TestClass testClass) {
         this.frameworkMethod = method;
         this.testClass = testClass.getJavaClass();
@@ -35,6 +37,12 @@ public class TestMethod {
         parametersReader = new ParametersReader(testClass(), frameworkMethod);
 
         namingStrategy = new MacroSubstitutionNamingStrategy(this);
+        description = new Memoizer<Description>() {
+            @Override
+            protected Description computeValue() {
+                return TestMethod.this.computeDescription();
+            }
+        };
     }
 
     public String name() {
@@ -97,6 +105,11 @@ public class TestMethod {
     }
 
     Description describe() {
+        return description.get();
+    }
+
+    // visible for testing
+    Description computeDescription() {
         if (isNotIgnored() && !describeFlat()) {
             Description parametrised = Description.createSuiteDescription(name());
             Object[] params = parametersSets();
