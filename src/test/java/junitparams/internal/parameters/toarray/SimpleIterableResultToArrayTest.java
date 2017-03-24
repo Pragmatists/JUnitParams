@@ -1,81 +1,87 @@
 package junitparams.internal.parameters.toarray;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
-import static junitparams.JUnitParamsRunner.$;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-/**
- * Tests for {@link SimpleIterableResultToArray}.
- */
 public class SimpleIterableResultToArrayTest {
-
-    private static <T> ArrayList<T> newArrayList(T... args) {
-        ArrayList<T> list = new ArrayList<T>();
-        Collections.addAll(list, args);
-        return list;
-    }
-
-    private ArrayList<String> strings;
-
-    @Before
-    public void setUp() throws Exception {
-        strings = newArrayList("SNARK", "BOOJUM");
-    }
 
     @Test
     public void testSimpleIterableObjectArray() throws Exception {
-        Object[] actual = new SimpleIterableResultToArray(
-                newArrayList((Object[]) $("SNARK", "BOOJUM"))
-        ).convert();
+        Object[] actual = convert(
+                asList(
+                        (Object[]) arr("SNARK", "BOOJUM")
+                )
+        );
 
         assertThat(actual)
-                .isEqualTo($(
-                        $("SNARK"),
-                        $("BOOJUM")
+                .isEqualTo(arr(
+                        arr("SNARK"),
+                        arr("BOOJUM")
                 ));
     }
 
     @Test
     public void testSimpleIterable() throws Exception {
-        Object[] actual = new SimpleIterableResultToArray(strings).convert();
+
+        Object[] actual = convert(
+                asList("SNARK", "BOOJUM"));
+
         assertThat(actual)
-                .isEqualTo($(
-                        $("SNARK"),
-                        $("BOOJUM")
+                .isEqualTo(arr(
+                        arr("SNARK"),
+                        arr("BOOJUM")
                 ));
     }
 
     @Test
     public void testNestedManyIterable() throws Exception {
-        @SuppressWarnings("unchecked") ArrayList<ArrayList<String>> result =
-                newArrayList(strings, strings, strings);
 
-        Object[] actual = new SimpleIterableResultToArray(result).convert();
+        Object[] actual = convert(
+                asList(
+                        asList("SNARK", "BOOJUM"),
+                        asList("SNARK", "BOOJUM"),
+                        asList("SNARK", "BOOJUM")
+                )
+        );
+
         Object[] expected = new Object[]{
-                new Object[]{strings},
-                new Object[]{strings},
-                new Object[]{strings}
+                new Object[]{asList("SNARK", "BOOJUM")},
+                new Object[]{asList("SNARK", "BOOJUM")},
+                new Object[]{asList("SNARK", "BOOJUM")}
         };
+
         assertThat(actual)
                 .isEqualTo(expected);
-
 
     }
 
     @Test
     public void testNestedSingleIterable() throws Exception {
-        @SuppressWarnings("unchecked") ArrayList<ArrayList<String>> result =
-                newArrayList(strings);
 
-        Object[] actual = new SimpleIterableResultToArray(result).convert();
-        Object[] expected = new Object[]{new Object[]{strings}};
+        Object[] actual = convert(
+                asList(
+                        asList("SNARK", "BOOJUM")
+                )
+        );
+
+        Object[] expected = new Object[]{
+                new Object[]{asList("SNARK", "BOOJUM")}
+        };
+
         assertThat(actual)
                 .isEqualTo(expected);
+    }
+
+    private static Object[] arr(Object... params) {
+        return params;
+    }
+
+    private Object[] convert(List result) {
+        return new SimpleIterableResultToArray(result).convert();
     }
 }
