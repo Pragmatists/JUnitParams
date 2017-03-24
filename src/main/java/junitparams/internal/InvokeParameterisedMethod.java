@@ -26,13 +26,13 @@ class InvokeParameterisedMethod extends Statement {
     private final Object testClass;
     private final String uniqueMethodId;
 
-    InvokeParameterisedMethod(FrameworkMethod testMethod, Object testClass, Object params, int paramSetIdx) {
+    InvokeParameterisedMethod(FrameworkMethod testMethod, Object testClass, Object params, int paramSetIdx, boolean trimStringParameters) {
         this.testMethod = testMethod;
         this.testClass = testClass;
         this.uniqueMethodId = Utils.uniqueMethodId(paramSetIdx - 1, params, testMethod.getName());
         try {
             if (params instanceof String)
-                this.params = castParamsFromString((String) params);
+                this.params = castParamsFromString((String) params, trimStringParameters);
             else {
                 this.params = castParamsFromObjects(params);
             }
@@ -41,10 +41,10 @@ class InvokeParameterisedMethod extends Statement {
         }
     }
 
-    private Object[] castParamsFromString(String params) throws ConversionFailedException {
+    private Object[] castParamsFromString(String params, boolean trimStringParameters) throws ConversionFailedException {
         Object[] columns = null;
         try {
-            columns = Utils.splitAtCommaOrPipe(params);
+            columns = Utils.splitAtCommaOrPipe(params, trimStringParameters);
             columns = castParamsUsingConverters(columns);
         } catch (RuntimeException e) {
             new IllegalArgumentException("Cannot parse parameters. Did you use ',' or '|' as column separator? "

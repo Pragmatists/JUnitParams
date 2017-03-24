@@ -19,7 +19,7 @@ public class CombinedParametersProvider implements ParametersProvider<CombinedPa
     public Object[] getParameters() {
         List<Object[]> list = new ArrayList<Object[]>();
         for(String parameterArray : combinedParameters.value()) {
-            list.add(Utils.splitAtCommaOrPipe(parameterArray));
+            list.add(Utils.splitAtCommaOrPipe(parameterArray, combinedParameters.trimStringParams()));
         }
 
         return Cartesian.getCartesianProductOf(list);

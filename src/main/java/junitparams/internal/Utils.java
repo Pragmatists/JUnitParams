@@ -33,10 +33,10 @@ public class Utils {
         return trimSpecialChars(result);
     }
 
-    public static String getParameterStringByIndexOrEmpty(Object paramSet, int parameterIndex) {
+    public static String getParameterStringByIndexOrEmpty(Object paramSet, int parameterIndex, boolean trimStringParameters) {
         Object[] params = safelyCastParamsToArray(paramSet);
         if (paramSet instanceof String) {
-            params = splitAtCommaOrPipe((String) paramSet);
+            params = splitAtCommaOrPipe((String) paramSet, trimStringParameters);
         }
         if (parameterIndex >= 0 && parameterIndex < params.length) {
             return addParamToResult("", params[parameterIndex]);
@@ -45,7 +45,7 @@ public class Utils {
         return "";
     }
 
-    public static String[] splitAtCommaOrPipe(String input) {
+    public static String[] splitAtCommaOrPipe(String input, boolean trimParameters) {
         ArrayList<String> result = new ArrayList<String>();
 
         char character = '\0';
@@ -61,14 +61,14 @@ public class Utils {
                     value.setCharAt(value.length() - 1, character);
                     continue;
                 }
-                result.add(value.toString().trim());
+                result.add(trimParameters ? value.toString().trim() : value.toString());
                 value = new StringBuilder();
                 continue;
             }
 
             value.append(character);
         }
-        result.add(value.toString().trim());
+        result.add(trimParameters ? value.toString().trim() : value.toString());
 
         return result.toArray(new String[]{});
     }

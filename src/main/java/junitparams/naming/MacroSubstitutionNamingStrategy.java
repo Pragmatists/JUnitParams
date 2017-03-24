@@ -78,7 +78,7 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
     private String substituteDynamicMacro(String macro, String macroKey, Object parameters) {
         if (isMethodParameterIndex(macroKey)) {
             int index = parseIndex(macroKey);
-            return Utils.getParameterStringByIndexOrEmpty(parameters, index);
+            return Utils.getParameterStringByIndexOrEmpty(parameters, index, method.trimStringParameters());
         }
 
         return macro;
