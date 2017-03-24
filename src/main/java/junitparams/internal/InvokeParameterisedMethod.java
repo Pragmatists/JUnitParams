@@ -1,19 +1,18 @@
 package junitparams.internal;
 
+import junitparams.converters.ConversionFailedException;
+import junitparams.converters.ConvertParam;
+import junitparams.converters.ParamAnnotation;
+import junitparams.converters.ParamConverter;
+import org.junit.runner.Description;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
+
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
-
-import org.junit.runner.Description;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.Statement;
-
-import junitparams.converters.ConversionFailedException;
-import junitparams.converters.ConvertParam;
-import junitparams.converters.ParamAnnotation;
-import junitparams.converters.ParamConverter;
 
 /**
  * JUnit invoker for parameterised test methods
@@ -144,16 +143,17 @@ class InvokeParameterisedMethod extends Statement {
 
     private Object[] castAllParametersToProperTypes(Object[] columns, Class<?>[] expectedParameterTypes,
                                                     Annotation[][] parameterAnnotations) throws ConversionFailedException {
-        Object[] result = new Object[columns.length];
+        Object[] results = new Object[columns.length];
 
         for (int i = 0; i < columns.length; i++) {
-            if (parameterAnnotations[i].length == 0)
-                result[i] = castParameterDirectly(columns[i], expectedParameterTypes[i]);
-            else
-                result[i] = castParameterUsingConverter(columns[i], parameterAnnotations[i]);
+            Object result = columns[i];
+            if (parameterAnnotations[i].length != 0) {
+                result = castParameterUsingConverter(result, parameterAnnotations[i]);
+            }
+            results[i] = castParameterDirectly(result, expectedParameterTypes[i]);
         }
 
-        return result;
+        return results;
     }
 
     private Object castParameterUsingConverter(Object param, Annotation[] annotations) throws ConversionFailedException {
