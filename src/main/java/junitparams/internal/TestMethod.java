@@ -1,19 +1,19 @@
 package junitparams.internal;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import junitparams.internal.annotation.FrameworkMethodAnnotations;
+import junitparams.internal.parameters.ParametersReader;
+import junitparams.naming.MacroSubstitutionNamingStrategy;
+import junitparams.naming.TestCaseName;
+import junitparams.naming.TestCaseNamingStrategy;
 import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
-import junitparams.internal.annotation.FrameworkMethodAnnotations;
-import junitparams.internal.parameters.ParametersReader;
-import junitparams.naming.MacroSubstitutionNamingStrategy;
-import junitparams.naming.TestCaseNamingStrategy;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A wrapper for a test method
@@ -21,26 +21,38 @@ import junitparams.naming.TestCaseNamingStrategy;
  * @author Pawel Lipinski
  */
 public class TestMethod {
+
     private FrameworkMethod frameworkMethod;
     private FrameworkMethodAnnotations frameworkMethodAnnotations;
-    private Class<?> testClass;
-    private ParametersReader parametersReader;
-    private Object[] cachedParameters;
-    private TestCaseNamingStrategy namingStrategy;
 
-    private final Memoizer<Description> description;
+    private Memoizer<Object[]> parameters;
+    private Memoizer<Description> description;
 
-    public TestMethod(FrameworkMethod method, TestClass testClass) {
+    public TestMethod(final FrameworkMethod method, final TestClass testClass) {
         this.frameworkMethod = method;
-        this.testClass = testClass.getJavaClass();
         frameworkMethodAnnotations = new FrameworkMethodAnnotations(method);
-        parametersReader = new ParametersReader(testClass(), frameworkMethod);
 
-        namingStrategy = new MacroSubstitutionNamingStrategy(this);
         description = new Memoizer<Description>() {
             @Override
             protected Description computeValue() {
-                return TestMethod.this.computeDescription();
+
+                if (isNotIgnored() && !describeFlat()) {
+                    TestCaseNamingStrategy namingStrategy = new MacroSubstitutionNamingStrategy(getAnnotation(TestCaseName.class), name());
+                    return new ParametrizedDescription(namingStrategy, testClass.getJavaClass().getName(), name()).parametrizedDescription(parametersSets());
+                } else {
+                    return Description.createTestDescription(testClass.getJavaClass(), name(), frameworkMethodAnnotations.allAnnotations());
+                }
+            }
+
+            private boolean describeFlat() {
+                return System.getProperty("JUnitParams.flat") != null;
+            }
+
+        };
+        parameters = new Memoizer<Object[]>() {
+            @Override
+            protected Object[] computeValue() {
+                return new ParametersReader(testClass.getJavaClass(), frameworkMethod).read();
             }
         };
     }
@@ -80,10 +92,6 @@ public class TestMethod {
         return Arrays.equals(frameworkMethodParameterTypes, testMethodParameterTypes);
     }
 
-    private Class<?> testClass() {
-        return testClass;
-    }
-
     public boolean isIgnored() {
         return hasIgnoredAnnotation() || hasNoParameters();
     }
@@ -93,7 +101,7 @@ public class TestMethod {
     }
 
     private boolean hasNoParameters() {
-       return isParameterised() && parametersSets().length == 0;
+        return isParameterised() && parametersSets().length == 0;
     }
 
     public boolean isNotIgnored() {
@@ -108,35 +116,9 @@ public class TestMethod {
         return description.get();
     }
 
-    // visible for testing
-    Description computeDescription() {
-        if (isNotIgnored() && !describeFlat()) {
-            Description parametrised = Description.createSuiteDescription(name());
-            Object[] params = parametersSets();
-            for (int i = 0; i < params.length; i++) {
-                Object paramSet = params[i];
-                String name = namingStrategy.getTestCaseName(i, paramSet);
-                String uniqueMethodId = Utils.uniqueMethodId(i, paramSet, name());
-
-                parametrised.addChild(
-                        Description.createTestDescription(testClass().getName(), name, uniqueMethodId)
-                );
-            }
-            return parametrised;
-        } else {
-            return Description.createTestDescription(testClass(), name(), frameworkMethodAnnotations.allAnnotations());
-        }
-    }
-
-    private boolean describeFlat() {
-        return System.getProperty("JUnitParams.flat") != null;
-    }
 
     public Object[] parametersSets() {
-        if (cachedParameters == null) {
-            cachedParameters = parametersReader.read();
-        }
-        return cachedParameters;
+        return parameters.get();
     }
 
     void warnIfNoParamsGiven() {

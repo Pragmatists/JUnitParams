@@ -1,6 +1,5 @@
 package junitparams.naming;
 
-import junitparams.internal.TestMethod;
 import junitparams.internal.Utils;
 
 import java.util.Arrays;
@@ -16,14 +15,21 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
     private static final String MACRO_END = "}";
     static final String DEFAULT_TEMPLATE = "{method}({params}) [{index}]";
     private static final String[] DEFAULT_TEMPLATE_PARTS = MACRO_SPLIT_PATTERN.split(DEFAULT_TEMPLATE);
-    private TestMethod method;
-    private String[] templateParts;
 
-    public MacroSubstitutionNamingStrategy(TestMethod testMethod) {
-        this.method = testMethod;
-        TestCaseName testCaseName = method.getAnnotation(TestCaseName.class);
-        String template = getTemplate(testCaseName);
-        this.templateParts = MACRO_SPLIT_PATTERN.split(template);
+    private String[] templateParts;
+    private String methodName;
+
+    public MacroSubstitutionNamingStrategy(TestCaseName testCaseName, String methodName) {
+        this.templateParts = MACRO_SPLIT_PATTERN.split(getTemplate(testCaseName));
+        this.methodName = methodName;
+    }
+
+    public static String getTemplate(TestCaseName testCaseName) {
+        if (testCaseName != null) {
+            return testCaseName.value();
+        }
+
+        return DEFAULT_TEMPLATE;
     }
 
     @Override
@@ -35,14 +41,6 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
         } else {
             return builtName;
         }
-    }
-
-    private String getTemplate(TestCaseName testCaseName) {
-        if (testCaseName != null) {
-            return testCaseName.value();
-        }
-
-        return DEFAULT_TEMPLATE;
     }
 
     private String buildNameByTemplate(String[] parts, int parametersIndex, Object parameters) {
@@ -70,7 +68,7 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
         switch (Macro.parse(macroKey)) {
             case INDEX: return String.valueOf(parametersIndex);
             case PARAMS: return Utils.stringify(parameters);
-            case METHOD: return method.name();
+            case METHOD: return methodName;
             default: return substituteDynamicMacro(macro, macroKey, parameters);
         }
     }
