@@ -40,6 +40,7 @@
 # Guava related ignorables
 -dontwarn com.google.j2objc.annotations.Weak
 -dontwarn java.lang.ClassValue
+-dontwarn java.lang.SafeVarargs
 -dontwarn javax.annotation.**
 -dontwarn javax.inject.**
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
