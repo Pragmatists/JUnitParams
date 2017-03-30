@@ -1,14 +1,16 @@
 package junitparams.internal.parameters.toarray;
 
-import org.junit.runners.model.FrameworkMethod;
+import junitparams.internal.parameters.ParameterTypeSupplier;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 class ObjectArrayResultToArray implements ResultToArray {
     private Object result;
-    private FrameworkMethod frameworkMethod;
+    private ParameterTypeSupplier parameterTypeSupplier;
 
-    ObjectArrayResultToArray(Object result, FrameworkMethod frameworkMethod) {
-        this.result = result;
-        this.frameworkMethod = frameworkMethod;
+    ObjectArrayResultToArray(Object result, ParameterTypeSupplier parameterTypeSupplier) {
+        this.result = checkNotNull(result, "result must not be null");
+        this.parameterTypeSupplier = checkNotNull(parameterTypeSupplier, "parameterTypeSupplier must not be null");
     }
 
     @Override
@@ -22,7 +24,7 @@ class ObjectArrayResultToArray implements ResultToArray {
     }
 
     private Object[] encapsulateParamsIntoArrayIfSingleParamsetPassed(Object[] params) {
-        if (frameworkMethod.getMethod().getParameterTypes().length != params.length) {
+        if (parameterTypeSupplier.getParameterTypes().size() != params.length) {
             return params;
         }
 

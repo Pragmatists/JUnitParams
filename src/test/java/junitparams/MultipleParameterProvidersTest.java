@@ -1,5 +1,6 @@
 package junitparams;
 
+import com.google.common.base.Throwables;
 import junitparams.internal.parameters.ParametersReader;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -7,9 +8,9 @@ import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 
-import static org.junit.Assert.assertEquals;
-
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class MultipleParameterProvidersTest {
 
@@ -34,8 +35,19 @@ public class MultipleParameterProvidersTest {
         assertEquals(1, testResult.getFailureCount());
 
         Failure testFailure = testResult.getFailures().iterator().next();
-        assertEquals(IllegalStateException.class, testFailure.getException().getClass());
-        assertEquals(format(ParametersReader.ILLEGAL_STATE_EXCEPTION_MESSAGE, "testWithValueAndMethodProviders"),
-                     testFailure.getMessage());
+
+        String expectedMessage = format(ParametersReader.ILLEGAL_STATE_EXCEPTION_MESSAGE, "testWithValueAndMethodProviders");
+        try {
+            Throwable thr = testFailure.getException();
+            Throwables.propagateIfInstanceOf(thr, IllegalStateException.class);
+            throw Throwables.propagate(thr);
+        } catch (IllegalStateException ise) {
+            assertThat(ise)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage(expectedMessage);
+        }
+
+        assertThat(testFailure.getMessage())
+            .isEqualTo(expectedMessage);
     }
 }

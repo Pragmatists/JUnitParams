@@ -1,6 +1,6 @@
 package junitparams.internal.parameters;
 
-interface ParametrizationStrategy {
+public interface ParametrizationStrategy {
     Object[] getParameters();
     boolean isApplicable();
 }

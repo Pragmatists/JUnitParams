@@ -8,7 +8,11 @@ class ParametersFromValue implements ParametrizationStrategy {
     private final Parameters parametersAnnotation;
 
     ParametersFromValue(FrameworkMethod frameworkMethod) {
-        parametersAnnotation = frameworkMethod.getAnnotation(Parameters.class);
+        this(frameworkMethod.getAnnotation(Parameters.class));
+    }
+
+    ParametersFromValue(Parameters annotation) {
+        parametersAnnotation = annotation;
     }
 
     @Override

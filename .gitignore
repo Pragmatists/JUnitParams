@@ -10,4 +10,4 @@ tmp/
 .project
 .externalToolBuilders/
 .classpath
-
+dependency-reduced-pom.xml
