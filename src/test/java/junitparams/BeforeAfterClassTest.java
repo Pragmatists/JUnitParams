@@ -1,9 +1,13 @@
 package junitparams;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.RunWith;
 
-import org.junit.*;
-import org.junit.runner.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnitParamsRunner.class)
 public class BeforeAfterClassTest {
@@ -21,8 +25,49 @@ public class BeforeAfterClassTest {
     }
 
     @Test
-    @Parameters({ " " })
+    @Parameters({" "})
     public void test(String param) {
         assertThat(val).isTrue();
     }
+
+
+    @Test
+    @Parameters({
+            "junitparams.BeforeAfterClassTest$NonStaticBeforeTest",
+            "junitparams.BeforeAfterClassTest$NonStaticBeforeTest"
+    })
+    public void shouldProvideHelpfulExceptionMessageWhenLifecycleAnnotationUsedImproperly(Class<?> testClass) {
+        Result result = JUnitCore.runClasses(testClass);
+
+        assertThat(result.getFailureCount()).isEqualTo(1);
+        assertThat(result.getFailures().get(0).getException())
+                .hasMessage("Method fail() should be static");
+    }
+
+
+    @RunWith(JUnitParamsRunner.class)
+    private static class NonStaticBeforeTest {
+
+        @BeforeClass
+        public void fail() {
+        }
+
+        @Test
+        public void test() {
+        }
+    }
+
+    @RunWith(JUnitParamsRunner.class)
+    private static class NonStaticAfterTest {
+
+        @AfterClass
+        public void fail() {
+        }
+
+        @Test
+        public void test() {
+        }
+    }
+
+
 }
