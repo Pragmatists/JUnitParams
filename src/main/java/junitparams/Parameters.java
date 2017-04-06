@@ -53,7 +53,7 @@ public @interface Parameters {
      * by the method is the same as for the source annotation class.
      * Example: <code>@Parameters(named = "exemplaryPeople")</code>
      * <p>
-     * You can use multiple methods to provide parameters - use comma to do it:
+     * You can use multiple named methods to provide parameters - use comma to do it:
      * Example: <code>@Parameters(named = "womenParams, menParams")</code>
      */
     String named() default "";
