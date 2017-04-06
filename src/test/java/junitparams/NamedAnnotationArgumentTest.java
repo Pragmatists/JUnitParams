@@ -16,7 +16,7 @@ public class NamedAnnotationArgumentTest {
 
     @Test
     @Parameters(named = "return1")
-    public void testSingleNamedMethods(int number) {
+    public void testSingleNamedMethod(int number) {
         assertThat(number).isEqualTo(1);
     }
 
