@@ -1,17 +1,15 @@
 package junitparams.internal.parameters;
 
-
-import org.junit.runners.model.FrameworkMethod;
-
 import junitparams.NullType;
 import junitparams.Parameters;
+import org.junit.runners.model.FrameworkMethod;
 
-class ParametersFromTestClassMethod implements ParametrizationStrategy {
+class ParametersFromNamedTestClassMethod implements ParametrizationStrategy {
     private final ParamsFromMethodCommon paramsFromMethodCommon;
     private final Class<?> testClass;
     private final Parameters annotation;
 
-    ParametersFromTestClassMethod(FrameworkMethod frameworkMethod, Class<?> testClass) {
+    ParametersFromNamedTestClassMethod(FrameworkMethod frameworkMethod, Class<?> testClass) {
         this.testClass = testClass;
         paramsFromMethodCommon = new ParamsFromMethodCommon(frameworkMethod);
         annotation = frameworkMethod.getAnnotation(Parameters.class);
@@ -19,14 +17,14 @@ class ParametersFromTestClassMethod implements ParametrizationStrategy {
 
     @Override
     public Object[] getParameters() {
-        return paramsFromMethodCommon.paramsFromMethod(testClass);
+        return paramsFromMethodCommon.paramsFromNamedMethod(testClass);
     }
 
     @Override
     public boolean isApplicable() {
         return annotation != null
                 && annotation.source().isAssignableFrom(NullType.class)
-                && (!annotation.method().isEmpty() || paramsFromMethodCommon.containsDefaultParametersProvidingMethod(testClass))
-                && annotation.named().isEmpty();
+                && annotation.method().isEmpty()
+                && !annotation.named().isEmpty();
     }
 }

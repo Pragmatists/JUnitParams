@@ -25,6 +25,7 @@ public class PersonTest {
         assertThat(new Person(age).isAdult()).isEqualTo(valid);
     }
 
+    @Named("grownups")
     private Object[] adultValues() {
         return new Object[]{new Object[]{17, false}, new Object[]{22, true}};
     }
