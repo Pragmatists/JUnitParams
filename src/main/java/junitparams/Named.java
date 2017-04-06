@@ -5,8 +5,6 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * An annotation for test parameter providers.
- *
- * @author Toby Terhoeven (toby@terhoeven.co.uk)
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Named {
