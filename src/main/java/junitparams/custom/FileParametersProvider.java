@@ -8,13 +8,14 @@ import java.io.Reader;
 
 import junitparams.FileParameters;
 import junitparams.mappers.DataMapper;
+import org.junit.runners.model.FrameworkMethod;
 
 public class FileParametersProvider implements ParametersProvider<FileParameters> {
 
     private FileParameters fileParameters;
 
     @Override
-    public void initialize(FileParameters fileParameters) {
+    public void initialize(FileParameters fileParameters, FrameworkMethod frameworkMethod) {
         this.fileParameters = fileParameters;
     }
 

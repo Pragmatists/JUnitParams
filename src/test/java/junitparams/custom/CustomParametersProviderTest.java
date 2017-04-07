@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import junitparams.JUnitParamsRunner;
+import org.junit.runners.model.FrameworkMethod;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -25,6 +26,11 @@ public class CustomParametersProviderTest {
         assertThat(param).isEqualTo("Hi");
     }
 
+    @Test
+    @CustomParameters(provider = MethodNameReader.class)
+    public void getDataFromFrameworkMethod(String name) throws Exception {
+        assertThat(name).isEqualTo("getDataFromFrameworkMethod");
+    }
 
     @Retention(RetentionPolicy.RUNTIME)
     @CustomParameters(provider = CustomHelloProvider.class)
@@ -34,7 +40,7 @@ public class CustomParametersProviderTest {
 
     public static class SimpleHelloProvider implements ParametersProvider<CustomParameters> {
         @Override
-        public void initialize(CustomParameters parametersAnnotation) {
+        public void initialize(CustomParameters parametersAnnotation, FrameworkMethod frameworkMethod) {
         }
 
         @Override
@@ -48,13 +54,27 @@ public class CustomParametersProviderTest {
         private String hello;
 
         @Override
-        public void initialize(HelloParameters parametersAnnotation) {
+        public void initialize(HelloParameters parametersAnnotation, FrameworkMethod frameworkMethod) {
             hello = parametersAnnotation.hello();
         }
 
         @Override
         public Object[] getParameters() {
             return new Object[]{hello, hello};
+        }
+    }
+
+    public static class MethodNameReader implements ParametersProvider<CustomParameters> {
+        private FrameworkMethod frameworkMethod;
+
+        @Override
+        public void initialize(CustomParameters parametersAnnotation, FrameworkMethod frameworkMethod) {
+            this.frameworkMethod = frameworkMethod;
+        }
+
+        @Override
+        public Object[] getParameters() {
+            return new Object[]{frameworkMethod.getName()};
         }
     }
 }
