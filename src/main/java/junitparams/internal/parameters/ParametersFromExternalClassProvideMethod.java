@@ -32,7 +32,8 @@ class ParametersFromExternalClassProvideMethod implements ParametrizationStrateg
     public boolean isApplicable() {
         return annotation != null
                 && !annotation.source().isAssignableFrom(NullType.class)
-                && annotation.method().isEmpty();
+                && annotation.method().isEmpty()
+                && annotation.named().isEmpty();
     }
 
     private Object[] fillResultWithAllParamProviderMethods(Class<?> sourceClass) {

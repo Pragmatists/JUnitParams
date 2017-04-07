@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import junitparams.Named;
 import org.junit.runners.model.FrameworkMethod;
 
 import junitparams.Parameters;
@@ -32,6 +33,22 @@ class ParamsFromMethodCommon {
         return result.toArray();
     }
 
+    Object[] paramsFromNamedMethod(Class<?> sourceClass) {
+        String namedMethodAnnotation = frameworkMethod.getAnnotation(Parameters.class).named();
+
+        if (namedMethodAnnotation.isEmpty()) {
+            return invokeMethodWithParams(defaultMethodName(), sourceClass);
+        }
+
+        List<Object> result = new ArrayList<Object>();
+        for (String name : namedMethodAnnotation.split(",")) {
+            for (Object param : invokeNamedMethodWithParams(name.trim(), sourceClass))
+                result.add(param);
+        }
+
+        return result.toArray();
+    }
+
     boolean containsDefaultParametersProvidingMethod(Class<?> sourceClass) {
         return findMethodInTestClassHierarchy(defaultMethodName(), sourceClass) != null;
     }
@@ -45,6 +62,15 @@ class ParamsFromMethodCommon {
         Method providerMethod = findMethodInTestClassHierarchy(methodName, sourceClass);
         if (providerMethod == null) {
             throw new RuntimeException("Could not find method: " + methodName + " so no params were used.");
+        }
+
+        return invokeParamsProvidingMethod(providerMethod, sourceClass);
+    }
+
+    private Object[] invokeNamedMethodWithParams(String name, Class<?> sourceClass) {
+        Method providerMethod = findNamedMethodInTestClassHierarchy(name, sourceClass);
+        if (providerMethod == null) {
+            throw new RuntimeException("Could not find method with Named annotation: " + name + " so no params were used.");
         }
 
         return invokeParamsProvidingMethod(providerMethod, sourceClass);
@@ -82,5 +108,20 @@ class ParamsFromMethodCommon {
         return null;
     }
 
-
+    private Method findNamedMethodInTestClassHierarchy(String name, Class<?> sourceClass) {
+        Class<?> declaringClass = sourceClass;
+        while (declaringClass.getSuperclass() != null) {
+            try {
+                Method[] methods = declaringClass.getDeclaredMethods();
+                for (Method method : methods) {
+                    if (method.isAnnotationPresent(Named.class) && name.equals(method.getAnnotation(Named.class).value())) {
+                        return method;
+                    }
+                }
+            } catch (Exception ignore) {
+            }
+            declaringClass = declaringClass.getSuperclass();
+        }
+        return null;
+    }
 }
