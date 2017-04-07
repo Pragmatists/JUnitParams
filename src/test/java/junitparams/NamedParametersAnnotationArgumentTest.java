@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("unused")
 @RunWith(JUnitParamsRunner.class)
-public class NamedAnnotationArgumentTest {
+public class NamedParametersAnnotationArgumentTest {
 
     @Test
     @Parameters(named = "return1")
@@ -20,7 +20,7 @@ public class NamedAnnotationArgumentTest {
         assertThat(number).isEqualTo(1);
     }
 
-    @Named("return1")
+    @NamedParameters("return1")
     private Integer[] returnNumberOne() {
         return new Integer[] { 1 };
     }
@@ -41,7 +41,7 @@ public class NamedAnnotationArgumentTest {
                 .isGreaterThanOrEqualTo(1);
     }
 
-    @Named("return2")
+    @NamedParameters("return2")
     private Integer[] returnNumberTwo() {
         return new Integer[] { 2 };
     }
@@ -60,9 +60,9 @@ public class NamedAnnotationArgumentTest {
         assertThat(acceptedParams).contains(parameter);
     }
 
-    @Named("stringParamsWithNull")
+    @NamedParameters("stringParamsWithNull")
     Object[] stringWithNullParameters() {
-        return genericArray("1", "2", "3", null);
+        return arr("1", "2", "3", null);
     }
 
     @Test
@@ -71,14 +71,14 @@ public class NamedAnnotationArgumentTest {
         assertThat(first).isEqualTo(second);
     }
 
-    @Named("multiStringParams")
+    @NamedParameters("multiStringParams")
     Object[] multiStringParameters() {
-        return genericArray(
-                genericArray("test", "test"),
-                genericArray("ble", "ble"));
+        return arr(
+                arr("test", "test"),
+                arr("ble", "ble"));
     }
 
-    private static <T> T[] genericArray(T... elements) {
+    private static <T> T[] arr(T... elements) {
         return elements;
     }
 }

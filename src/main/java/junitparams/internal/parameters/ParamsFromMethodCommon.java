@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import junitparams.Named;
+import junitparams.NamedParameters;
 import org.junit.runners.model.FrameworkMethod;
 
 import junitparams.Parameters;
@@ -70,7 +70,7 @@ class ParamsFromMethodCommon {
     private Object[] invokeNamedMethodWithParams(String name, Class<?> sourceClass) {
         Method providerMethod = findNamedMethodInTestClassHierarchy(name, sourceClass);
         if (providerMethod == null) {
-            throw new RuntimeException("Could not find method with Named annotation: " + name + " so no params were used.");
+            throw new RuntimeException("Could not find method with NamedParameters annotation: " + name + " so no params were used.");
         }
 
         return invokeParamsProvidingMethod(providerMethod, sourceClass);
@@ -114,7 +114,7 @@ class ParamsFromMethodCommon {
             try {
                 Method[] methods = declaringClass.getDeclaredMethods();
                 for (Method method : methods) {
-                    if (method.isAnnotationPresent(Named.class) && name.equals(method.getAnnotation(Named.class).value())) {
+                    if (method.isAnnotationPresent(NamedParameters.class) && name.equals(method.getAnnotation(NamedParameters.class).value())) {
                         return method;
                     }
                 }
