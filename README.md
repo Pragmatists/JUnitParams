@@ -52,6 +52,12 @@ JUnitParams is available as Maven artifact:
   <scope>test</scope>
 </dependency>
 ```
+To use JUnitParams in a Gradle build add this to your dependencies:
+
+```
+testCompile 'pl.pragmatists:JUnitParams:1.0.6'
+```
+
 
 If you want to see just one simple test class with all main ways to use JUnitParams see here:
 https://github.com/Pragmatists/junitparams/tree/master/src/test/java/junitparams/usage
