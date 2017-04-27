@@ -1,3 +1,54 @@
+## JUnitParams 1.1.0 release. Release date : 2017-04-17
+
+###[**Breaking change**] Enhance ParametersProvider with FrameworkMethod
+
+`ParametersProvider#initialize` method was enhanced with new parameter - FrameworkMethod object. It gives access to all information connected with method in testing e.g. annotations. 
+
+```java
+    public static class MethodNameReader implements ParametersProvider<CustomParameters> {
+        private FrameworkMethod frameworkMethod;
+    
+        @Override
+        public void initialize(CustomParameters parametersAnnotation, FrameworkMethod frameworkMethod) {
+            this.frameworkMethod = frameworkMethod;
+        }
+    
+        @Override
+        public Object[] getParameters() {
+            return new Object[]{frameworkMethod.getName()};
+        }
+    }
+```
+
+**How to migrate?** Add new parameter to `ParametersProvider#initialize` method if you are using any custom parameters provider.
+
+Thanks [bohrqiu](https://github.com/bohrqiu) for contribution.
+
+### Possibility to link parameters to test case by `@Named` annotation
+
+In some cases we can don't want to link parameters to test case by method name or putting everything into the test case annotation. We introduce possibility to define custom name for the connection by using `@NamedParameters` annotation.
+
+```java
+    @Test
+    @Parameters(named = "return 1")
+    public void testSingleNamedMethod(int number) {
+        assertThat(number).isEqualTo(1);
+    }
+
+    @NamedParameters("return 1")
+    private Integer[] returnNumberOne() {
+        return new Integer[] { 1 };
+    }
+```
+
+Thanks [tobyt42](https://github.com/tobyt42) for idea and contribution.
+
+### Speedups
+
+New version is noticeably faster for big as well as small set of parameters.
+ 
+ Thanks for [ukcrpb6](https://github.com/ukcrpb6) for contribution.
+ 
 ## JUnitParams 1.0.6 release. Release date : 2017-01-23
 
 ### Change default testcase naming template

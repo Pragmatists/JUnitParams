@@ -24,12 +24,12 @@ See more [examples](https://github.com/Pragmatists/JUnitParams/blob/master/src/t
 
 ## Latest News
 
-* 2017-01-23 JUnitParams 1.0.6 released. Check [release info](RELEASES.md).
+* 2017-04-17 JUnitParams 1.1.0 released. Check [release info](RELEASES.md).
 
 [more news here](https://github.com/Pragmatists/JUnitParams/wiki)
 
 ## About
-JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit >=4.6.
+JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit >= 4.6.
 
 Main differences to standard JUnit Parametrised runner:
 
@@ -48,14 +48,14 @@ JUnitParams is available as Maven artifact:
 <dependency>
   <groupId>pl.pragmatists</groupId>
   <artifactId>JUnitParams</artifactId>
-  <version>1.0.6</version>
+  <version>1.1.0</version>
   <scope>test</scope>
 </dependency>
 ```
 To use JUnitParams in a Gradle build add this to your dependencies:
 
 ```
-testCompile 'pl.pragmatists:JUnitParams:1.0.6'
+testCompile 'pl.pragmatists:JUnitParams:1.1.0'
 ```
 
 
