@@ -5,14 +5,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import junitparams.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import junitparams.FileParameters;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import junitparams.ParametersReaderProvidersTest;
-import junitparams.ParamsConverterTest;
 import junitparams.converters.Param;
 import junitparams.custom.combined.CombinedParameters;
 import junitparams.mappers.CsvWithHeaderMapper;
@@ -47,6 +43,14 @@ public class SamplesOfUsageTest {
     public void paramsInNamedMethod(String p1, Integer p2) { }
     private Object named1() {
         return new Object[]{"AAA", 1};
+    }
+
+    @Test
+    @Parameters(named = "return 1")
+    public void paramsInNamedParameters(int number) { }
+    @NamedParameters("return 1")
+    private Integer[] customNamedParameters() {
+        return new Integer[] { 1 };
     }
 
     @Test
