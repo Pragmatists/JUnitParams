@@ -1,6 +1,6 @@
 ## JUnitParams 1.1.0 release. Release date : 2017-04-17
 
-###[**Breaking change**] Enhance ParametersProvider with FrameworkMethod
+### [Breaking change] Enhance ParametersProvider with FrameworkMethod
 
 `ParametersProvider#initialize` method was enhanced with new parameter - FrameworkMethod object. It gives access to all information connected with method in testing e.g. annotations. 
 
