@@ -98,6 +98,8 @@ class InvokeParameterisedMethod extends Statement {
     private Object[] castParamsUsingConverters(Object[] columns) throws ConversionFailedException {
         Class<?>[] expectedParameterTypes = testMethod.getMethod().getParameterTypes();
 
+        fillPreformattedNulls(columns);
+
         if (testMethodParamsHasVarargs(columns, expectedParameterTypes)) {
             columns = columnsWithVarargs(columns, expectedParameterTypes);
         }
@@ -106,6 +108,15 @@ class InvokeParameterisedMethod extends Statement {
         verifySameSizeOfArrays(columns, expectedParameterTypes);
         columns = castAllParametersToProperTypes(columns, expectedParameterTypes, parameterAnnotations);
         return columns;
+    }
+
+    private Object[] fillPreformattedNulls(Object[] input) {
+        for(int i = 0; i < input.length; i++) {
+            if("/null/".equalsIgnoreCase(String.valueOf(input[i]))) {
+                input[i] = null;
+            }
+        }
+        return input;
     }
 
     private Object[] columnsWithVarargs(Object[] columns, Class<?>[] expectedParameterTypes) {
@@ -183,7 +194,7 @@ class InvokeParameterisedMethod extends Statement {
         if (clazz.isEnum())
             return (Enum.valueOf(clazz, (String) object));
         if (clazz.isAssignableFrom(String.class))
-            return object.toString();
+            return object;
         if (clazz.isAssignableFrom(Class.class))
             try {
                 return Class.forName((String) object);
