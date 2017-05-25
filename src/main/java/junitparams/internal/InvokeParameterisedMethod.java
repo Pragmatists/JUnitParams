@@ -4,7 +4,6 @@ import junitparams.converters.ConversionFailedException;
 import junitparams.converters.ConvertParam;
 import junitparams.converters.ParamAnnotation;
 import junitparams.converters.ParamConverter;
-import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
@@ -24,12 +23,10 @@ class InvokeParameterisedMethod extends Statement {
     private final Object[] params;
     private final FrameworkMethod testMethod;
     private final Object testClass;
-    private final String uniqueMethodId;
 
-    InvokeParameterisedMethod(FrameworkMethod testMethod, Object testClass, Object params, int paramSetIdx) {
+    InvokeParameterisedMethod(FrameworkMethod testMethod, Object testClass, Object params) {
         this.testMethod = testMethod;
         this.testClass = testClass;
-        this.uniqueMethodId = Utils.uniqueMethodId(paramSetIdx - 1, params, testMethod.getName());
         try {
             if (params instanceof String)
                 this.params = castParamsFromString((String) params);
@@ -223,10 +220,6 @@ class InvokeParameterisedMethod extends Statement {
                     "Number of parameters inside @Parameters annotation doesn't match the number of test method parameters.\nThere are "
                             + columns.length + " parameters in annotation, while there's " + parameterTypes.length + " parameters in the "
                             + testMethod.getName() + " method.");
-    }
-
-    boolean matchesDescription(Description description) {
-        return description.hashCode() == uniqueMethodId.hashCode();
     }
 
     @Override

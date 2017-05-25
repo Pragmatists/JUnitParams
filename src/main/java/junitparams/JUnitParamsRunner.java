@@ -1,6 +1,5 @@
 package junitparams;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -8,8 +7,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.Description;
-import org.junit.runner.manipulation.Filter;
-import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -17,11 +14,15 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.validator.PublicClassValidator;
 
-import static org.junit.internal.runners.rules.RuleMemberValidator.*;
-
-import junitparams.internal.ParameterisedTestClassRunner;
-import junitparams.internal.ParametrizedTestMethodsFilter;
+import junitparams.internal.DescribableFrameworkMethod;
+import junitparams.internal.InstanceFrameworkMethod;
+import junitparams.internal.InvokableFrameworkMethod;
+import junitparams.internal.MethodBlockSupplier;
+import junitparams.internal.NonParameterisedFrameworkMethod;
+import junitparams.internal.ParameterisedFrameworkMethod;
 import junitparams.internal.TestMethod;
+
+import static org.junit.internal.runners.rules.RuleMemberValidator.*;
 
 /**
  * <h1>JUnitParams</h1><br>
@@ -392,19 +393,17 @@ import junitparams.internal.TestMethod;
  */
 public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
-    private ParametrizedTestMethodsFilter parametrizedTestMethodsFilter = new ParametrizedTestMethodsFilter(this);
-    private ParameterisedTestClassRunner parameterisedRunner;
+    private final MethodBlockSupplier methodBlockSupplier;
     private Description description;
 
     public JUnitParamsRunner(Class<?> klass) throws InitializationError {
         super(klass);
-        parameterisedRunner = new ParameterisedTestClassRunner(getTestClass());
-    }
-
-    @Override
-    public void filter(Filter filter) throws NoTestsRemainException {
-        super.filter(filter);
-        this.parametrizedTestMethodsFilter = new ParametrizedTestMethodsFilter(this, filter);
+        methodBlockSupplier = new MethodBlockSupplier() {
+            @Override
+            public Statement getMethodBlock(InvokableFrameworkMethod method) {
+                return methodBlock(method);
+            }
+        };
     }
 
     @Override
@@ -438,73 +437,67 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        if (handleIgnored(method, notifier))
+        DescribableFrameworkMethod describableMethod = getDescribableMethod(method);
+        if (handleIgnored(describableMethod, notifier))
             return;
 
-        TestMethod testMethod = parameterisedRunner.testMethodFor(method);
-        if (parameterisedRunner.shouldRun(testMethod)) {
-            parameterisedRunner.runParameterisedTest(testMethod, methodBlock(method), notifier);
-        } else {
-            verifyMethodCanBeRunByStandardRunner(testMethod);
-            super.runChild(method, notifier);
+        if (describableMethod instanceof InvokableFrameworkMethod) {
+            ((InvokableFrameworkMethod) describableMethod).run(methodBlockSupplier, notifier);
+        }
+        else {
+            throw new IllegalStateException(
+                    "Unsupported FrameworkMethod class: " + method.getClass());
         }
     }
 
-    private void verifyMethodCanBeRunByStandardRunner(TestMethod testMethod) {
-        List<Throwable> errors = new ArrayList<Throwable>();
-        testMethod.frameworkMethod().validatePublicVoidNoArg(false, errors);
-        if (!errors.isEmpty()) {
-            throw new RuntimeException(errors.get(0));
+    /**
+     * Check that the supplied method is one that was originally in the list returned by
+     * {@link #computeTestMethods()}.
+     *
+     * @param method the method, must be an instance of {@link DescribableFrameworkMethod}
+     * @return the supplied method cast to {@link DescribableFrameworkMethod}
+     * @throws IllegalArgumentException if the supplied method is not a
+     *         {@link DescribableFrameworkMethod}
+     */
+    private DescribableFrameworkMethod getDescribableMethod(FrameworkMethod method) {
+        if (!(method instanceof DescribableFrameworkMethod)) {
+            throw new IllegalArgumentException(
+                    "Unsupported FrameworkMethod class: " + method.getClass()
+                            + ", expected a DescribableFrameworkMethod subclass");
         }
+
+        return (DescribableFrameworkMethod) method;
     }
 
-    private boolean handleIgnored(FrameworkMethod method, RunNotifier notifier) {
-        TestMethod testMethod = parameterisedRunner.testMethodFor(method);
-        if (testMethod.isIgnored())
-            notifier.fireTestIgnored(describeMethod(method));
+    private boolean handleIgnored(DescribableFrameworkMethod method, RunNotifier notifier) {
+        // A parameterised method that is ignored (either due to @Ignore or due to empty parameters)
+        // is treated as if it was a non-parameterised method.
+        boolean ignored = (method instanceof NonParameterisedFrameworkMethod)
+                && ((NonParameterisedFrameworkMethod) method).isIgnored();
+        if (ignored)
+            notifier.fireTestIgnored(method.getDescription());
 
-        return testMethod.isIgnored();
+        return ignored;
     }
 
     @Override
     protected List<FrameworkMethod> computeTestMethods() {
-        return parameterisedRunner.computeFrameworkMethods();
+        return TestMethod.listFrom(getTestClass());
     }
 
     @Override
     protected Statement methodInvoker(FrameworkMethod method, Object test) {
-        Statement methodInvoker = parameterisedRunner.parameterisedMethodInvoker(method, test);
-        if (methodInvoker == null)
-            methodInvoker = super.methodInvoker(method, test);
-
-        return methodInvoker;
+        if (method instanceof InvokableFrameworkMethod) {
+            return ((InvokableFrameworkMethod) method).getInvokeStatement(test);
+        }
+        throw new IllegalStateException(
+                "Unsupported FrameworkMethod class: " + method.getClass()
+                        + ", expected an InvokableFrameworkMethod subclass");
     }
 
     @Override
-    public Description getDescription() {
-        if (description == null) {
-            description = Description.createSuiteDescription(getName(), getTestClass().getAnnotations());
-            List<FrameworkMethod> resultMethods = getListOfMethods();
-
-            for (FrameworkMethod method : resultMethods)
-                description.addChild(describeMethod(method));
-        }
-
-        return description;
-    }
-
-    private List<FrameworkMethod> getListOfMethods() {
-        List<FrameworkMethod> frameworkMethods = parameterisedRunner.returnListOfMethods();
-        return parametrizedTestMethodsFilter.filteredMethods(frameworkMethods);
-    }
-
-    public Description describeMethod(FrameworkMethod method) {
-        Description child = parameterisedRunner.describeParameterisedMethod(method);
-
-        if (child == null)
-            child = describeChild(method);
-
-        return child;
+    protected Description describeChild(FrameworkMethod method) {
+        return getDescribableMethod(method).getDescription();
     }
 
     /**

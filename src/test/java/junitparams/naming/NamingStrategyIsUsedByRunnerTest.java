@@ -1,6 +1,7 @@
 package junitparams.naming;
 
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
@@ -26,6 +27,9 @@ public class NamingStrategyIsUsedByRunnerTest {
                 "[1] Well formed name of sampleMethod with param2" + className);
     }
 
+    // Android-changed: CTS and AndroidJUnitRunner rely on specific format to test names, changing
+    // them will prevent CTS and AndroidJUnitRunner from working properly; see b/36541809
+    @Ignore
     @Test
     @Parameters({"param1", "param2"})
     @TestCaseName("[{index}] Well formed name of {method} with {params}")

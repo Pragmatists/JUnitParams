@@ -57,6 +57,9 @@ public class PersonTest {
         }
     }
 
+    // Android-changed: CTS and AndroidJUnitRunner rely on specific format to test names, changing
+    // them will prevent CTS and AndroidJUnitRunner from working properly; see b/36541809
+    @Ignore
     @Test
     @Parameters(method = "adultValues")
     @TestCaseName("Is person with age {0} adult? It's {1} statement.")

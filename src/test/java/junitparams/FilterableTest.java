@@ -6,6 +6,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.manipulation.Filter;
+import org.junit.runner.manipulation.NoTestsRemainException;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -56,6 +57,20 @@ public class FilterableTest {
 
         assertThat(description.getChildren()).hasSize(1);
         assertThat(description.getChildren().get(0).getChildren()).hasSize(2);
+    }
+
+    @Test
+    public void shouldApplyFiltersCumulatively() throws Exception {
+        JUnitParamsRunner runner = new JUnitParamsRunner(SampleTestCase.class);
+        // Remove the first method.
+        new SingleMethodFilter("firstTestMethod").apply(runner);
+        try {
+            // Now remove all instances of the second method.
+            new SingleMethodFilter("secondTestMethod").apply(runner);
+            fail("Filtering did not apply cumulatively");
+        } catch (NoTestsRemainException expected) {
+            // expected
+        }
     }
 
     private Request requestSingleMethodRun(Class<SampleTestCase> clazz, String methodName) {
