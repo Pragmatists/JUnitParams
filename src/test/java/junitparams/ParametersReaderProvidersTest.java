@@ -1,6 +1,5 @@
 package junitparams;
 
-import junitparams.internal.ParameterisedTestMethodRunner;
 import junitparams.internal.TestMethod;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,11 +33,11 @@ public class ParametersReaderProvidersTest {
 
     @Test
     public void shouldPutProviderClassNameInExceptionMessageForProviderWithNoValidMethods() {
-        ParameterisedTestMethodRunner runner = new ParameterisedTestMethodRunner(getTestMethodWithInvalidProvider());
+        TestMethod testMethod = getTestMethodWithInvalidProvider();
 
         exception.expect(RuntimeException.class);
         exception.expectMessage(ProviderClassWithNoValidMethods.class.getName());
-        runner.method.parametersSets();
+        testMethod.parametersSets();
     }
 
     private TestMethod getTestMethodWithInvalidProvider() {

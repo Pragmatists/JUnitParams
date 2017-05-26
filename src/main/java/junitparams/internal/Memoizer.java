@@ -14,4 +14,13 @@ abstract class Memoizer<T> {
     }
 
     protected abstract T computeValue();
+
+    public static <T> Memoizer<T> of(final T value) {
+        return new Memoizer<T>() {
+            @Override
+            protected T computeValue() {
+                return value;
+            }
+        };
+    }
 }
