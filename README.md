@@ -29,7 +29,7 @@ See more [examples](https://github.com/Pragmatists/JUnitParams/blob/master/src/t
 [more news here](https://github.com/Pragmatists/JUnitParams/wiki)
 
 ## About
-JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit >= 4.6.
+JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit >= 4.12.
 
 Main differences to standard JUnit Parametrised runner:
 
