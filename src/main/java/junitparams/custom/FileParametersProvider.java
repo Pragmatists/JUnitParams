@@ -45,7 +45,7 @@ public class FileParametersProvider implements ParametersProvider<FileParameters
         String encoding = fileParameters.encoding();
 
         if (filepath.indexOf(':') < 0) {
-            return new FileReader(filepath);
+            return new InputStreamReader(new FileInputStream(filepath), encoding);
         }
 
         String protocol = filepath.substring(0, filepath.indexOf(':'));
