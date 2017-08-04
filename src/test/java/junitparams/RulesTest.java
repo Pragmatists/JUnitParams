@@ -1,5 +1,6 @@
 package junitparams;
 
+import junitparams.naming.TestCaseName;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -31,9 +32,9 @@ public class RulesTest {
     @Rule
     public Timeout timeout = new Timeout(0);
 
-
     @Test
     @Parameters("")
+    @TestCaseName("{method}")
     public void shouldHandleRulesProperly(String n) {
         assertThat(testName.getMethodName()).isEqualTo("shouldHandleRulesProperly");
     }

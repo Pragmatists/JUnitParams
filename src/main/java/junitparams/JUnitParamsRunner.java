@@ -450,6 +450,12 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
         }
     }
 
+    @Override
+    protected Description describeChild(FrameworkMethod method) {
+        Description description = parameterisedRunner.getDescriptionFor(method);
+        return description == null ? super.describeChild(method) : description;
+    }
+
     private void verifyMethodCanBeRunByStandardRunner(TestMethod testMethod) {
         List<Throwable> errors = new ArrayList<Throwable>();
         testMethod.frameworkMethod().validatePublicVoidNoArg(false, errors);
