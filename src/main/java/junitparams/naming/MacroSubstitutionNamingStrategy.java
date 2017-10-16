@@ -2,25 +2,23 @@ package junitparams.naming;
 
 import junitparams.internal.Utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
-    private static final String MACRO_PATTERN = "\\{[^\\}]{0,50}\\}";
-    // Pattern that keeps delimiters in split result
-    private static final Pattern MACRO_SPLIT_PATTERN = Pattern.compile(String.format("(?=%s)|(?<=%s)", MACRO_PATTERN, MACRO_PATTERN));
     private static final String MACRO_START = "{";
     private static final String MACRO_END = "}";
     static final String DEFAULT_TEMPLATE = "{method}({params}) [{index}]";
-    private static final String[] DEFAULT_TEMPLATE_PARTS = MACRO_SPLIT_PATTERN.split(DEFAULT_TEMPLATE);
+    private static final String[] DEFAULT_TEMPLATE_PARTS = split(DEFAULT_TEMPLATE);
 
     private String[] templateParts;
     private String methodName;
 
     public MacroSubstitutionNamingStrategy(TestCaseName testCaseName, String methodName) {
-        this.templateParts = MACRO_SPLIT_PATTERN.split(getTemplate(testCaseName));
+        this.templateParts = split(getTemplate(testCaseName));
         this.methodName = methodName;
     }
 
@@ -117,5 +115,49 @@ public class MacroSubstitutionNamingStrategy implements TestCaseNamingStrategy {
         private static final HashSet<String> macros = new HashSet<String>(Arrays.asList(
                 Macro.INDEX.toString(), Macro.PARAMS.toString(), Macro.METHOD.toString())
         );
+    }
+
+    /**
+     * Split keeping delimiters in split result
+     */
+    private static String[] split(String input) {
+        char macroStart = MACRO_START.charAt(0);
+        char macroEnd = MACRO_END.charAt(0);
+
+        int startIndex = 0;
+        boolean inMacro = false;
+
+        List<String> list = new ArrayList<String>();
+
+        for (int endIndex = 0; endIndex < input.length(); endIndex++) {
+            char chr = input.charAt(endIndex);
+
+            if (!inMacro) {
+                if (chr == macroStart) {
+                    String result = input.substring(startIndex, endIndex);
+                    if (result.length() > 0) {
+                        list.add(result);
+                    }
+                    inMacro = true;
+                    startIndex = endIndex;
+                }
+            } else {
+                if (chr == macroEnd) {
+                    String result = input.substring(startIndex, endIndex + 1);
+                    if (result.length() > 0) {
+                        list.add(result);
+                    }
+                    inMacro = false;
+                    startIndex = endIndex + 1;
+                }
+            }
+        }
+
+        String result = input.substring(startIndex);
+        if (result.length() > 0) {
+            list.add(result);
+        }
+
+        return list.toArray(new String[list.size()]);
     }
 }
