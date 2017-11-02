@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ParameterisedTestClassRunnerTest {
 
     @Test
-    public void name() throws Exception {
+    public void shouldGetNullDescriptionForMethodNotYetInvoked() throws Exception {
         ParameterisedTestClassRunner runner = new ParameterisedTestClassRunner(new TestClass(SampleTest.class));
         runner.returnListOfMethods();
 
