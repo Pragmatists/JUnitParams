@@ -1,3 +1,11 @@
+## JUnitParams 1.1.1 release. Release date : 2017-11-03
+
+### Regexp bugfix
+
+New version works well for Instrumented Unit Test for Android 19 and below.
+
+Thanks [mattmook](https://github.com/mattmook) and [aaalaniz](https://github.com/aaalaniz) for contribution.
+
 ## JUnitParams 1.1.0 release. Release date : 2017-04-17
 
 ### [Breaking change] Enhance ParametersProvider with FrameworkMethod

@@ -24,7 +24,7 @@ See more [examples](https://github.com/Pragmatists/JUnitParams/blob/master/src/t
 
 ## Latest News
 
-* 2017-04-17 JUnitParams 1.1.0 released. Check [release info](RELEASES.md).
+* 2017-11-03 JUnitParams 1.1.1 released. Check [release info](RELEASES.md).
 
 [more news here](https://github.com/Pragmatists/JUnitParams/wiki)
 
@@ -48,14 +48,14 @@ JUnitParams is available as Maven artifact:
 <dependency>
   <groupId>pl.pragmatists</groupId>
   <artifactId>JUnitParams</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <scope>test</scope>
 </dependency>
 ```
 To use JUnitParams in a Gradle build add this to your dependencies:
 
 ```
-testCompile 'pl.pragmatists:JUnitParams:1.1.0'
+testCompile 'pl.pragmatists:JUnitParams:1.1.1'
 ```
 
 
