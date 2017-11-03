@@ -6,4 +6,4 @@ jdk:
   - oraclejdk7
   - openjdk6
 after_success:
-  - mvn clean test jacoco:report coveralls:report
+  - mvn clean test cobertura:cobertura coveralls:report
