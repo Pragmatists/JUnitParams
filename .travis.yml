@@ -5,3 +5,5 @@ jdk:
   - oraclejdk8
   - oraclejdk7
   - openjdk6
+after_success:
+  - mvn clean test cobertura:cobertura coveralls:report
