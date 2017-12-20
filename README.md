@@ -44,7 +44,7 @@ Main differences to standard JUnit Parametrised runner:
 ## Quickstart
 
 JUnitParams is available as Maven artifact:
-```
+```xml
 <dependency>
   <groupId>pl.pragmatists</groupId>
   <artifactId>JUnitParams</artifactId>
@@ -54,7 +54,7 @@ JUnitParams is available as Maven artifact:
 ```
 To use JUnitParams in a Gradle build add this to your dependencies:
 
-```
+```groovy
 testCompile 'pl.pragmatists:JUnitParams:1.1.1'
 ```
 
