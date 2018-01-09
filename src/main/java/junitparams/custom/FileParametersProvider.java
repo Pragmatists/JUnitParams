@@ -8,13 +8,14 @@ import java.io.Reader;
 
 import junitparams.FileParameters;
 import junitparams.mappers.DataMapper;
+import org.junit.runners.model.FrameworkMethod;
 
 public class FileParametersProvider implements ParametersProvider<FileParameters> {
 
     private FileParameters fileParameters;
 
     @Override
-    public void initialize(FileParameters fileParameters) {
+    public void initialize(FileParameters fileParameters, FrameworkMethod frameworkMethod) {
         this.fileParameters = fileParameters;
     }
 
@@ -44,7 +45,7 @@ public class FileParametersProvider implements ParametersProvider<FileParameters
         String encoding = fileParameters.encoding();
 
         if (filepath.indexOf(':') < 0) {
-            return new FileReader(filepath);
+            return new InputStreamReader(new FileInputStream(filepath), encoding);
         }
 
         String protocol = filepath.substring(0, filepath.indexOf(':'));

@@ -158,7 +158,7 @@ public class ParameterisedTestClassRunner {
         if (!testMethod.isParameterised())
             return null;
 
-        return testMethod.describe();
+        return testMethod.description();
     }
 
     /**
@@ -174,4 +174,24 @@ public class ParameterisedTestClassRunner {
         return testMethods.get(method);
     }
 
+    /**
+     * Returns description of parametrized method for given set of parameters (considering test name convention
+     * given with @{@link junitparams.naming.TestCaseName}). If method is not parametrized or runner has not been created yet
+     * returns null.
+     *
+     * @param method
+     * @return description of given method
+     */
+    public Description getDescriptionFor(FrameworkMethod method) {
+        TestMethod testMethod = testMethodFor(method);
+        if (shouldRun(testMethod)) {
+            ParameterisedTestMethodRunner runner = parameterisedMethods.get(testMethod);
+            return wasInvoked(runner) ? runner.currentTestDescription() : null;
+        }
+        return null;
+    }
+
+    private boolean wasInvoked(ParameterisedTestMethodRunner runner) {
+        return runner != null && runner.count() != 0;
+    }
 }

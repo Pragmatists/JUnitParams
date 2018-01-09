@@ -5,13 +5,14 @@ import java.util.List;
 
 import junitparams.custom.ParametersProvider;
 import junitparams.internal.Utils;
+import org.junit.runners.model.FrameworkMethod;
 
 public class CombinedParametersProvider implements ParametersProvider<CombinedParameters> {
 
     private CombinedParameters combinedParameters;
 
     @Override
-    public void initialize(CombinedParameters parametersAnnotation) {
+    public void initialize(CombinedParameters parametersAnnotation, FrameworkMethod frameworkMethod) {
         this.combinedParameters = parametersAnnotation;
     }
 

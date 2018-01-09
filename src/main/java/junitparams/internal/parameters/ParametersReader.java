@@ -30,7 +30,8 @@ public class ParametersReader {
                 new ParametersFromValue(frameworkMethod),
                 new ParametersFromExternalClassProvideMethod(frameworkMethod),
                 new ParametersFromExternalClassMethod(frameworkMethod),
-                new ParametersFromTestClassMethod(frameworkMethod, testClass)
+                new ParametersFromTestClassMethod(frameworkMethod, testClass),
+                new ParametersFromNamedParametersMethod(frameworkMethod, testClass)
         );
     }
 

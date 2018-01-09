@@ -32,7 +32,8 @@ class ParametersFromExternalClassProvideMethod implements ParametrizationStrateg
     public boolean isApplicable() {
         return annotation != null
                 && !annotation.source().isAssignableFrom(NullType.class)
-                && annotation.method().isEmpty();
+                && annotation.method().isEmpty()
+                && annotation.named().isEmpty();
     }
 
     private Object[] fillResultWithAllParamProviderMethods(Class<?> sourceClass) {
@@ -62,17 +63,17 @@ class ParametersFromExternalClassProvideMethod implements ParametrizationStrateg
     private List<Object> gatherParamsFromAllMethodsFrom(Class<?> sourceClass) {
         List<Object> result = new ArrayList<Object>();
         Method[] methods = sourceClass.getDeclaredMethods();
-        for (Method prividerMethod : methods) {
-            if (prividerMethod.getName().startsWith("provide")) {
-                if (!Modifier.isStatic(prividerMethod.getModifiers())) {
+        for (Method providerMethod : methods) {
+            if (providerMethod.getName().startsWith("provide")) {
+                if (!Modifier.isStatic(providerMethod.getModifiers())) {
                     throw new RuntimeException("Parameters source method " +
-                            prividerMethod.getName() +
+                            providerMethod.getName() +
                             " is not declared as static. Change it to a static method.");
                 }
                 try {
-                    result.addAll(getDataFromMethod(prividerMethod));
+                    result.addAll(getDataFromMethod(providerMethod));
                 } catch (Exception e) {
-                    throw new RuntimeException("Cannot invoke parameters source method: " + prividerMethod.getName(),
+                    throw new RuntimeException("Cannot invoke parameters source method: " + providerMethod.getName(),
                             e);
                 }
             }

@@ -3,6 +3,10 @@ package junitparams;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
@@ -11,6 +15,9 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.junit.validator.PublicClassValidator;
+
+import static org.junit.internal.runners.rules.RuleMemberValidator.*;
 
 import junitparams.internal.ParameterisedTestClassRunner;
 import junitparams.internal.ParametrizedTestMethodsFilter;
@@ -43,16 +50,16 @@ import junitparams.internal.TestMethod;
  * Parameterized runner or Theories? I always thought they're so awkward to use,
  * that I've written this library to help all those out there who'd like to have
  * a handy tool.
- *
+ * <p>
  * So here we go. There are a few different ways to use JUnitParams, I will try
  * to show you all of them here.
- *
+ * <p>
  * <h4 id="a">a. Parameterising tests via values in annotation</h4>
  * <p>
  * You can parameterise your test with values defined in annotations. Just pass
  * sets of test method argument values as an array of Strings, where each string
  * contains the argument values separated by a comma or a pipe "|".
- *
+ * <p>
  * <pre>
  *   &#064;Test
  *   &#064;Parameters({ "20, Tarzan", "0, Jane" })
@@ -60,24 +67,24 @@ import junitparams.internal.TestMethod;
  *       ...
  *   }
  * </pre>
- *
+ * <p>
  * Sometimes you may be interested in passing enum values as parameters, then
  * you can just write them as Strings like this:
- *
+ * <p>
  * <pre>
  * &#064;Test
  * &#064;Parameters({ &quot;FROM_JUNGLE&quot;, &quot;FROM_CITY&quot; })
  * public void passEnumAsParam(PersonType person) {
  * }
  * </pre>
- *
+ * <p>
  * <h4 id="b">b. Parameterising tests via a method that returns parameter values
  * </h4>
  * <p>
  * Obviously passing parameters as strings is handy only for trivial situations,
  * that's why for normal cases you have a method that gives you a collection of
  * parameters:
- *
+ * <p>
  * <pre>
  *   &#064;Test
  *   &#064;Parameters(method = "cartoonCharacters")
@@ -91,11 +98,11 @@ import junitparams.internal.TestMethod;
  *      );
  *   }
  * </pre>
- *
+ * <p>
  * Where <code>$(...)</code> is a static method defined in
  * <code>JUnitParamsRunner</code> class, which returns its parameters as a
  * <code>Object[]</code> array. Just a shortcut, so that you don't need to write the ugly <code>new Object[] {}</code> kind of stuff.
- *
+ * <p>
  * <p>
  * <code>method</code> can take more than one method name - you can pass as many
  * of them as you want, separated by commas. This enables you to divide your
@@ -125,7 +132,7 @@ import junitparams.internal.TestMethod;
  * be ommited if the method that provides parameters has a the same name as the
  * test, but prefixed by <code>parametersFor</code>. So our example would look
  * like this:
- *
+ * <p>
  * <pre>
  *   &#064;Test
  *   &#064;Parameters
@@ -139,11 +146,11 @@ import junitparams.internal.TestMethod;
  *      );
  *   }
  * </pre>
- *
+ * <p>
  * <p>
  * If you don't like returning untyped values and arrays, you can equally well
  * return any Iterable of concrete objects:
- *
+ * <p>
  * <pre>
  *   &#064;Test
  *   &#064;Parameters
@@ -157,12 +164,12 @@ import junitparams.internal.TestMethod;
  *      );
  *   }
  * </pre>
- *
+ * <p>
  * If we had more than just two Person's to make, we would get redundant,
  * so JUnitParams gives you a simplified way of creating objects to be passed as
  * params. You can omit the creation of the objects and just return their constructor
  * argument values like this:
- *
+ * <p>
  * <pre>
  *   &#064;Test
  *   &#064;Parameters
@@ -179,7 +186,7 @@ import junitparams.internal.TestMethod;
  * And JUnitParams will invoke the appropriate constructor (<code>new Person(int age, String name)</code> in this case.)
  * <b>If you want to use it, watch out! Automatic refactoring of constructor
  * arguments won't be working here!</b>
- *
+ * <p>
  * <p>
  * You can also define methods that provide parameters in subclasses and use
  * them in test methods defined in superclasses, as well as redefine data
@@ -187,13 +194,13 @@ import junitparams.internal.TestMethod;
  * superclass. That you can doesn't mean you should. Inheritance in tests is
  * usually a code smell (readability hurts), so make sure you know what you're
  * doing.
- *
+ * <p>
  * <h4 id="c">c. Parameterising tests via external classes</h4>
  * <p>
  * For more complex cases you may want to externalise the method that provides
  * parameters or use more than one method to provide parameters to a single test
  * method. You can easily do that like this:
- *
+ * <p>
  * <pre>
  *   &#064;Test
  *   &#064;Parameters(source = CartoonCharactersProvider.class)
@@ -213,14 +220,14 @@ import junitparams.internal.TestMethod;
  *      }
  *   }
  * </pre>
- *
+ * <p>
  * All methods starting with <code>provide</code> are used as parameter
  * providers.
- *
+ * <p>
  * <p>
  * Sometimes though you may want to use just one or few methods of some class to
  * provide you parameters. This can be done as well like this:
- *
+ * <p>
  * <pre>
  *   &#064;Test
  *   &#064;Parameters(source = CartoonCharactersProvider.class, method = "cinderellaCharacters,snowwhiteCharacters")
@@ -228,12 +235,12 @@ import junitparams.internal.TestMethod;
  *       ...
  *   }
  * </pre>
- *
- *
+ * <p>
+ * <p>
  * <h4 id="d">d. Loading parameters from files</h4> You may be interested in
  * loading parameters from a file. This is very easy if it's a CSV file with
  * columns in the same order as test method parameters:
- *
+ * <p>
  * <pre>
  *   &#064;Test
  *   &#064;FileParameters("cartoon-characters.csv")
@@ -241,11 +248,11 @@ import junitparams.internal.TestMethod;
  *       ...
  *   }
  * </pre>
- *
+ * <p>
  * But if you want to process the data from the CSV file a bit to use it in the
  * test method arguments, you
  * need to use an <code>IdentityMapper</code>. Look:
- *
+ * <p>
  * <pre>
  *   &#064;Test
  *   &#064;FileParameters(value = "cartoon-characters.csv", mapper = CartoonMapper.class)
@@ -267,12 +274,12 @@ import junitparams.internal.TestMethod;
  *
  * }
  * </pre>
- *
+ * <p>
  * A CSV files with a header are also supported with the use of <code>CsvWithHeaderMapper</code> class.
- *
+ * <p>
  * You may also want to use a completely different file format, like excel or
  * something. Then just parse it yourself:
- *
+ * <p>
  * <pre>
  *   &#064;Test
  *   &#064;FileParameters(value = "cartoon-characters.xsl", mapper = ExcelCartoonMapper.class)
@@ -287,13 +294,13 @@ import junitparams.internal.TestMethod;
  *     }
  * }
  * </pre>
- *
+ * <p>
  * As you see, you don't need to open or close the file. Just read it from the
  * reader and parse it the way you wish.
- *
+ * <p>
  * By default the file is loaded from the file system, relatively to where you start the tests from. But you can also use a resource from
  * the classpath by prefixing the file name with <code>classpath:</code>
- *
+ * <p>
  * <h4 id="e">e. Converting parameter values</h4>
  * Sometimes you want to pass some parameter in one form, but use it in the test in another. Dates are a good example. It's handy to
  * specify them in the parameters as a String like "2013.01.01", but you'd like to use a Jodatime's LocalDate or JDKs Date in the test
@@ -317,7 +324,7 @@ import junitparams.internal.TestMethod;
  *         assertEquals(65, num);
  *     }
  * </pre>
- *
+ * <p>
  * <h3 id="p2">2. Usage with Spring</h3>
  * <p>
  * You can easily use JUnitParams together with Spring. The only problem is that
@@ -325,7 +332,7 @@ import junitparams.internal.TestMethod;
  * runner to be run at once. Which would normally mean that you could use only
  * one of Spring or JUnitParams. Luckily we can cheat Spring a little by adding
  * this to your test class:
- *
+ * <p>
  * <pre>
  * private TestContextManager testContextManager;
  *
@@ -335,10 +342,10 @@ import junitparams.internal.TestMethod;
  *     this.testContextManager.prepareTestInstance(this);
  * }
  * </pre>
- *
+ * <p>
  * This lets you use in your tests anything that Spring provides in its test
  * framework.
- *
+ * <p>
  * <h3 id="p3">3. Other options</h3>
  * <h4> Enhancing test case description</h4>
  * You can use <code>TestCaseName</code> annotation to provide template of the individual test case name:
@@ -397,14 +404,36 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     @Override
     public void filter(Filter filter) throws NoTestsRemainException {
         super.filter(filter);
-        this.parametrizedTestMethodsFilter = new ParametrizedTestMethodsFilter(this,filter);
+        this.parametrizedTestMethodsFilter = new ParametrizedTestMethodsFilter(this, filter);
     }
 
     @Override
     protected void collectInitializationErrors(List<Throwable> errors) {
-        super.validateFields(errors);
+        validatePublicTestClass();
+        validateZeroArgConstructor(errors);
+        validateLifecycleMethods(errors);
+        validateRules(errors);
+
         for (Throwable throwable : errors)
             throwable.printStackTrace();
+    }
+
+    private void validatePublicTestClass() {
+        new PublicClassValidator().validateTestClass(getTestClass());
+    }
+
+    private void validateRules(List<Throwable> errors) {
+        CLASS_RULE_VALIDATOR.validate(getTestClass(), errors);
+        CLASS_RULE_METHOD_VALIDATOR.validate(getTestClass(), errors);
+        RULE_METHOD_VALIDATOR.validate(getTestClass(), errors);
+        RULE_VALIDATOR.validate(getTestClass(), errors);
+    }
+
+    private void validateLifecycleMethods(List<Throwable> errors) {
+        validatePublicVoidNoArgMethods(BeforeClass.class, true, errors);
+        validatePublicVoidNoArgMethods(AfterClass.class, true, errors);
+        validatePublicVoidNoArgMethods(After.class, false, errors);
+        validatePublicVoidNoArgMethods(Before.class, false, errors);
     }
 
     @Override
@@ -413,13 +442,18 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
             return;
 
         TestMethod testMethod = parameterisedRunner.testMethodFor(method);
-        if (parameterisedRunner.shouldRun(testMethod)){
+        if (parameterisedRunner.shouldRun(testMethod)) {
             parameterisedRunner.runParameterisedTest(testMethod, methodBlock(method), notifier);
-        }
-        else{
+        } else {
             verifyMethodCanBeRunByStandardRunner(testMethod);
             super.runChild(method, notifier);
         }
+    }
+
+    @Override
+    protected Description describeChild(FrameworkMethod method) {
+        Description description = parameterisedRunner.getDescriptionFor(method);
+        return description == null ? super.describeChild(method) : description;
     }
 
     private void verifyMethodCanBeRunByStandardRunner(TestMethod testMethod) {
@@ -482,17 +516,15 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     /**
      * Shortcut for returning an array of objects. All parameters passed to this
      * method are returned in an <code>Object[]</code> array.
-     *
+     * <p>
      * Should not be used to create var-args arrays, because of the way Java resolves
      * var-args for objects and primitives.
      *
+     * @param params Values to be returned in an <code>Object[]</code> array.
+     * @return Values passed to this method.
      * @deprecated This method is no longer supported. It might be removed in future
      * as it does not support all cases (especially var-args). Create arrays using
      * <code>new Object[]{}</code> instead.
-     *
-     * @param params
-     *            Values to be returned in an <code>Object[]</code> array.
-     * @return Values passed to this method.
      */
     @Deprecated
     public static Object[] $(Object... params) {

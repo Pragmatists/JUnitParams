@@ -112,11 +112,6 @@ public class TestMethod {
         return frameworkMethodAnnotations.getAnnotation(annotationType);
     }
 
-    Description describe() {
-        return description.get();
-    }
-
-
     public Object[] parametersSets() {
         return parameters.get();
     }
@@ -132,5 +127,9 @@ public class TestMethod {
 
     boolean isParameterised() {
         return frameworkMethodAnnotations.isParametrised();
+    }
+
+    Description description() {
+        return description.get();
     }
 }

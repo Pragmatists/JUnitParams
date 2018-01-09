@@ -1,5 +1,7 @@
 package junitparams.custom;
 
+import org.junit.runners.model.FrameworkMethod;
+
 import java.lang.annotation.Annotation;
 
 /**
@@ -14,8 +16,9 @@ public interface ParametersProvider<A extends Annotation> {
      * Initializes this provider - you can read your custom annotation config here.
      *
      * @param parametersAnnotation parameters annotation on test method
+     * @param frameworkMethod test method
      */
-    void initialize(A parametersAnnotation);
+    void initialize(A parametersAnnotation, FrameworkMethod frameworkMethod);
 
     /**
      * Actual parameters generation

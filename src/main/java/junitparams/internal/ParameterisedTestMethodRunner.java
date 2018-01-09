@@ -35,7 +35,7 @@ public class ParameterisedTestMethodRunner {
     }
 
     void runTestMethod(Statement methodInvoker, RunNotifier notifier) {
-        Description methodWithParams = findChildForParams(methodInvoker, method.describe());
+        Description methodWithParams = findChildForParams(methodInvoker, method.description());
 
         runMethodInvoker(notifier, methodInvoker, methodWithParams);
     }
@@ -104,5 +104,9 @@ public class ParameterisedTestMethodRunner {
             e.printStackTrace();
             return null;
         }
+    }
+
+    Description currentTestDescription() {
+        return method.description().getChildren().get(count - 1);
     }
 }

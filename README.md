@@ -1,6 +1,6 @@
 # JUnitParams
 
-[![Build Status](https://secure.travis-ci.org/Pragmatists/JUnitParams.png)](http://travis-ci.org/Pragmatists/JUnitParams) [![Coverage Status](https://coveralls.io/repos/Pragmatists/JUnitParams/badge.svg)](https://coveralls.io/r/Pragmatists/JUnitParams) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/pl.pragmatists/JUnitParams/badge.svg)](https://maven-badges.herokuapp.com/maven-central/pl.pragmatists/JUnitParams)
+[![Build Status](https://secure.travis-ci.org/Pragmatists/JUnitParams.png)](http://travis-ci.org/Pragmatists/JUnitParams) [![Coverage Status](https://coveralls.io/repos/github/Pragmatists/JUnitParams/badge.svg?branch=coverage)](https://coveralls.io/github/Pragmatists/JUnitParams?branch=master) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/pl.pragmatists/JUnitParams/badge.svg)](https://maven-badges.herokuapp.com/maven-central/pl.pragmatists/JUnitParams)
 
 *Parameterised tests that don't suck*
 
@@ -24,12 +24,12 @@ See more [examples](https://github.com/Pragmatists/JUnitParams/blob/master/src/t
 
 ## Latest News
 
-* 2017-01-23 JUnitParams 1.0.6 released. Check [release info](RELEASES.md).
+* 2017-11-03 JUnitParams 1.1.1 released. Check [release info](RELEASES.md).
 
 [more news here](https://github.com/Pragmatists/JUnitParams/wiki)
 
 ## About
-JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit >=4.6.
+JUnitParams project adds a new runner to JUnit and provides much easier and readable parametrised tests for JUnit >= 4.12.
 
 Main differences to standard JUnit Parametrised runner:
 
@@ -44,14 +44,20 @@ Main differences to standard JUnit Parametrised runner:
 ## Quickstart
 
 JUnitParams is available as Maven artifact:
-```
+```xml
 <dependency>
   <groupId>pl.pragmatists</groupId>
   <artifactId>JUnitParams</artifactId>
-  <version>1.0.6</version>
+  <version>1.1.1</version>
   <scope>test</scope>
 </dependency>
 ```
+To use JUnitParams in a Gradle build add this to your dependencies:
+
+```groovy
+testCompile 'pl.pragmatists:JUnitParams:1.1.1'
+```
+
 
 If you want to see just one simple test class with all main ways to use JUnitParams see here:
 https://github.com/Pragmatists/junitparams/tree/master/src/test/java/junitparams/usage

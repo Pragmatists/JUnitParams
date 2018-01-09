@@ -39,10 +39,23 @@ public @interface Parameters {
      * don't need additional classes and the test code may be a bit cleaner. The
      * format of the data returned by the method is the same as for the source
      * annotation class.
-     * Example: <code>@Parameters(method = "examplaryPeople")</code>
+     * Example: <code>@Parameters(method = "exemplaryPeople")</code>
      * <p>
      * You can use multiple methods to provide parameters - use comma to do it:
      * Example: <code>@Parameters(method = "womenParams, menParams")</code>
      */
     String method() default "";
+
+    /**
+     * Alternative way to designate a method providing parameters for test.
+     * Annotate provider method with <code>@NamedParameters</code>.
+     * This way you can rely on method description instead of name.
+     * <p>
+     * Example:<br/>
+     * <code>@Parameters(named = "exemplaryPeople")</code><br/>
+     * You can use multiple named methods to provide parameters - use comma to do it:<br/>
+     * <code>@Parameters(named = "womenParams, menParams")</code>
+     * @see NamedParameters
+     */
+    String named() default "";
 }

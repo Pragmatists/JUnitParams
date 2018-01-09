@@ -17,13 +17,15 @@ class ParametersFromExternalClassMethod implements ParametrizationStrategy {
     @Override
     public Object[] getParameters() {
         Class<?> sourceClass = annotation.source();
-        return paramsFromMethodCommon.paramsFromMethod(sourceClass);
+        return !annotation.method().isEmpty()
+            ? paramsFromMethodCommon.paramsFromMethod(sourceClass)
+            : paramsFromMethodCommon.paramsFromNamedMethod(sourceClass);
     }
 
     @Override
     public boolean isApplicable() {
         return annotation != null
                 && !annotation.source().isAssignableFrom(NullType.class)
-                && !annotation.method().isEmpty();
+                && (!annotation.method().isEmpty() || ! annotation.named().isEmpty());
     }
 }
