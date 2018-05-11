@@ -1,5 +1,6 @@
 package junitparams.internal;
 
+import junitparams.FileParameters;
 import junitparams.converters.ConversionFailedException;
 import junitparams.converters.ConvertParam;
 import junitparams.converters.ParamAnnotation;
@@ -62,13 +63,15 @@ class InvokeParameterisedMethod extends Statement {
         } catch (ConversionFailedException e) {
             throw e;
         } catch (Exception e) {
-            Class<?>[] typesOfParameters = createArrayOfTypesOf(paramset);
-            Object resultParam = createObjectOfExpectedTypeBasedOnParams(paramset, typesOfParameters);
-            return new Object[]{resultParam};
+            return createObjectOfExpectedTypeBasedOnParams(paramset);
         }
     }
 
-    private Object createObjectOfExpectedTypeBasedOnParams(Object[] paramset, Class<?>[] typesOfParameters) {
+    private Object[] createObjectOfExpectedTypeBasedOnParams(Object[] paramset) {
+
+        verifyNumberOfParameters(testMethod, paramset);
+
+        Class<?>[] typesOfParameters = createArrayOfTypesOf(paramset);
         Object resultParam;
 
         try {
@@ -84,7 +87,7 @@ class InvokeParameterisedMethod extends Statement {
             throw new IllegalStateException("While trying to create object of class " + testMethod.getMethod().getParameterTypes()[0]
                     + " could not find constructor with arguments matching (type-wise) the ones given in parameters.", e);
         }
-        return resultParam;
+        return new Object[]{resultParam};
     }
 
     private Class<?>[] createArrayOfTypesOf(Object[] paramset) {
@@ -217,12 +220,39 @@ class InvokeParameterisedMethod extends Statement {
                 " Only primitive types, BigDecimals and Strings can be used.");
     }
 
-    private void verifySameSizeOfArrays(Object[] columns, Class<?>[] parameterTypes) {
+    private void verifySameSizeOfArrays(Object[] columns, Object[] parameterTypes) {
         if (parameterTypes.length != columns.length)
             throw new IllegalArgumentException(
                     "Number of parameters inside @Parameters annotation doesn't match the number of test method parameters.\nThere are "
                             + columns.length + " parameters in annotation, while there's " + parameterTypes.length + " parameters in the "
                             + testMethod.getName() + " method.");
+    }
+
+    private void verifyNumberOfParameters(FrameworkMethod testMethod, Object[] providedParameters) {
+        if (isForFileParameters(testMethod) || isForSingleParameter(testMethod)) {
+            return;
+        }
+        int numberOftestParameters = testMethod.getMethod().getParameterTypes().length;
+        int NumberOfProvidedParameters = providedParameters.length;
+
+        if (numberOftestParameters != NumberOfProvidedParameters)
+            throw new IllegalArgumentException(
+                    "Number of parameters in data provider method doesn't match the number of test method parameters.\nThere are "
+                            + NumberOfProvidedParameters + " parameters in provider method, while there's " + numberOftestParameters + " parameters in the "
+                            + testMethod.getName() + " method.");
+    }
+
+    private boolean isForSingleParameter(FrameworkMethod testMethod) {
+        return testMethod.getMethod().getParameterTypes().length==1;
+    }
+
+    private boolean isForFileParameters(FrameworkMethod testMethod) {
+        for (int i = 0; i < testMethod.getAnnotations().length; i++) {
+            if (testMethod.getAnnotations()[i].annotationType().isAssignableFrom(FileParameters.class)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     boolean matchesDescription(Description description) {
