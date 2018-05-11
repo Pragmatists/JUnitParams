@@ -1,24 +1,24 @@
 package junitparams.usage;
 
+import junitparams.*;
+import junitparams.converters.Param;
+import junitparams.custom.combined.CombinedParameters;
+import junitparams.mappers.CsvWithHeaderMapper;
+import junitparams.naming.TestCaseName;
+import junitparams.usage.person_example.Person1;
+import junitparams.usage.person_example.PersonMapper;
+import junitparams.usage.person_example.PersonTest;
+import junitparams.usage.person_example.PersonType;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import junitparams.*;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import junitparams.converters.Param;
-import junitparams.custom.combined.CombinedParameters;
-import junitparams.mappers.CsvWithHeaderMapper;
-import junitparams.naming.TestCaseName;
-import junitparams.usage.person_example.PersonMapper;
-import junitparams.usage.person_example.PersonTest;
-import junitparams.usage.person_example.PersonType;
-
-import static junitparams.JUnitParamsRunner.*;
-import static org.assertj.core.api.Assertions.*;
+import static junitparams.JUnitParamsRunner.$;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnitParamsRunner.class)
 public class SamplesOfUsageTest {
@@ -169,5 +169,27 @@ public class SamplesOfUsageTest {
     @Test
     @CombinedParameters({"AAA,BBB", "1|2"})
     public void combineParamsInAnnotation(String p1, Integer p2) {}
+
+
+    /**
+     * read csv file and construct javabean for test case
+     *
+     * @param person constructed javabean
+     */
+    @Test
+    @CsvParameters(value = "classpath:with_header1.csv")
+    public void loadParamsFromAnyCsvWithConverter(Person1 person) {
+
+    }
+
+    @Test
+    @CsvParameters(value = "classpath:with_header1.csv")
+    public void loadParamsFromAnyCsvWithConverter1(int id, String name, Date date) {
+    }
+
+    @Test
+    @CsvParameters(value = "classpath:with_header1.csv")
+    public void loadParamsFromAnyCsvWithConverter2(int id) {
+    }
 
 }
