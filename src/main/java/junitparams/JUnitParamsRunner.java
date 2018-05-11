@@ -7,9 +7,11 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.Description;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.NoTestsRemainException;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -18,6 +20,7 @@ import org.junit.runners.model.Statement;
 import org.junit.validator.PublicClassValidator;
 
 import static org.junit.internal.runners.rules.RuleMemberValidator.*;
+import static org.junit.runner.Description.createSuiteDescription;
 
 import junitparams.internal.ParameterisedTestClassRunner;
 import junitparams.internal.ParametrizedTestMethodsFilter;
@@ -443,11 +446,28 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
 
         TestMethod testMethod = parameterisedRunner.testMethodFor(method);
         if (parameterisedRunner.shouldRun(testMethod)) {
-            parameterisedRunner.runParameterisedTest(testMethod, methodBlock(method), notifier);
+            Statement statement = methodBlock(method);
+            if (initializedProperly(statement, notifier)) {
+                parameterisedRunner.runParameterisedTest(testMethod, statement, notifier);
+            }
         } else {
             verifyMethodCanBeRunByStandardRunner(testMethod);
             super.runChild(method, notifier);
         }
+    }
+
+    private boolean initializedProperly(Statement statement, RunNotifier notifier) {
+        boolean initializedProperly = true;
+        if (statement instanceof Fail) {
+            try {
+                statement.evaluate();
+            } catch (Throwable throwable) {
+                initializedProperly = false;
+                Failure instantiationFailure = new Failure(createSuiteDescription("Instantiation failure"), throwable);
+                notifier.fireTestFailure(instantiationFailure);
+            }
+        }
+        return initializedProperly;
     }
 
     @Override
@@ -489,7 +509,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
     @Override
     public Description getDescription() {
         if (description == null) {
-            description = Description.createSuiteDescription(getName(), getTestClass().getAnnotations());
+            description = createSuiteDescription(getName(), getTestClass().getAnnotations());
             List<FrameworkMethod> resultMethods = getListOfMethods();
 
             for (FrameworkMethod method : resultMethods)
