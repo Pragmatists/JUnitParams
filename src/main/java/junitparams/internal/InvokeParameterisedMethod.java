@@ -237,9 +237,9 @@ class InvokeParameterisedMethod extends Statement {
 
         if (numberOftestParameters != NumberOfProvidedParameters)
             throw new IllegalArgumentException(
-                    "Number of parameters in data provider method doesn't match the number of test method parameters.\nThere are "
-                            + NumberOfProvidedParameters + " parameters in provider method, while there's " + numberOftestParameters + " parameters in the "
-                            + testMethod.getName() + " method.");
+                    "Number of parameters in data provider method doesn't match the number of test method parameters.\n" +
+                            "Number of parameters in provider method is " + NumberOfProvidedParameters +
+                            ", while the number of parameters in the " + testMethod.getName() + " test is " + numberOftestParameters);
     }
 
     private boolean isForSingleParameter(FrameworkMethod testMethod) {

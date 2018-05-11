@@ -39,15 +39,12 @@ public class MissingParametersTest {
         assertEquals(1, testResult.getFailureCount());
         assertEquals(IllegalArgumentException.class, testFailure.getException().getClass());
         assertEquals("Number of parameters in data provider method doesn't match the number of test method parameters.\n" +
-                        "There are 1 parameters in provider method, while there's 2 parameters in the missingParameters method."
+                        "Number of parameters in provider method is 1, while the number of parameters in the missingParameters test is 2"
                 , testFailure.getException().getMessage());
     }
 
     @RunWith(JUnitParamsRunner.class)
     public static class MissingNullParametersInMethodProvider {
-
-        public MissingNullParametersInMethodProvider() {
-        }
 
         @Test
         @Parameters(method = "withWrongNumberOfNullParams")
@@ -71,8 +68,8 @@ public class MissingParametersTest {
         assertEquals(1, testResult.getFailureCount());
         assertEquals(IllegalArgumentException.class, testFailure.getException().getClass());
         assertEquals("Number of parameters in data provider method doesn't match the number of test method parameters.\n" +
-                        "There are 2 parameters in provider method, while there's 3 parameters in the testWithValueAndMethodProviders method.",
-                testFailure.getException().getMessage());
+                        "Number of parameters in provider method is 2, while the number of parameters in the testWithValueAndMethodProviders test is 3"
+                , testFailure.getException().getMessage());
     }
 
 
