@@ -192,6 +192,6 @@ public class ParameterisedTestClassRunner {
     }
 
     private boolean wasInvoked(ParameterisedTestMethodRunner runner) {
-        return runner != null && runner.count() != 0;
+        return runner != null;
     }
 }
