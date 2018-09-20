@@ -2,6 +2,7 @@ language: java
 dist: precise
 before_install:
   - cp .travis.maven.settings.xml $HOME/.m2/settings.xml
+  - echo "MAVEN_OPTS=-Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2" > ~/.mavenrc
 install: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B -V
 jdk:
   - oraclejdk8
