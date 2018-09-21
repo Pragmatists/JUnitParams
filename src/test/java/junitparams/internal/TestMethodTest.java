@@ -46,7 +46,7 @@ public class TestMethodTest {
     public void flatTestMethodStructure() throws Exception {
         System.setProperty("JUnitParams.flat", "true");
 
-        Description description = plainTestMethod.description();
+        Description description = plainTestMethod.describe();
 
         assertEquals("for_others_to_work(junitparams.internal.TestMethodTest)", description.getDisplayName());
         assertTrue(description.getChildren().isEmpty());
@@ -57,7 +57,7 @@ public class TestMethodTest {
     @Test
     public void hierarchicalTestMethodStructure() throws Exception {
         System.clearProperty("JUnitParams.flat");
-        Description description = plainTestMethod.description();
+        Description description = plainTestMethod.describe();
 
         assertEquals("forOthersToWork", description.getDisplayName());
         assertEquals("forOthersToWork(a) [0](junitparams.internal.TestMethodTest)", description.getChildren().get(0).getDisplayName());
@@ -67,7 +67,7 @@ public class TestMethodTest {
     @Test
     public void hierarchicalArrayTestMethodStructure() throws Exception {
         System.clearProperty("JUnitParams.flat");
-        Description description = arrayTestMethod.description();
+        Description description = arrayTestMethod.describe();
 
         assertEquals("forOthersToWorkWithArray", description.getDisplayName());
         assertEquals("forOthersToWorkWithArray(a,b) [0](junitparams.internal.TestMethodTest)",

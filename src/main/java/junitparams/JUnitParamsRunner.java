@@ -455,7 +455,7 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
             super.runChild(method, notifier);
         }
     }
-
+    
     private boolean initializedProperly(Statement statement, RunNotifier notifier) {
         boolean initializedProperly = true;
         if (statement instanceof Fail) {
@@ -468,12 +468,6 @@ public class JUnitParamsRunner extends BlockJUnit4ClassRunner {
             }
         }
         return initializedProperly;
-    }
-
-    @Override
-    protected Description describeChild(FrameworkMethod method) {
-        Description description = parameterisedRunner.getDescriptionFor(method);
-        return description == null ? super.describeChild(method) : description;
     }
 
     private void verifyMethodCanBeRunByStandardRunner(TestMethod testMethod) {
