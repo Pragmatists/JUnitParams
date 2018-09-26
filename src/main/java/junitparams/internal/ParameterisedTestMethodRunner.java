@@ -1,12 +1,13 @@
 package junitparams.internal;
 
-import java.lang.reflect.Field;
-
 import org.junit.internal.AssumptionViolatedException;
 import org.junit.internal.runners.model.EachTestNotifier;
+import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.Statement;
+
+import java.lang.reflect.Field;
 
 /**
  * Testmethod-level functionalities for parameterised tests
@@ -68,6 +69,14 @@ public class ParameterisedTestMethodRunner {
     }
 
     private InvokeParameterisedMethod findParameterisedMethodInvokerInChain(Statement methodInvoker) {
+        if (methodInvoker != null && methodInvoker instanceof Fail) {
+            try {
+                methodInvoker.evaluate();
+            } catch (Throwable throwable) {
+                throw new IllegalStateException("Instantiation failed", throwable);
+            }
+        }
+
         while (methodInvoker != null && !(methodInvoker instanceof InvokeParameterisedMethod))
             methodInvoker = nextChainedInvoker(methodInvoker);
 
