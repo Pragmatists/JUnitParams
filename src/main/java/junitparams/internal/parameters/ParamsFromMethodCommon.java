@@ -87,11 +87,11 @@ class ParamsFromMethodCommon {
 
         } catch (ClassCastException e) {
             throw new RuntimeException(
-                "The return type of: " + provideMethod.getName() + " defined in class " + sourceClass +
+                "The return type of: " + provideMethod.getName() + " defined in " + sourceClass +
                 " should be one of the following:\nObject[][], Iterable<Object[]>, Iterable<Iterable<Object>>," +
                 " Iterator<Object[]>.\nFix it!", e);
         } catch (Exception e) {
-            throw new RuntimeException("Could not invoke method: " + provideMethod.getName() + " defined in class " +
+            throw new RuntimeException("Could not invoke method: " + provideMethod.getName() + " defined in " +
                     sourceClass + " so no params were used.", e);
         }
     }
