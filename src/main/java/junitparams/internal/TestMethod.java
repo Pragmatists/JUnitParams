@@ -38,7 +38,7 @@ public class TestMethod {
 
                 if (isNotIgnored() && !describeFlat()) {
                     TestCaseNamingStrategy namingStrategy = new MacroSubstitutionNamingStrategy(getAnnotation(TestCaseName.class), name());
-                    return new ParametrizedDescription(namingStrategy, testClass.getJavaClass().getName(), name()).parametrizedDescription(parametersSets());
+                    return new ParametrizedDescription(namingStrategy, testClass.getJavaClass().getName(), name(), frameworkMethodAnnotations.allAnnotations()).parametrizedDescription(parametersSets());
                 } else {
                     return Description.createTestDescription(testClass.getJavaClass(), name(), frameworkMethodAnnotations.allAnnotations());
                 }
