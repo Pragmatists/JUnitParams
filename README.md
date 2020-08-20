@@ -2,7 +2,7 @@
 
 [![Build Status](https://secure.travis-ci.org/Pragmatists/JUnitParams.png)](http://travis-ci.org/Pragmatists/JUnitParams) [![Coverage Status](https://coveralls.io/repos/github/Pragmatists/JUnitParams/badge.svg?branch=coverage)](https://coveralls.io/github/Pragmatists/JUnitParams?branch=master) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/pl.pragmatists/JUnitParams/badge.svg)](https://maven-badges.herokuapp.com/maven-central/pl.pragmatists/JUnitParams)
 
-*Parameterised tests that don't suck*
+*JUnit 4.0 parameterised tests that don't suck*
 
 ## Example
 
@@ -66,4 +66,10 @@ You can also have a look at [Wiki:Quickstart](https://github.com/Pragmatists/jun
 
 ## Integration with Spring framework
 
-Since **spring version 4.2** it is possible to integrate JUnitParams and spring. More about this [here.](https://github.com/Pragmatists/junitparams-spring-integration-example) 
+Since **spring version 4.2** it is possible to integrate JUnitParams and spring. More about this [here.](https://github.com/Pragmatists/junitparams-spring-integration-example)
+
+## Integration with JUnit 5
+
+JUnitParams does not currently support the the `@ExtendWith` mechanism.
+
+In the meantime, see [JUnit 5 Vintage](https://junit.org/junit5/docs/current/user-guide/#migrating-from-junit4-running) to continue using `@RunWith(JUnitParamsRunner.class)` within JUnit 5 codebases.
