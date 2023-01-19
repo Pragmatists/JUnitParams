@@ -112,7 +112,7 @@ import junitparams.internal.TestMethod;
  * test cases e.g. into categories.
  * <pre>
  *   &#064;Test
- *   &#064;Parameters(method = "menCharactes, womenCharacters")
+ *   &#064;Parameters(method = "menCharacters, womenCharacters")
  *   public void cartoonCharacters(int yearsInJungle, String person) {
  *       ...
  *   }
