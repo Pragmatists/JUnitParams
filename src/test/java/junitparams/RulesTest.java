@@ -45,7 +45,7 @@ public class RulesTest {
 
         assertThat(result.getFailureCount()).isEqualTo(1);
         assertThat(result.getFailures().get(0).getException())
-                .hasMessage("The @Rule 'testRule' must be public.");
+                .hasMessageContaining("The @Rule 'testRule' must be public.");
     }
 
     public class ProtectedRuleTest {

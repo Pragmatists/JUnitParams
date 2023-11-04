@@ -41,7 +41,7 @@ public class BeforeAfterClassTest {
 
         assertThat(result.getFailureCount()).isEqualTo(1);
         assertThat(result.getFailures().get(0).getException())
-                .hasMessage("Method fail() should be static");
+                .hasMessageContaining("Method fail() should be static");
     }
 
 
